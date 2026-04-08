@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import patch
-
-import httpx
+from unittest.mock import AsyncMock
 
 from vos.opnsensecraft.collector import OpnsensecraftCollector
 
@@ -17,33 +15,13 @@ def _load_fixture() -> dict:
     return json.loads(FIXTURE.read_text())
 
 
-def _make_mcp_response(data: dict) -> dict:
-    return {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "result": {"content": [{"type": "text", "text": json.dumps(data)}]},
-    }
+def _mock_call_tool(fixture: dict) -> AsyncMock:
+    async def call_tool(tool_name: str, arguments: dict | None = None, **kwargs):
+        if tool_name == "opnsense-get-interfaces":
+            return fixture
+        return None
 
-
-def _patch_httpx(fixture: dict):
-    class PatchedClient:
-        def __init__(self, **kwargs):
-            pass
-
-        async def __aenter__(self):
-            return self
-
-        async def __aexit__(self, *args):
-            pass
-
-        async def post(self, url: str, *, json: dict, **kwargs):
-            return httpx.Response(
-                200,
-                json=_make_mcp_response(fixture),
-                request=httpx.Request("POST", url),
-            )
-
-    return patch("httpx.AsyncClient", PatchedClient)
+    return AsyncMock(side_effect=call_tool)
 
 
 async def test_collector_produces_observations():
@@ -53,9 +31,9 @@ async def test_collector_produces_observations():
         device_name="OPNsense",
         management_ip="192.168.254.1",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with _patch_httpx(fixture):
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     assert len(obs) > 0
     devices = {o.device for o in obs}
@@ -68,9 +46,9 @@ async def test_collector_has_device_identity():
         device_slug="opnsense",
         device_name="OPNsense",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with _patch_httpx(fixture):
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     type_obs = [o for o in obs if o.field == "type" and o.port is None]
     assert type_obs[0].value == "firewall"
@@ -79,9 +57,9 @@ async def test_collector_has_device_identity():
 async def test_collector_has_port_observations():
     fixture = _load_fixture()
     collector = OpnsensecraftCollector(device_slug="opnsense")
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with _patch_httpx(fixture):
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     ports = {o.port for o in obs if o.port is not None}
     assert "ix1" in ports
@@ -89,22 +67,14 @@ async def test_collector_has_port_observations():
 
 
 async def test_collector_handles_mcp_error():
-    class FailingClient:
-        def __init__(self, **kwargs):
-            pass
+    collector = OpnsensecraftCollector(device_slug="dead")
 
-        async def __aenter__(self):
-            return self
+    async def failing_call_tool(tool_name: str, arguments=None, **kwargs):
+        return None
 
-        async def __aexit__(self, *args):
-            pass
+    collector._gw.call_tool = AsyncMock(side_effect=failing_call_tool)
 
-        async def post(self, url: str, *, json: dict, **kwargs):
-            raise httpx.ConnectError("Connection refused")
-
-    with patch("httpx.AsyncClient", FailingClient):
-        collector = OpnsensecraftCollector(device_slug="dead")
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     # Should still have device identity obs (those don't need MCP)
     type_obs = [o for o in obs if o.field == "type" and o.port is None]

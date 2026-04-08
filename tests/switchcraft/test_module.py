@@ -11,9 +11,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-from unittest.mock import patch
-
-import httpx
+from unittest.mock import AsyncMock
 
 from vos.apps.preflight import PreflightWorkflow
 from vos.switchcraft import SwitchcraftConfig, SwitchcraftModule
@@ -26,32 +24,22 @@ def _load_switch_fixture() -> dict:
     return json.loads(SWITCH_FIXTURE.read_text())
 
 
-def _make_mcp_response(data: dict) -> dict:
-    return {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "result": {"content": [{"type": "text", "text": json.dumps(data)}]},
-    }
-
-
-def _mock_post(fixture: dict):
-    async def mock_post(url: str, *, json: dict, **kwargs):
-        tool_name = json["params"]["name"]
+def _mock_call_tool(fixture: dict) -> AsyncMock:
+    async def call_tool(tool_name: str, arguments: dict | None = None, **kwargs):
         lookup = {
             "switchcraft-device-status": fixture["device_status"],
             "switchcraft-get-ports": fixture["get_ports"],
             "switchcraft-get-vlans": fixture["get_vlans"],
         }
-        data = lookup.get(tool_name)
-        if data is None:
-            return httpx.Response(404, request=httpx.Request("POST", url))
-        return httpx.Response(
-            200,
-            json=_make_mcp_response(data),
-            request=httpx.Request("POST", url),
-        )
+        return lookup.get(tool_name)
 
-    return mock_post
+    return AsyncMock(side_effect=call_tool)
+
+
+def _patch_module_gateway(module: SwitchcraftModule, fixture: dict) -> None:
+    """Patch the gateway client on a module's collector."""
+    if module._collector is not None:
+        module._collector._gw.call_tool = _mock_call_tool(fixture)
 
 
 @dataclass
@@ -71,25 +59,6 @@ def _make_context(config: SwitchcraftConfig) -> FakeModuleContext:
         config=config,
         capabilities=None,
     )
-
-
-def _patch_httpx(fixture: dict):
-    """Context manager that patches httpx.AsyncClient to return fixture data."""
-
-    class PatchedClient:
-        def __init__(self, **kwargs):
-            pass
-
-        async def __aenter__(self):
-            return self
-
-        async def __aexit__(self, *args):
-            pass
-
-        async def post(self, url: str, *, json: dict, **kwargs):
-            return await _mock_post(fixture)(url, json=json, **kwargs)
-
-    return patch("httpx.AsyncClient", PatchedClient)
 
 
 # --- Module lifecycle ---
@@ -136,9 +105,9 @@ async def test_collect_after_start_produces_observations():
     )
     module = SwitchcraftModule()
     await module.start(_make_context(config))
+    _patch_module_gateway(module, fixture)
 
-    with _patch_httpx(fixture):
-        obs = await module.collect()
+    obs = await module.collect()
 
     assert len(obs) > 0
     assert all(o.device == "onti-be" for o in obs)
@@ -174,9 +143,9 @@ async def test_health_reachable():
     )
     module = SwitchcraftModule()
     await module.start(_make_context(config))
+    _patch_module_gateway(module, fixture)
 
-    with _patch_httpx(fixture):
-        result = await module.health()
+    result = await module.health()
 
     assert result["status"] == "ok"
     assert result["reachable"] is True
@@ -203,9 +172,9 @@ async def test_health_unreachable():
     )
     module = SwitchcraftModule()
     await module.start(_make_context(config))
+    _patch_module_gateway(module, unreachable_fixture)
 
-    with _patch_httpx(unreachable_fixture):
-        result = await module.health()
+    result = await module.health()
 
     assert result["status"] == "degraded"
     assert result["reachable"] is False
@@ -214,23 +183,6 @@ async def test_health_unreachable():
 
 async def test_health_gateway_down():
     """If the MCP gateway itself is unreachable, health returns error."""
-
-    def _patch_httpx_error():
-        class FailingClient:
-            def __init__(self, **kwargs):
-                pass
-
-            async def __aenter__(self):
-                return self
-
-            async def __aexit__(self, *args):
-                pass
-
-            async def post(self, url: str, *, json: dict, **kwargs):
-                raise httpx.ConnectError("Connection refused")
-
-        return patch("httpx.AsyncClient", FailingClient)
-
     config = SwitchcraftConfig(
         mcp_device_id="any",
         device_slug="any",
@@ -238,8 +190,12 @@ async def test_health_gateway_down():
     module = SwitchcraftModule()
     await module.start(_make_context(config))
 
-    with _patch_httpx_error():
-        result = await module.health()
+    async def failing_call_tool(tool_name: str, arguments=None, **kwargs):
+        return None
+
+    module._collector._gw.call_tool = AsyncMock(side_effect=failing_call_tool)
+
+    result = await module.health()
 
     assert result["status"] == "error"
 
@@ -257,11 +213,11 @@ async def test_workflow_with_real_module():
     )
     module = SwitchcraftModule()
     await module.start(_make_context(config))
+    _patch_module_gateway(module, fixture)
 
     workflow = PreflightWorkflow(TOPO_FIXTURE, collectors=[module])
 
-    with _patch_httpx(fixture):
-        report = await workflow.run_verification()
+    report = await workflow.run_verification()
 
     # Should produce a real VerificationReport
     assert report.summary["total"] == 3

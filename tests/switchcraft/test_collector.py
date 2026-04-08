@@ -8,9 +8,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
-
-import httpx
+from unittest.mock import AsyncMock
 
 from vos.switchcraft.collector import SwitchcraftCollector
 
@@ -21,39 +19,20 @@ def _load_fixture() -> dict:
     return json.loads(FIXTURE.read_text())
 
 
-def _make_mcp_response(data: dict) -> dict:
-    """Wrap data in the MCP JSON-RPC response envelope."""
-    return {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "result": {
-            "content": [{"type": "text", "text": json.dumps(data)}],
-        },
-    }
+def _mock_call_tool(fixture: dict) -> AsyncMock:
+    """Create an AsyncMock for McpGatewayClient.call_tool that returns fixture data."""
 
-
-def _mock_post(fixture: dict):
-    """Create an AsyncMock for httpx.AsyncClient.post that returns fixture data."""
-
-    async def mock_post(url: str, *, json: dict, **kwargs):
-        tool_name = json["params"]["name"]
+    async def call_tool(tool_name: str, arguments: dict | None = None, **kwargs):
         if tool_name == "switchcraft-device-status":
-            data = fixture["device_status"]
-        elif tool_name == "switchcraft-get-ports":
-            data = fixture["get_ports"]
-        elif tool_name == "switchcraft-get-vlans":
-            data = fixture["get_vlans"]
-        else:
-            raise ValueError(f"Unknown tool: {tool_name}")
+            return fixture["device_status"]
+        if tool_name == "switchcraft-get-ports":
+            return fixture["get_ports"]
+        if tool_name == "switchcraft-get-vlans":
+            return fixture["get_vlans"]
+        return None
 
-        resp = httpx.Response(
-            200,
-            json=_make_mcp_response(data),
-            request=httpx.Request("POST", url),
-        )
-        return resp
-
-    return mock_post
+    mock = AsyncMock(side_effect=call_tool)
+    return mock
 
 
 async def test_collector_produces_observations():
@@ -63,15 +42,9 @@ async def test_collector_produces_observations():
         mcp_device_id="onti-backend",
         device_name="ONTI-BE",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = _mock_post(fixture)
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
-
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     assert len(obs) > 0
     devices = {o.device for o in obs}
@@ -85,15 +58,9 @@ async def test_collector_has_port_observations():
         mcp_device_id="onti-backend",
         device_name="ONTI-BE",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = _mock_post(fixture)
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
-
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     ports = {o.port for o in obs if o.port is not None}
     assert "eth1" in ports
@@ -107,15 +74,9 @@ async def test_collector_has_vlan_observations():
         mcp_device_id="onti-backend",
         device_name="ONTI-BE",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = _mock_post(fixture)
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
-
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     vlan_obs = [o for o in obs if o.field == "vlans"]
     assert len(vlan_obs) == 8  # one per port
@@ -128,15 +89,9 @@ async def test_collector_has_device_level_observations():
         mcp_device_id="onti-backend",
         device_name="ONTI-BE",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = _mock_post(fixture)
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
-
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     type_obs = [o for o in obs if o.field == "type" and o.port is None]
     assert len(type_obs) == 1
@@ -153,17 +108,12 @@ async def test_collector_handles_mcp_error():
         mcp_device_id="nonexistent",
     )
 
-    async def failing_post(url: str, *, json: dict, **kwargs):
-        raise httpx.ConnectError("Connection refused")
+    async def failing_call_tool(tool_name: str, arguments=None, **kwargs):
+        return None
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = failing_post
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
+    collector._gw.call_tool = AsyncMock(side_effect=failing_call_tool)
 
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     assert obs == []
 
@@ -175,15 +125,9 @@ async def test_collector_all_observations_are_mcp_live():
         device_slug="onti-be",
         mcp_device_id="onti-backend",
     )
+    collector._gw.call_tool = _mock_call_tool(fixture)
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
-        client = AsyncMock()
-        client.post = _mock_post(fixture)
-        client.__aenter__ = AsyncMock(return_value=client)
-        client.__aexit__ = AsyncMock(return_value=False)
-        mock_client_cls.return_value = client
-
-        obs = await collector.collect()
+    obs = await collector.collect()
 
     assert all(o.source == "mcp_live" for o in obs)
     assert all(o.adapter == "switchcraft" for o in obs)

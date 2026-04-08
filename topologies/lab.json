@@ -1,0 +1,608 @@
+{
+  "meta": {
+    "version": "1.0",
+    "name": "emesix-homelab",
+    "updated": "2026-04-08T12:00:00Z",
+    "updated_by": "emesix"
+  },
+  "devices": {
+    "opnsense": {
+      "id": "opnsense",
+      "name": "OPNsense",
+      "type": "firewall",
+      "model": "Qotom VM (VMID 100)",
+      "management_ip": "192.168.254.1",
+      "mcp_source": "opnsensecraft",
+      "ports": {
+        "igc0": {
+          "type": "ethernet",
+          "device_name": "igc0",
+          "speed": "2.5G",
+          "description": "WAN (ISP uplink)",
+          "vlans": {"mode": "access", "access_vlan": null}
+        },
+        "igc1": {
+          "type": "ethernet",
+          "device_name": "igc1",
+          "speed": "2.5G",
+          "description": "Bypass 172.16.0.0/24 (emergency, never touch)",
+          "vlans": {"mode": "access", "access_vlan": null}
+        },
+        "ix0": {
+          "type": "sfp+",
+          "device_name": "ix0",
+          "speed": "10G",
+          "description": "Frontend trunk to ONTi-FE",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "onti-fe", "port": "1/0/1"}
+        },
+        "ix1": {
+          "type": "sfp+",
+          "device_name": "ix1",
+          "speed": "10G",
+          "description": "Backend trunk to ONTi-BE",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "onti-be", "port": "1/0/1"}
+        },
+        "bridge0": {
+          "type": "bridge",
+          "device_name": "bridge0",
+          "description": "Management domain bridge (ix0.254 + ix1.254 + vtnet0)"
+        }
+      },
+      "children": ["zabbix", "docker", "lldap"]
+    },
+
+    "onti-fe": {
+      "id": "onti-fe",
+      "name": "ONTi-FE (Frontend)",
+      "type": "switch",
+      "model": "ONTI S508CL-8S",
+      "management_ip": "192.168.254.31",
+      "mcp_source": "switchcraft",
+      "ports": {
+        "1/0/1": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/1",
+          "speed": "10G",
+          "description": "Trunk to OPNsense ix0",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "opnsense", "port": "ix0"}
+        },
+        "1/0/2": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/2",
+          "speed": "10G",
+          "description": "Trunk to 91TSM SFP+ uplink",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "91tsm", "port": "sfp1"}
+        },
+        "1/0/3": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/3",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/4": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/4",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/5": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/5",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/6": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/6",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/7": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/7",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/8": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/8",
+          "speed": "1G",
+          "description": "Fiber trunk to Zyxel GS1900",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "zyxel-gs1900", "port": "sfp1"}
+        }
+      }
+    },
+
+    "onti-be": {
+      "id": "onti-be",
+      "name": "ONTi-BE (Backend)",
+      "type": "switch",
+      "model": "ONTI S508CL-8S",
+      "management_ip": "192.168.254.30",
+      "mcp_source": "switchcraft",
+      "ports": {
+        "1/0/1": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/1",
+          "speed": "10G",
+          "description": "Trunk to OPNsense ix1",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "opnsense", "port": "ix1"}
+        },
+        "1/0/2": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/2",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/3": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/3",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/4": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/4",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/5": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/5",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/6": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/6",
+          "speed": "10G",
+          "description": "Available"
+        },
+        "1/0/7": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/7",
+          "speed": "1G",
+          "description": "Cat6+SFP to HX310-DB eth1 (AWAITING SFP MODULE)",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "pve-hx310-db", "port": "eth1"}
+        },
+        "1/0/8": {
+          "type": "sfp+",
+          "device_name": "Ethernet1/0/8",
+          "speed": "1G",
+          "description": "Cat6+SFP to HX310-ARR eth1 (AWAITING SFP MODULE)",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "pve-hx310-arr", "port": "eth1"}
+        }
+      }
+    },
+
+    "91tsm": {
+      "id": "91tsm",
+      "name": "91TSM (Copper Breakout)",
+      "type": "switch",
+      "model": "JT-COM S207CW-91TSM",
+      "management_ip": "192.168.254.32",
+      "mcp_source": "switchcraft",
+      "ports": {
+        "sfp1": {
+          "type": "sfp+",
+          "device_name": "SFP+ Port 1",
+          "speed": "10G",
+          "description": "DAC trunk to ONTi-FE port 2",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "onti-fe", "port": "1/0/2"}
+        },
+        "port2": {
+          "type": "ethernet",
+          "device_name": "Port 2",
+          "speed": "2.5G",
+          "description": "Available / DHCP",
+          "vlans": {"mode": "access", "access_vlan": 25}
+        },
+        "port3": {
+          "type": "ethernet",
+          "device_name": "Port 3",
+          "speed": "2.5G",
+          "description": "Available / DHCP",
+          "vlans": {"mode": "access", "access_vlan": 25}
+        },
+        "port4": {
+          "type": "ethernet",
+          "device_name": "Port 4",
+          "speed": "2.5G",
+          "description": "Available / DHCP",
+          "vlans": {"mode": "access", "access_vlan": 25}
+        },
+        "port5": {
+          "type": "ethernet",
+          "device_name": "Port 5",
+          "speed": "2.5G",
+          "description": "Available / DHCP",
+          "vlans": {"mode": "access", "access_vlan": 25}
+        },
+        "port6": {
+          "type": "ethernet",
+          "device_name": "Port 6",
+          "speed": "2.5G",
+          "description": "Available / DHCP",
+          "vlans": {"mode": "access", "access_vlan": 25}
+        },
+        "port7": {
+          "type": "ethernet",
+          "device_name": "Port 7",
+          "speed": "2.5G",
+          "description": "Trunk to HX310-ARR eth0",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "pve-hx310-arr", "port": "eth0"}
+        },
+        "port8": {
+          "type": "ethernet",
+          "device_name": "Port 8",
+          "speed": "2.5G",
+          "description": "Trunk to HX310-DB eth0",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "pve-hx310-db", "port": "eth0"}
+        },
+        "sfp2": {
+          "type": "sfp+",
+          "device_name": "SFP+ Port 2",
+          "speed": "10G",
+          "description": "Available"
+        }
+      }
+    },
+
+    "zyxel-gs1900": {
+      "id": "zyxel-gs1900",
+      "name": "Zyxel GS1900-24HP",
+      "type": "switch",
+      "model": "Zyxel GS1900-24HP",
+      "management_ip": "192.168.254.33",
+      "mcp_source": "switchcraft",
+      "ports": {
+        "sfp1": {
+          "type": "sfp+",
+          "device_name": "SFP 1",
+          "speed": "1G",
+          "description": "Fiber trunk to ONTi-FE port 8",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "onti-fe", "port": "1/0/8"}
+        },
+        "port1": {
+          "type": "ethernet",
+          "device_name": "Port 1",
+          "speed": "1G",
+          "description": "PoE - WiFi AP (Phase 4)"
+        },
+        "port2": {
+          "type": "ethernet",
+          "device_name": "Port 2",
+          "speed": "1G",
+          "description": "PoE - WiFi AP (Phase 4)"
+        },
+        "port3": {
+          "type": "ethernet",
+          "device_name": "Port 3",
+          "speed": "1G",
+          "description": "PoE - WiFi AP (Phase 4)"
+        }
+      }
+    },
+
+    "pve-qotom-1u": {
+      "id": "pve-qotom-1u",
+      "name": "Qotom (Proxmox Host)",
+      "type": "proxmox",
+      "model": "Qotom Mini PC",
+      "management_ip": "192.168.254.100",
+      "mcp_source": "proxmoxcraft",
+      "ports": {
+        "igc0": {
+          "type": "ethernet",
+          "device_name": "igc0",
+          "speed": "2.5G",
+          "description": "WAN (PCI passthrough to OPNsense)"
+        },
+        "igc1": {
+          "type": "ethernet",
+          "device_name": "igc1",
+          "speed": "2.5G",
+          "description": "Bypass 172.16.0.0/24 (PCI passthrough to OPNsense)"
+        },
+        "ix0": {
+          "type": "sfp+",
+          "device_name": "ix0",
+          "speed": "10G",
+          "description": "Frontend trunk (PCI passthrough to OPNsense)"
+        },
+        "ix1": {
+          "type": "sfp+",
+          "device_name": "ix1",
+          "speed": "10G",
+          "description": "Backend trunk (PCI passthrough to OPNsense)"
+        },
+        "vmbr0": {
+          "type": "bridge",
+          "device_name": "vmbr0",
+          "description": "Bypass bridge (igc1 bound, 172.16.0.x)"
+        },
+        "vmbr1": {
+          "type": "bridge",
+          "device_name": "vmbr1",
+          "description": "Frontend trunk bridge (ix0 bound, VLAN-aware)"
+        },
+        "vmbr2": {
+          "type": "bridge",
+          "device_name": "vmbr2",
+          "description": "Backend trunk bridge (ix1 bound, VLAN-aware)"
+        },
+        "vmbr3": {
+          "type": "bridge",
+          "device_name": "vmbr3",
+          "description": "WAN bridge (igc0 bound, passthrough)"
+        }
+      },
+      "children": ["opnsense", "zabbix", "docker", "lldap"]
+    },
+
+    "pve-hx310-db": {
+      "id": "pve-hx310-db",
+      "name": "HX310-DB (Database Node)",
+      "type": "proxmox",
+      "model": "HX310",
+      "management_ip": "192.168.254.101",
+      "mcp_source": "proxmoxcraft",
+      "ports": {
+        "eth0": {
+          "type": "ethernet",
+          "device_name": "eth0",
+          "speed": "2.5G",
+          "description": "Frontend (91TSM port 8) - cluster + DHCP",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "91tsm", "port": "port8"}
+        },
+        "eth1": {
+          "type": "sfp+",
+          "device_name": "eth1",
+          "speed": "1G",
+          "description": "Backend (ONTi-BE port 7) - AWAITING SFP MODULE",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "onti-be", "port": "1/0/7"}
+        },
+        "vmbr0": {
+          "type": "bridge",
+          "device_name": "vmbr0",
+          "description": "Frontend bridge (eth0 bound, NOT yet VLAN-aware)"
+        },
+        "vmbr1": {
+          "type": "bridge",
+          "device_name": "vmbr1",
+          "description": "Backend bridge (eth1 bound, VLAN-aware, bridge-vids 254)"
+        }
+      }
+    },
+
+    "pve-hx310-arr": {
+      "id": "pve-hx310-arr",
+      "name": "HX310-ARR (ARR Services Node)",
+      "type": "proxmox",
+      "model": "HX310",
+      "management_ip": "192.168.254.102",
+      "mcp_source": "proxmoxcraft",
+      "ports": {
+        "eth0": {
+          "type": "ethernet",
+          "device_name": "eth0",
+          "speed": "2.5G",
+          "description": "Frontend (91TSM port 7) - cluster + DHCP",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [25, 254]},
+          "expected_neighbor": {"device": "91tsm", "port": "port7"}
+        },
+        "eth1": {
+          "type": "sfp+",
+          "device_name": "eth1",
+          "speed": "1G",
+          "description": "Backend (ONTi-BE port 8) - AWAITING SFP MODULE",
+          "vlans": {"mode": "trunk", "native": 1, "tagged": [254]},
+          "expected_neighbor": {"device": "onti-be", "port": "1/0/8"}
+        },
+        "vmbr0": {
+          "type": "bridge",
+          "device_name": "vmbr0",
+          "description": "Frontend bridge (eth0 bound, NOT yet VLAN-aware)"
+        },
+        "vmbr1": {
+          "type": "bridge",
+          "device_name": "vmbr1",
+          "description": "Backend bridge (eth1 bound, VLAN-aware, bridge-vids 254)"
+        }
+      }
+    }
+  },
+
+  "links": [
+    {
+      "id": "phys-opnsense-ix0-to-onti-fe",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "opnsense", "port": "ix0"},
+        {"device": "onti-fe", "port": "1/0/1"}
+      ],
+      "media": "DAC SFP+ 10G",
+      "cable_color": "black",
+      "notes": "Frontend trunk: OPNsense to ONTi-FE"
+    },
+    {
+      "id": "phys-opnsense-ix1-to-onti-be",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "opnsense", "port": "ix1"},
+        {"device": "onti-be", "port": "1/0/1"}
+      ],
+      "media": "DAC SFP+ 10G",
+      "cable_color": "black",
+      "notes": "Backend trunk: OPNsense to ONTi-BE"
+    },
+    {
+      "id": "phys-onti-fe-to-91tsm",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "onti-fe", "port": "1/0/2"},
+        {"device": "91tsm", "port": "sfp1"}
+      ],
+      "media": "DAC SFP+ 10G",
+      "cable_color": "blue",
+      "notes": "Frontend: ONTi-FE to 91TSM copper breakout"
+    },
+    {
+      "id": "phys-onti-fe-to-zyxel",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "onti-fe", "port": "1/0/8"},
+        {"device": "zyxel-gs1900", "port": "sfp1"}
+      ],
+      "media": "Fiber 1G (BiDi SFP)",
+      "cable_color": "yellow",
+      "notes": "Frontend: ONTi-FE to Zyxel PoE switch"
+    },
+    {
+      "id": "phys-91tsm-to-hx310-db",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "91tsm", "port": "port8"},
+        {"device": "pve-hx310-db", "port": "eth0"}
+      ],
+      "media": "Cat6 RJ45 2.5G",
+      "cable_color": "green",
+      "notes": "Frontend: 91TSM to HX310-DB (cluster + DHCP)"
+    },
+    {
+      "id": "phys-91tsm-to-hx310-arr",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "91tsm", "port": "port7"},
+        {"device": "pve-hx310-arr", "port": "eth0"}
+      ],
+      "media": "Cat6 RJ45 2.5G",
+      "cable_color": "green",
+      "notes": "Frontend: 91TSM to HX310-ARR (cluster + DHCP)"
+    },
+    {
+      "id": "phys-onti-be-to-hx310-db",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "onti-be", "port": "1/0/7"},
+        {"device": "pve-hx310-db", "port": "eth1"}
+      ],
+      "media": "Cat6 + 10Gtek SFP-to-RJ45 1G",
+      "cable_color": "red",
+      "notes": "Backend: ONTi-BE to HX310-DB - BLOCKED (SFP module not installed)"
+    },
+    {
+      "id": "phys-onti-be-to-hx310-arr",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "onti-be", "port": "1/0/8"},
+        {"device": "pve-hx310-arr", "port": "eth1"}
+      ],
+      "media": "Cat6 + 10Gtek SFP-to-RJ45 1G",
+      "cable_color": "red",
+      "notes": "Backend: ONTi-BE to HX310-ARR - BLOCKED (SFP module not installed)"
+    },
+
+    {
+      "id": "bridge-qotom-igc1-vmbr0",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-qotom-1u", "port": "igc1"},
+        {"device": "pve-qotom-1u", "port": "vmbr0"}
+      ],
+      "notes": "Bypass bridge"
+    },
+    {
+      "id": "bridge-qotom-ix0-vmbr1",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-qotom-1u", "port": "ix0"},
+        {"device": "pve-qotom-1u", "port": "vmbr1"}
+      ],
+      "notes": "Frontend trunk bridge"
+    },
+    {
+      "id": "bridge-qotom-ix1-vmbr2",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-qotom-1u", "port": "ix1"},
+        {"device": "pve-qotom-1u", "port": "vmbr2"}
+      ],
+      "notes": "Backend trunk bridge"
+    },
+    {
+      "id": "bridge-qotom-igc0-vmbr3",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-qotom-1u", "port": "igc0"},
+        {"device": "pve-qotom-1u", "port": "vmbr3"}
+      ],
+      "notes": "WAN bridge"
+    },
+    {
+      "id": "bridge-hx310-db-eth0-vmbr0",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-hx310-db", "port": "eth0"},
+        {"device": "pve-hx310-db", "port": "vmbr0"}
+      ],
+      "notes": "Frontend bridge"
+    },
+    {
+      "id": "bridge-hx310-db-eth1-vmbr1",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-hx310-db", "port": "eth1"},
+        {"device": "pve-hx310-db", "port": "vmbr1"}
+      ],
+      "notes": "Backend bridge (awaiting SFP)"
+    },
+    {
+      "id": "bridge-hx310-arr-eth0-vmbr0",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-hx310-arr", "port": "eth0"},
+        {"device": "pve-hx310-arr", "port": "vmbr0"}
+      ],
+      "notes": "Frontend bridge"
+    },
+    {
+      "id": "bridge-hx310-arr-eth1-vmbr1",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-hx310-arr", "port": "eth1"},
+        {"device": "pve-hx310-arr", "port": "vmbr1"}
+      ],
+      "notes": "Backend bridge (awaiting SFP)"
+    }
+  ],
+
+  "vlans": {
+    "25": {
+      "name": "General LAN",
+      "color": "#4caf50",
+      "subnet": "192.168.25.0/24",
+      "gateway": "192.168.25.1"
+    },
+    "254": {
+      "name": "Management",
+      "color": "#2196f3",
+      "subnet": "192.168.254.0/24",
+      "gateway": "192.168.254.1"
+    }
+  }
+}
