@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://emesix.github.io/vos-workbench/schemas/node.schema.json",
+  "title": "VOS Workbench Node",
+  "type": "object",
+  "required": ["id", "type", "label", "activation_state"],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "parent_id": {
+      "type": ["string", "null"]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "project",
+        "container",
+        "file",
+        "task",
+        "terminal",
+        "resource",
+        "memory",
+        "session",
+        "log",
+        "artifact",
+        "agent"
+      ]
+    },
+    "label": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "children": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "activation_state": {
+      "type": "string",
+      "enum": ["inactive", "available", "active", "degraded"]
+    }
+  },
+  "additionalProperties": false
+}

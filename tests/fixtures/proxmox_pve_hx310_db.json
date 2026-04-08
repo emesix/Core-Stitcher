@@ -1,0 +1,82 @@
+{
+  "node_status": {
+    "uptime": 173819,
+    "pveversion": "pve-manager/9.0.11/3bf5476b8a4699e2",
+    "kversion": "Linux 6.14.11-4-pve #1 SMP PREEMPT_DYNAMIC PMX 6.14.11-4",
+    "cpu": 0.004,
+    "loadavg": ["0.00", "0.01", "0.00"],
+    "memory": {
+      "total": 16631259136,
+      "used": 1616941056,
+      "free": 14591172608
+    },
+    "cpuinfo": {
+      "model": "Intel(R) Core(TM) i3-6006U CPU @ 2.00GHz",
+      "cpus": 4,
+      "cores": 2,
+      "sockets": 1
+    }
+  },
+  "bridges": [
+    {
+      "iface": "vmbr0",
+      "type": "bridge",
+      "method": "static",
+      "address": "192.168.254.20",
+      "netmask": "255.255.255.0",
+      "autostart": 1,
+      "bridge_ports": "enp2s0",
+      "comments": "Management bridge"
+    },
+    {
+      "iface": "vmbr1",
+      "type": "bridge",
+      "method": "manual",
+      "autostart": 1,
+      "bridge_ports": "enp2s0.25",
+      "comments": "IoT VLAN bridge"
+    }
+  ],
+  "network": [
+    {
+      "iface": "enp2s0",
+      "type": "eth",
+      "method": "manual",
+      "autostart": 1,
+      "active": 1
+    },
+    {
+      "iface": "enp2s0.25",
+      "type": "vlan",
+      "method": "manual",
+      "autostart": 1,
+      "active": 1
+    },
+    {
+      "iface": "vmbr0",
+      "type": "bridge",
+      "method": "static",
+      "address": "192.168.254.20",
+      "netmask": "255.255.255.0",
+      "autostart": 1,
+      "bridge_ports": "enp2s0",
+      "active": 1,
+      "comments": "Management bridge"
+    },
+    {
+      "iface": "vmbr1",
+      "type": "bridge",
+      "method": "manual",
+      "autostart": 1,
+      "bridge_ports": "enp2s0.25",
+      "active": 1,
+      "comments": "IoT VLAN bridge"
+    },
+    {
+      "iface": "lo",
+      "type": "loopback",
+      "method": "loopback",
+      "active": 1
+    }
+  ]
+}

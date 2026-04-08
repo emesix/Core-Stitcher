@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://emesix.github.io/vos-workbench/schemas/module-contract.schema.json",
+  "title": "VOS Workbench Module Contract",
+  "type": "object",
+  "required": ["module_id", "version", "capabilities"],
+  "properties": {
+    "module_id": {"type": "string"},
+    "version": {"type": "string"},
+    "capabilities": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "config_schema": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "permissions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "events": {
+      "type": "object",
+      "properties": {
+        "subscribes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "emits": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

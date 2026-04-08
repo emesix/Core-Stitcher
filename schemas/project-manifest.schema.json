@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://emesix.github.io/vos-workbench/schemas/project-manifest.schema.json",
+  "title": "VOS Workbench Project Manifest",
+  "type": "object",
+  "required": ["project_id", "name", "root_path"],
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9._-]+$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "root_path": {
+      "type": "string"
+    },
+    "working_mode": {
+      "type": "string",
+      "enum": ["planning", "execution", "review", "maintenance"]
+    },
+    "clients": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "terminals": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "models": {
+      "type": "object",
+      "properties": {
+        "default": {"type": "string"},
+        "fallbacks": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": true
+    },
+    "memory": {
+      "type": "object",
+      "properties": {
+        "backend": {"type": "string"},
+        "file_index": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "resources": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "modules": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

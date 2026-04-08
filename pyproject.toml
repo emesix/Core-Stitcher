@@ -1,0 +1,69 @@
+[project]
+name = "core-stitcher"
+version = "0.1.0"
+description = "Core-Stitcher — backbone + modules + orchestration"
+readme = "README.md"
+authors = [
+    { name = "emesix", email = "emesix@xs4all.nl" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.18.4",
+    "fastapi>=0.135.3",
+    "httpx>=0.28.1",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
+    "pyyaml>=6.0.3",
+    "sqlmodel>=0.0.38",
+    "structlog>=25.5.0",
+    "uvicorn[standard]>=0.42.0",
+    "websockets>=16.0",
+]
+
+[project.scripts]
+vos-workbench = "vos_workbench:main"
+project-stitcher = "vos.apps.project_stitcher.cli:main"
+
+[project.entry-points."vos.modules"]
+"resource.switchcraft" = "vos.switchcraft:SwitchcraftModule"
+"resource.opnsensecraft" = "vos.opnsensecraft:OpnsensecraftModule"
+"resource.proxmoxcraft" = "vos.proxmoxcraft:ProxmoxcraftModule"
+"resource.collectkit" = "vos.collectkit:CollectkitModule"
+"core.verifykit" = "vos.verifykit:VerifykitModule"
+"core.tracekit" = "vos.tracekit:TracekitModule"
+"integration.interfacekit" = "vos.interfacekit:InterfacekitModule"
+
+[build-system]
+requires = ["uv_build>=0.11.1,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "vos_workbench"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "--import-mode=importlib"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "SIM", "TCH"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["TCH003", "B017"]
+"src/vos/modelkit/**" = ["TCH001", "TCH003"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["vos_workbench", "vos"]

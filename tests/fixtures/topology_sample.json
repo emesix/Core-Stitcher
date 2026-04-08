@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "version": "1.0",
+    "name": "homelab-sample",
+    "updated": "2026-04-07T10:00:00Z",
+    "updated_by": "emesix"
+  },
+  "devices": {
+    "onti-be": {
+      "id": "onti-be",
+      "name": "ONTI-BE",
+      "type": "switch",
+      "model": "ONTI OGF-08P",
+      "management_ip": "192.168.254.10",
+      "mcp_source": "switchcraft",
+      "ports": {
+        "eth1": {
+          "type": "sfp+",
+          "device_name": "ge1",
+          "vlans": {
+            "mode": "trunk",
+            "native": 1,
+            "tagged": [25, 254]
+          },
+          "expected_neighbor": {
+            "device": "opnsense",
+            "port": "ix1"
+          }
+        },
+        "eth2": {
+          "type": "sfp+",
+          "device_name": "ge2",
+          "vlans": {
+            "mode": "trunk",
+            "native": 1,
+            "tagged": [25, 254]
+          },
+          "expected_neighbor": {
+            "device": "pve-hx310-db",
+            "port": "enp2s0"
+          }
+        }
+      }
+    },
+    "opnsense": {
+      "id": "opnsense",
+      "name": "OPNsense",
+      "type": "firewall",
+      "management_ip": "192.168.254.1",
+      "mcp_source": "opnsensecraft",
+      "ports": {
+        "ix1": {
+          "type": "sfp+",
+          "device_name": "ix1",
+          "vlans": {
+            "mode": "trunk",
+            "native": 1,
+            "tagged": [25, 254]
+          },
+          "expected_neighbor": {
+            "device": "onti-be",
+            "port": "eth1"
+          }
+        }
+      }
+    },
+    "pve-hx310-db": {
+      "id": "pve-hx310-db",
+      "name": "PVE-HX310-DB",
+      "type": "proxmox",
+      "management_ip": "192.168.254.20",
+      "mcp_source": "proxmoxcraft",
+      "ports": {
+        "enp2s0": {
+          "type": "sfp+",
+          "device_name": "enp2s0",
+          "vlans": {
+            "mode": "trunk",
+            "native": 1,
+            "tagged": [25, 254]
+          },
+          "expected_neighbor": {
+            "device": "onti-be",
+            "port": "eth2"
+          }
+        },
+        "vmbr0": {
+          "type": "bridge",
+          "device_name": "vmbr0"
+        }
+      }
+    }
+  },
+  "links": [
+    {
+      "id": "phys-opnsense-ix1-to-onti-be-eth1",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "opnsense", "port": "ix1"},
+        {"device": "onti-be", "port": "eth1"}
+      ],
+      "media": "DAC SFP+",
+      "cable_color": "black"
+    },
+    {
+      "id": "phys-onti-be-eth2-to-pve-hx310-db-enp2s0",
+      "type": "physical_cable",
+      "endpoints": [
+        {"device": "onti-be", "port": "eth2"},
+        {"device": "pve-hx310-db", "port": "enp2s0"}
+      ],
+      "media": "DAC SFP+",
+      "cable_color": "blue"
+    },
+    {
+      "id": "bridge-pve-hx310-db-enp2s0-to-vmbr0",
+      "type": "bridge_member",
+      "endpoints": [
+        {"device": "pve-hx310-db", "port": "enp2s0"},
+        {"device": "pve-hx310-db", "port": "vmbr0"}
+      ]
+    }
+  ],
+  "vlans": {
+    "25": {
+      "name": "IoT",
+      "color": "#ff9800",
+      "subnet": "192.168.25.0/24",
+      "gateway": "192.168.25.1"
+    },
+    "254": {
+      "name": "Management",
+      "color": "#2196f3",
+      "subnet": "192.168.254.0/24",
+      "gateway": "192.168.254.1"
+    }
+  }
+}

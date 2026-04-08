@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VOS Explorer</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0f1117; color: #e0e0e0; display: flex; height: 100vh; }
+#graph-panel { flex: 1; position: relative; }
+#detail-panel { width: 340px; background: #1a1d27; border-left: 1px solid #2a2d37; padding: 16px; overflow-y: auto; }
+svg { width: 100%; height: 100%; }
+.node { cursor: pointer; }
+.node circle { stroke-width: 2; }
+.node text { font-size: 11px; fill: #ccc; text-anchor: middle; pointer-events: none; }
+.node.selected circle { stroke: #fff; stroke-width: 3; }
+.link { stroke: #444; stroke-width: 2; }
+.link:hover { stroke: #888; }
+h1 { font-size: 14px; color: #888; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+h2 { font-size: 16px; margin-bottom: 8px; color: #7eb8ff; }
+h3 { font-size: 13px; color: #888; margin: 12px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+.device-type { font-size: 12px; color: #888; margin-bottom: 12px; }
+.port-list { list-style: none; }
+.port-list li { font-size: 12px; padding: 4px 8px; margin: 2px 0; background: #22252f; border-radius: 4px; font-family: monospace; }
+.neighbor-list { list-style: none; }
+.neighbor-list li { font-size: 12px; padding: 6px 8px; margin: 3px 0; background: #22252f; border-radius: 4px; cursor: pointer; }
+.neighbor-list li:hover { background: #2a2d3a; }
+.neighbor-list .local { color: #7eb8ff; font-family: monospace; }
+.neighbor-list .remote { color: #7eff9e; font-family: monospace; }
+.neighbor-list .arrow { color: #555; margin: 0 4px; }
+.diag-bar { position: absolute; bottom: 0; left: 0; right: 340px; background: #1a1d27; border-top: 1px solid #2a2d37; padding: 8px 16px; display: flex; gap: 24px; font-size: 12px; color: #888; }
+.diag-bar .warn { color: #ffb86c; }
+.diag-bar .ok { color: #7eff9e; }
+.empty-state { color: #555; font-size: 13px; margin-top: 24px; }
+.type-switch circle { fill: #3b82f6; stroke: #60a5fa; }
+.type-firewall circle { fill: #ef4444; stroke: #f87171; }
+.type-proxmox circle { fill: #8b5cf6; stroke: #a78bfa; }
+.type-default circle { fill: #6b7280; stroke: #9ca3af; }
+.legend { position: absolute; top: 12px; left: 12px; background: #1a1d2799; padding: 8px 12px; border-radius: 6px; font-size: 11px; }
+.legend-item { display: flex; align-items: center; gap: 6px; margin: 3px 0; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div id="graph-panel">
+  <svg id="topo-svg"></svg>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#3b82f6"></span> Switch</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#ef4444"></span> Firewall</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#8b5cf6"></span> Proxmox</div>
+  </div>
+  <div class="diag-bar" id="diag-bar"></div>
+</div>
+
+<div id="detail-panel">
+  <h1>VOS Explorer</h1>
+  <div id="detail-content">
+    <p class="empty-state">Select a device in the topology graph to inspect it.</p>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin + '/explorer';
+
+let nodes = [];
+let edges = [];
+let selectedId = null;
+
+function el(tag, attrs, children) {
+  const e = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'onclick') e.addEventListener('click', v);
+    else if (k === 'className') e.className = v;
+    else e.setAttribute(k, v);
+  }
+  if (typeof children === 'string') e.textContent = children;
+  else if (Array.isArray(children)) children.forEach(c => { if (c) e.appendChild(c); });
+  else if (children instanceof Node) e.appendChild(children);
+  return e;
+}
+
+function svgEl(tag, attrs) {
+  const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
+  return e;
+}
+
+function clearChildren(parent) {
+  while (parent.firstChild) parent.removeChild(parent.firstChild);
+}
+
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+  return r.json();
+}
+
+async function init() {
+  const [topo, diagData] = await Promise.all([
+    fetchJSON(API + '/topology'),
+    fetchJSON(API + '/diagnostics'),
+  ]);
+
+  const devices = topo.devices || {};
+  const deviceIds = Object.keys(devices);
+  const cx = window.innerWidth / 2 - 170;
+  const cy = window.innerHeight / 2;
+  const radius = Math.min(cx, cy) * 0.6;
+
+  nodes = deviceIds.map(function(id, i) {
+    const angle = (2 * Math.PI * i) / deviceIds.length - Math.PI / 2;
+    return {
+      id: id,
+      label: devices[id].name || id,
+      type: devices[id].type || 'default',
+      x: cx + radius * Math.cos(angle),
+      y: cy + radius * Math.sin(angle),
+      ports: devices[id].ports || {},
+      management_ip: devices[id].management_ip,
+    };
+  });
+
+  edges = (topo.links || []).map(function(link) {
+    return {
+      id: link.id,
+      source: link.endpoints[0].device,
+      target: link.endpoints[1].device,
+      sourcePort: link.endpoints[0].port,
+      targetPort: link.endpoints[1].port,
+      type: link.type,
+    };
+  });
+
+  renderGraph();
+  renderDiagnostics(diagData);
+}
+
+function renderGraph() {
+  var svg = document.getElementById('topo-svg');
+  clearChildren(svg);
+
+  edges.forEach(function(e) {
+    var s = nodes.find(function(n) { return n.id === e.source; });
+    var t = nodes.find(function(n) { return n.id === e.target; });
+    if (!s || !t) return;
+    var line = svgEl('line', {
+      x1: s.x, y1: s.y, x2: t.x, y2: t.y, class: 'link'
+    });
+    var title = svgEl('title');
+    title.textContent = e.sourcePort + ' \u2194 ' + e.targetPort;
+    line.appendChild(title);
+    svg.appendChild(line);
+  });
+
+  nodes.forEach(function(n, idx) {
+    var cls = 'node type-' + n.type;
+    if (n.id === selectedId) cls += ' selected';
+    var g = svgEl('g', { class: cls, transform: 'translate(' + n.x + ',' + n.y + ')' });
+    g.addEventListener('click', function() { selectDevice(n.id); });
+    g.appendChild(svgEl('circle', { r: 20 }));
+    var text = svgEl('text', { dy: 32 });
+    text.textContent = n.label;
+    g.appendChild(text);
+    svg.appendChild(g);
+  });
+
+  // Drag
+  var dragging = null, offsetX = 0, offsetY = 0;
+  svg.onmousedown = function(ev) {
+    var g = ev.target.closest('.node');
+    if (!g) return;
+    var allNodes = svg.querySelectorAll('.node');
+    for (var i = 0; i < allNodes.length; i++) {
+      if (allNodes[i] === g) { dragging = nodes[i]; break; }
+    }
+    if (dragging) { offsetX = ev.clientX - dragging.x; offsetY = ev.clientY - dragging.y; }
+  };
+  svg.onmousemove = function(ev) {
+    if (!dragging) return;
+    dragging.x = ev.clientX - offsetX;
+    dragging.y = ev.clientY - offsetY;
+    renderGraph();
+  };
+  svg.onmouseup = function() { dragging = null; };
+}
+
+async function selectDevice(deviceId) {
+  selectedId = deviceId;
+  renderGraph();
+
+  var panel = document.getElementById('detail-content');
+  clearChildren(panel);
+  panel.appendChild(el('p', { className: 'empty-state' }, 'Loading...'));
+
+  var device = await fetchJSON(API + '/devices/' + encodeURIComponent(deviceId));
+  var neighbors = await fetchJSON(API + '/devices/' + encodeURIComponent(deviceId) + '/neighbors');
+
+  clearChildren(panel);
+
+  panel.appendChild(el('h2', null, device.name || deviceId));
+
+  var typeText = device.type || 'unknown';
+  if (device.management_ip) typeText += ' \u00b7 ' + device.management_ip;
+  panel.appendChild(el('div', { className: 'device-type' }, typeText));
+
+  var ports = device.ports || {};
+  var portNames = Object.keys(ports).sort();
+  panel.appendChild(el('h3', null, 'Ports (' + portNames.length + ')'));
+  var portList = el('ul', { className: 'port-list' });
+  portNames.forEach(function(p) {
+    var port = ports[p];
+    var info = port.type || '';
+    if (port.vlans) {
+      if (port.vlans.mode === 'trunk') info += ' trunk [' + (port.vlans.tagged || []).join(',') + ']';
+      else if (port.vlans.mode === 'access') info += ' access vlan ' + port.vlans.access_vlan;
+    }
+    var li = el('li', null);
+    li.appendChild(document.createTextNode(p + ' '));
+    var span = el('span', { style: 'color:#666' }, info);
+    li.appendChild(span);
+    portList.appendChild(li);
+  });
+  panel.appendChild(portList);
+
+  if (neighbors.length) {
+    panel.appendChild(el('h3', null, 'Neighbors (' + neighbors.length + ')'));
+    var nbrList = el('ul', { className: 'neighbor-list' });
+    neighbors.forEach(function(n) {
+      var li = el('li', { onclick: function() { selectDevice(n.device); } });
+      li.appendChild(el('span', { className: 'local' }, n.local_port));
+      li.appendChild(el('span', { className: 'arrow' }, ' \u2192 '));
+      li.appendChild(el('span', { className: 'remote' }, n.device + ':' + n.remote_port));
+      nbrList.appendChild(li);
+    });
+    panel.appendChild(nbrList);
+  }
+}
+
+function renderDiagnostics(diag) {
+  var bar = document.getElementById('diag-bar');
+  clearChildren(bar);
+
+  var items = [
+    { label: 'Devices', value: diag.total_devices },
+    { label: 'Ports', value: diag.total_ports },
+    { label: 'Links', value: diag.total_links },
+  ];
+  items.forEach(function(item) {
+    var span = el('span', null);
+    span.appendChild(document.createTextNode(item.label + ': '));
+    span.appendChild(el('b', null, String(item.value)));
+    bar.appendChild(span);
+  });
+
+  var dangling = (diag.dangling_ports || []).length;
+  var orphans = (diag.orphan_devices || []).length;
+  var missing = (diag.missing_endpoints || []).length;
+  var issues = dangling + orphans + missing;
+
+  if (issues === 0) {
+    bar.appendChild(el('span', { className: 'ok' }, 'No issues'));
+  } else {
+    if (dangling) bar.appendChild(el('span', { className: 'warn' }, 'Dangling ports: ' + dangling));
+    if (orphans) bar.appendChild(el('span', { className: 'warn' }, 'Orphan devices: ' + orphans));
+    if (missing) bar.appendChild(el('span', { className: 'warn' }, 'Missing endpoints: ' + missing));
+  }
+}
+
+init().catch(function(err) {
+  var panel = document.getElementById('detail-content');
+  clearChildren(panel);
+  panel.appendChild(el('p', { className: 'empty-state' }, 'Error loading topology: ' + err.message));
+});
+</script>
+</body>
+</html>
