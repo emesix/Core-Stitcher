@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import CheckCategory, CheckSeverity, ObservationSource
+from stitch.modelkit.enums import CheckCategory, CheckSeverity, ObservationSource
 
 __all__ = [
     "CheckResult",

@@ -5,7 +5,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import ObservationSource
+from stitch.modelkit.enums import ObservationSource
 
 __all__ = [
     "Observation",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import ObservationSource
+from stitch.modelkit.enums import ObservationSource
 
 __all__ = [
     "TraceRequest",

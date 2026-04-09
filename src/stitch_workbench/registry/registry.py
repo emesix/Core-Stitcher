@@ -35,7 +35,7 @@ class ModuleTypeRegistry:
     def list_types(self) -> list[str]:
         return list(self._types.keys())
 
-    def discover_entry_points(self, group: str = "vos.modules") -> int:
+    def discover_entry_points(self, group: str = "stitch.modules") -> int:
         """Discover and register module types from Python entry points.
 
         Returns the number of types discovered.

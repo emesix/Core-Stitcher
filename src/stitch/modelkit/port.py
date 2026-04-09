@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import PortType, VlanMode
+from stitch.modelkit.enums import PortType, VlanMode
 
 __all__ = [
     "VlanMembership",

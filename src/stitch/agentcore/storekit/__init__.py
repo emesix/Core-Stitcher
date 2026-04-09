@@ -4,8 +4,8 @@ Repository pattern. JSON file store for v0. Protocol-based so backends
 are swappable.
 """
 
-from vos.agentcore.storekit.json_store import JsonRunStore
-from vos.agentcore.storekit.models import (
+from stitch.agentcore.storekit.json_store import JsonRunStore
+from stitch.agentcore.storekit.models import (
     ExecutorSelection,
     RunRecord,
     RunStatus,
@@ -15,7 +15,7 @@ from vos.agentcore.storekit.models import (
     StepStatus,
     TaskExecution,
 )
-from vos.agentcore.storekit.protocol import RunStore
+from stitch.agentcore.storekit.protocol import RunStore
 
 __all__ = [
     "ExecutorSelection",

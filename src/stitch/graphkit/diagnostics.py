@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.modelkit.explorer import DanglingPort, TopologyDiagnostics
+from stitch.modelkit.explorer import DanglingPort, TopologyDiagnostics
 
 if TYPE_CHECKING:
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 def dangling_ports(snapshot: TopologySnapshot) -> list[DanglingPort]:

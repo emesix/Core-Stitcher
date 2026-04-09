@@ -8,7 +8,7 @@ import pytest
 from sqlalchemy import inspect, text
 from sqlmodel import Session
 
-from vos_workbench.storage.database import create_db_engine, run_migrations
+from stitch_workbench.storage.database import create_db_engine, run_migrations
 
 
 def test_run_migrations_creates_tables_on_empty_db(tmp_path: Path):

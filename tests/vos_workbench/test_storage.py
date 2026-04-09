@@ -5,7 +5,7 @@ from sqlmodel import select
 
 
 def test_create_event_record(db_session):
-    from vos_workbench.storage.models import EventRecord
+    from stitch_workbench.storage.models import EventRecord
 
     record = EventRecord(
         id=uuid4(),
@@ -26,7 +26,7 @@ def test_create_event_record(db_session):
 
 
 def test_create_module_health_record(db_session):
-    from vos_workbench.storage.models import ModuleHealthRecord
+    from stitch_workbench.storage.models import ModuleHealthRecord
 
     record = ModuleHealthRecord(
         module_uuid=uuid4(),
@@ -43,7 +43,7 @@ def test_create_module_health_record(db_session):
 
 
 def test_query_events_by_type(db_session):
-    from vos_workbench.storage.models import EventRecord
+    from stitch_workbench.storage.models import EventRecord
 
     now = datetime.now(UTC)
     for evt_type in ["a", "b", "a", "c"]:

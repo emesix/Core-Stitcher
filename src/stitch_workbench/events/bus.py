@@ -12,7 +12,7 @@ import structlog
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Callable
 
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
 logger = structlog.get_logger()
 
@@ -148,7 +148,7 @@ class EventBus:
         sub: _Subscriber,
         dropped_event: VosEvent,
     ) -> VosEvent:
-        from vos_workbench.events.models import VosEvent as VE
+        from stitch_workbench.events.models import VosEvent as VE
 
         return VE(
             type="bus.subscriber.overflow",

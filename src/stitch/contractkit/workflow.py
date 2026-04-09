@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from vos.modelkit.impact import ImpactRequest, ImpactResult
-    from vos.modelkit.trace import TraceRequest, TraceResult
-    from vos.modelkit.verification import VerificationReport
+    from stitch.modelkit.impact import ImpactRequest, ImpactResult
+    from stitch.modelkit.trace import TraceRequest, TraceResult
+    from stitch.modelkit.verification import VerificationReport
 
 
 @runtime_checkable

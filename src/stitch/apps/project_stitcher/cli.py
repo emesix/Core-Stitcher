@@ -7,8 +7,8 @@ import json
 import sys
 from typing import TYPE_CHECKING
 
-from vos.agentcore.plannerkit import PlanRecord, SubtaskSpec, WorkRequest, plan_request
-from vos.agentcore.taskkit import TaskPriority
+from stitch.agentcore.plannerkit import PlanRecord, SubtaskSpec, WorkRequest, plan_request
+from stitch.agentcore.taskkit import TaskPriority
 
 if TYPE_CHECKING:
     from uuid import UUID

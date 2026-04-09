@@ -7,13 +7,13 @@ proposed change.
 
 from __future__ import annotations
 
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
-from vos.modelkit.impact import ImpactRequest
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.port import Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
-from vos.tracekit.impact import preview_impact
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
+from stitch.modelkit.impact import ImpactRequest
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.port import Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.tracekit.impact import preview_impact
 
 META = TopologyMeta(version="1.0", name="test")
 

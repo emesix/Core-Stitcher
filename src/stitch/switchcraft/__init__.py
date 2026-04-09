@@ -10,12 +10,12 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import PortType
-from vos.switchcraft.collector import SwitchcraftCollector
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.modelkit.enums import PortType
+from stitch.switchcraft.collector import SwitchcraftCollector
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 _PORT_TYPE_MAP: dict[str, PortType] = {
     "sfp+": PortType.SFP_PLUS,

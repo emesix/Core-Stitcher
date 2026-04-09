@@ -14,11 +14,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
+from stitch.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
 
 if TYPE_CHECKING:
-    from vos.modelkit.link import Link
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.link import Link
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 _SEVERITY_ORDER = {"error": 0, "warning": 1, "info": 2}

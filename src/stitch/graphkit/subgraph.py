@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
 
 
 def subgraph(snapshot: TopologySnapshot, device_ids: set[str]) -> TopologySnapshot:

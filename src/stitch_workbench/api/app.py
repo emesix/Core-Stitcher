@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from vos_workbench.api.responses import ApiResponse
-from vos_workbench.api.routes_events import create_event_routes
-from vos_workbench.api.routes_modules import create_module_routes
-from vos_workbench.api.routes_project import create_project_routes
-from vos_workbench.runtime.runtime import Runtime
+from stitch_workbench.api.responses import ApiResponse
+from stitch_workbench.api.routes_events import create_event_routes
+from stitch_workbench.api.routes_modules import create_module_routes
+from stitch_workbench.api.routes_project import create_project_routes
+from stitch_workbench.runtime.runtime import Runtime
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -28,7 +28,7 @@ def create_app(project_root: Path | None = None, db_url: str | None = None) -> F
         return JSONResponse(content={"status": "alive"}, status_code=200)
 
     if project_root is not None:
-        effective_db_url = db_url or f"sqlite:///{project_root / 'vos_workbench.db'}"
+        effective_db_url = db_url or f"sqlite:///{project_root / 'stitch_workbench.db'}"
         runtime = Runtime(project_root, db_url=effective_db_url)
         runtime.load()
         app.state.runtime = runtime

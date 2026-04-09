@@ -9,11 +9,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from vos.contractkit.gateway import McpGatewayClient
-from vos.opnsensecraft.normalizer import normalize_device_identity, normalize_interfaces
+from stitch.contractkit.gateway import McpGatewayClient
+from stitch.opnsensecraft.normalizer import normalize_device_identity, normalize_interfaces
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 
 class OpnsensecraftCollector:

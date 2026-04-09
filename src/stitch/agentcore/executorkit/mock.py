@@ -4,18 +4,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
-from vos.agentcore.reviewkit.models import (
+from stitch.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
+from stitch.agentcore.reviewkit.models import (
     ReviewFinding,
     ReviewResult,
     ReviewVerdict,
     Severity,
 )
-from vos.agentcore.taskkit.models import TaskOutcome, TaskStatus
+from stitch.agentcore.taskkit.models import TaskOutcome, TaskStatus
 
 if TYPE_CHECKING:
-    from vos.agentcore.reviewkit.models import ReviewRequest
-    from vos.agentcore.taskkit.models import TaskRecord
+    from stitch.agentcore.reviewkit.models import ReviewRequest
+    from stitch.agentcore.taskkit.models import TaskRecord
 
 
 class MockExecutor:

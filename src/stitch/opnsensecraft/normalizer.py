@@ -10,8 +10,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from vos.modelkit.enums import ObservationSource, PortType
-from vos.modelkit.observation import Observation
+from stitch.modelkit.enums import ObservationSource, PortType
+from stitch.modelkit.observation import Observation
 
 
 def normalize_interfaces(

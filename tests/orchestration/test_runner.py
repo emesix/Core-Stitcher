@@ -6,20 +6,20 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from vos.agentcore.executorkit.mock import MockExecutor
-from vos.agentcore.executorkit.protocol import ExecutorCapability
-from vos.agentcore.orchestration import (
+from stitch.agentcore.executorkit.mock import MockExecutor
+from stitch.agentcore.executorkit.protocol import ExecutorCapability
+from stitch.agentcore.orchestration import (
     BudgetPolicy,
     RunOrchestrator,
     SelectionReason,
     StepKind,
     StepStatus,
 )
-from vos.agentcore.orchestration.runner import OrchestrationError
-from vos.agentcore.plannerkit import WorkRequest, plan_request
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.reviewkit import ReviewVerdict
-from vos.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
+from stitch.agentcore.orchestration.runner import OrchestrationError
+from stitch.agentcore.plannerkit import WorkRequest, plan_request
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.reviewkit import ReviewVerdict
+from stitch.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -319,7 +319,7 @@ class FailingExecutor:
         self._call_count += 1
         if self._call_count > self._fail_after:
             raise RuntimeError(f"executor crash #{self._call_count}")
-        from vos.agentcore.taskkit.models import TaskOutcome, TaskStatus
+        from stitch.agentcore.taskkit.models import TaskOutcome, TaskStatus
 
         return TaskOutcome(
             status=TaskStatus.COMPLETED,
@@ -331,7 +331,7 @@ class FailingExecutor:
         self._call_count += 1
         if self._call_count > self._fail_after:
             raise RuntimeError(f"review crash #{self._call_count}")
-        from vos.agentcore.reviewkit.models import ReviewResult, ReviewVerdict
+        from stitch.agentcore.reviewkit.models import ReviewResult, ReviewVerdict
 
         return ReviewResult(
             request_id=request.review_id,
@@ -341,7 +341,7 @@ class FailingExecutor:
         )
 
     async def health(self):
-        from vos.agentcore.executorkit.protocol import ExecutorHealth
+        from stitch.agentcore.executorkit.protocol import ExecutorHealth
 
         return ExecutorHealth(status="ok")
 

@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock
 
-from vos.apps.preflight import PreflightWorkflow
-from vos.switchcraft import SwitchcraftConfig, SwitchcraftModule
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.switchcraft import SwitchcraftConfig, SwitchcraftModule
 
 SWITCH_FIXTURE = Path(__file__).parent.parent / "fixtures" / "switchcraft_onti_backend.json"
 TOPO_FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"

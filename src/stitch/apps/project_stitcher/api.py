@@ -7,14 +7,14 @@ from uuid import UUID  # noqa: TC003 (FastAPI needs UUID at runtime for path par
 
 from fastapi import APIRouter, HTTPException
 
-from vos.agentcore.orchestration import RunOrchestrator
-from vos.agentcore.plannerkit import WorkRequest, plan_request
-from vos.agentcore.reviewkit import ReviewRequest
-from vos.agentcore.storekit import RunRecord, RunStatus, TaskExecution
+from stitch.agentcore.orchestration import RunOrchestrator
+from stitch.agentcore.plannerkit import WorkRequest, plan_request
+from stitch.agentcore.reviewkit import ReviewRequest
+from stitch.agentcore.storekit import RunRecord, RunStatus, TaskExecution
 
 if TYPE_CHECKING:
-    from vos.agentcore.registry import ExecutorRegistry
-    from vos.agentcore.storekit import JsonRunStore
+    from stitch.agentcore.registry import ExecutorRegistry
+    from stitch.agentcore.storekit import JsonRunStore
 
 
 def create_router(
@@ -75,7 +75,7 @@ def create_router(
         executions = []
 
         for task in run.plan.execution_order():
-            from vos.agentcore.taskkit import TaskRecord
+            from stitch.agentcore.taskkit import TaskRecord
 
             record = TaskRecord(
                 description=task.description,

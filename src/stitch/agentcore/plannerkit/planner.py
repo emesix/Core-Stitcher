@@ -7,7 +7,7 @@ single root task.
 
 from __future__ import annotations
 
-from vos.agentcore.plannerkit.models import PlannedTask, PlanRecord, WorkRequest
+from stitch.agentcore.plannerkit.models import PlannedTask, PlanRecord, WorkRequest
 
 
 def plan_request(request: WorkRequest) -> PlanRecord:

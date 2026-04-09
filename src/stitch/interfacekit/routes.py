@@ -11,10 +11,10 @@ from typing import TYPE_CHECKING, Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from vos.modelkit.impact import ImpactRequest  # noqa: TC001 (FastAPI runtime)
-from vos.modelkit.trace import TraceRequest  # noqa: TC001 (FastAPI runtime)
-from vos.modelkit.verification import VerificationReport  # noqa: TC001 (FastAPI runtime)
-from vos.verifykit.diff import diff_reports
+from stitch.modelkit.impact import ImpactRequest  # noqa: TC001 (FastAPI runtime)
+from stitch.modelkit.trace import TraceRequest  # noqa: TC001 (FastAPI runtime)
+from stitch.modelkit.verification import VerificationReport  # noqa: TC001 (FastAPI runtime)
+from stitch.verifykit.diff import diff_reports
 
 
 class DiffRequest(BaseModel):
@@ -24,7 +24,7 @@ class DiffRequest(BaseModel):
 if TYPE_CHECKING:
     from collections.abc import Callable, Coroutine
 
-    from vos.contractkit.workflow import PreflightWorkflowProtocol
+    from stitch.contractkit.workflow import PreflightWorkflowProtocol
 
 
 def create_preflight_router(workflow: PreflightWorkflowProtocol) -> APIRouter:

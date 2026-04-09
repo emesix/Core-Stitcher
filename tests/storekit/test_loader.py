@@ -5,9 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from vos.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
-from vos.storekit import load_topology, save_topology
-from vos.storekit.loader import TopologyVersionError
+from stitch.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
+from stitch.storekit import load_topology, save_topology
+from stitch.storekit.loader import TopologyVersionError
 
 FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"
 

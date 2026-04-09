@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from vos.contractkit.gateway import McpGatewayClient
-from vos.modelkit.enums import PortType
-from vos.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
+from stitch.contractkit.gateway import McpGatewayClient
+from stitch.modelkit.enums import PortType
+from stitch.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 
 class SwitchcraftCollector:

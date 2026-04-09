@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from vos.apps.explorer.workflow import ExplorerWorkflow
-from vos.contractkit.explorer import ExplorerWorkflowProtocol
-from vos.modelkit.impact import ImpactRequest
-from vos.modelkit.trace import TraceRequest
+from stitch.apps.explorer.workflow import ExplorerWorkflow
+from stitch.contractkit.explorer import ExplorerWorkflowProtocol
+from stitch.modelkit.impact import ImpactRequest
+from stitch.modelkit.trace import TraceRequest
 
 
 @pytest.fixture()

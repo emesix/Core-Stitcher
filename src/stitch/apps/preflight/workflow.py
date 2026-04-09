@@ -10,18 +10,18 @@ import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from vos.collectkit.merger import merge_observations
-from vos.storekit import load_topology
-from vos.tracekit.impact import preview_impact
-from vos.tracekit.tracer import trace_vlan_path
-from vos.verifykit.engine import verify_topology
+from stitch.collectkit.merger import merge_observations
+from stitch.storekit import load_topology
+from stitch.tracekit.impact import preview_impact
+from stitch.tracekit.tracer import trace_vlan_path
+from stitch.verifykit.engine import verify_topology
 
 if TYPE_CHECKING:
-    from vos.contractkit.collector import CollectorProtocol
-    from vos.modelkit.impact import ImpactRequest, ImpactResult
-    from vos.modelkit.topology import TopologySnapshot
-    from vos.modelkit.trace import TraceRequest, TraceResult
-    from vos.modelkit.verification import VerificationReport
+    from stitch.contractkit.collector import CollectorProtocol
+    from stitch.modelkit.impact import ImpactRequest, ImpactResult
+    from stitch.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.trace import TraceRequest, TraceResult
+    from stitch.modelkit.verification import VerificationReport
 
 
 class PreflightWorkflow:

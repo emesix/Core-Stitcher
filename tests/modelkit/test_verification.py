@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.verification import CheckResult, LinkVerification, VerificationReport
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.verification import CheckResult, LinkVerification, VerificationReport
 
 
 def test_check_result_minimal():

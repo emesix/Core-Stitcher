@@ -9,11 +9,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from vos.contractkit.gateway import McpGatewayClient
-from vos.proxmoxcraft.normalizer import normalize_network, normalize_node_identity
+from stitch.contractkit.gateway import McpGatewayClient
+from stitch.proxmoxcraft.normalizer import normalize_network, normalize_node_identity
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 
 class ProxmoxcraftCollector:

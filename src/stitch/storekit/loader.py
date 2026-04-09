@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from vos.modelkit.topology import TopologySnapshot
+from stitch.modelkit.topology import TopologySnapshot
 
 SUPPORTED_VERSIONS = {"1.0"}
 

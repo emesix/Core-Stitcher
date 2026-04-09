@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from vos.agentcore.executorkit.protocol import ExecutorHealth, ExecutorProtocol
-    from vos.agentcore.taskkit.models import TaskRecord
+    from stitch.agentcore.executorkit.protocol import ExecutorHealth, ExecutorProtocol
+    from stitch.agentcore.taskkit.models import TaskRecord
 
 
 class ExecutorNotFoundError(LookupError):

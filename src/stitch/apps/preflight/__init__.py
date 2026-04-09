@@ -5,6 +5,6 @@ modules, merge into a snapshot, verify against contracts, and expose results
 via interfacekit's HTTP API and MCP tools.
 """
 
-from vos.apps.preflight.workflow import PreflightWorkflow
+from stitch.apps.preflight.workflow import PreflightWorkflow
 
 __all__ = ["PreflightWorkflow"]

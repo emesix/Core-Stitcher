@@ -1,6 +1,6 @@
 """Re-export orchestration policy types from their canonical location in storekit.models."""
 
-from vos.agentcore.storekit.models import (
+from stitch.agentcore.storekit.models import (
     ExecutorSelection,
     SelectionReason,
     StepKind,

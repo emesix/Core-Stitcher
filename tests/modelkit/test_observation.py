@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.observation import MergeConflict, Mismatch, Observation
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.observation import MergeConflict, Mismatch, Observation
 
 
 def test_observation_minimal():

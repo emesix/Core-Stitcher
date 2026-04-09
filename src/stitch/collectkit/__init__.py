@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.collectkit.merger import merge_observations
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.collectkit.merger import merge_observations
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import MergeConflict, Observation
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.observation import MergeConflict, Observation
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 class CollectkitConfig(BaseModel):

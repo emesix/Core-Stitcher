@@ -9,8 +9,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from vos.modelkit.enums import ObservationSource
-from vos.switchcraft.normalizer import (
+from stitch.modelkit.enums import ObservationSource
+from stitch.switchcraft.normalizer import (
     _port_alias,
     normalize_ports,
     normalize_status,

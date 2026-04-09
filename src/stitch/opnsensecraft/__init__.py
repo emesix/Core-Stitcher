@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.opnsensecraft.collector import OpnsensecraftCollector
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.opnsensecraft.collector import OpnsensecraftCollector
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 
 class OpnsensecraftConfig(BaseModel):

@@ -19,14 +19,17 @@ from typing import TYPE_CHECKING
 import httpx
 from pydantic import BaseModel, Field
 
-from vos.agentcore.executorkit.openai_compat import OpenAICompatibleExecutor, OpenAIExecutorConfig
-from vos.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
-from vos.agentcore.orchestration.budget import ExecutorTier
-from vos.agentcore.taskkit.models import TaskOutcome, TaskStatus
+from stitch.agentcore.executorkit.openai_compat import (
+    OpenAICompatibleExecutor,
+    OpenAIExecutorConfig,
+)
+from stitch.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
+from stitch.agentcore.orchestration.budget import ExecutorTier
+from stitch.agentcore.taskkit.models import TaskOutcome, TaskStatus
 
 if TYPE_CHECKING:
-    from vos.agentcore.reviewkit.models import ReviewRequest, ReviewResult
-    from vos.agentcore.taskkit.models import TaskRecord
+    from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewResult
+    from stitch.agentcore.taskkit.models import TaskRecord
 
 LOCAL_EXECUTOR_URL_ENV = "LOCAL_EXECUTOR_URL"
 
@@ -150,8 +153,8 @@ class LocalExecutor:
 
     async def review(self, request: ReviewRequest) -> ReviewResult:
         if not await self._ensure_available():
-            from vos.agentcore.reviewkit.models import ReviewFinding, ReviewVerdict, Severity
-            from vos.agentcore.reviewkit.models import ReviewResult as RR
+            from stitch.agentcore.reviewkit.models import ReviewFinding, ReviewVerdict, Severity
+            from stitch.agentcore.reviewkit.models import ReviewResult as RR
 
             return RR(
                 request_id=request.review_id,

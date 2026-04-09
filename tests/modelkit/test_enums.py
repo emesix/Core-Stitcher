@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from vos.modelkit.enums import DeviceType, LinkType, ObservationSource, PortType, VlanMode
+from stitch.modelkit.enums import DeviceType, LinkType, ObservationSource, PortType, VlanMode
 
 
 def test_device_type_values():

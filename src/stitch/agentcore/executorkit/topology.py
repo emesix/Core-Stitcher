@@ -13,11 +13,11 @@ from typing import TYPE_CHECKING, Any
 import httpx
 from pydantic import BaseModel
 
-from vos.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
-from vos.agentcore.taskkit.models import TaskOutcome, TaskStatus
+from stitch.agentcore.executorkit.protocol import ExecutorCapability, ExecutorHealth
+from stitch.agentcore.taskkit.models import TaskOutcome, TaskStatus
 
 if TYPE_CHECKING:
-    from vos.agentcore.taskkit.models import TaskRecord
+    from stitch.agentcore.taskkit.models import TaskRecord
 
 
 class TopologyExecutorConfig(BaseModel):

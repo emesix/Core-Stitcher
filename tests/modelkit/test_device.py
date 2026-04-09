@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from vos.modelkit.device import Device, Position
-from vos.modelkit.enums import DeviceType
+from stitch.modelkit.device import Device, Position
+from stitch.modelkit.enums import DeviceType
 
 
 def test_position_minimal():

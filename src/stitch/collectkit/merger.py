@@ -8,11 +8,11 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, PortType
-from vos.modelkit.observation import MergeConflict, Observation
-from vos.modelkit.port import Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, PortType
+from stitch.modelkit.observation import MergeConflict, Observation
+from stitch.modelkit.port import Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
 
 
 def merge_observations(

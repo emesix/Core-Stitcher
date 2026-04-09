@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from vos.agentcore.plannerkit import PlanRecord, SubtaskSpec, WorkRequest, plan_request
-from vos.agentcore.taskkit import TaskPriority
+from stitch.agentcore.plannerkit import PlanRecord, SubtaskSpec, WorkRequest, plan_request
+from stitch.agentcore.taskkit import TaskPriority
 
 # --- Single task ---
 

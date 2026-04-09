@@ -10,10 +10,10 @@ import pytest
 if TYPE_CHECKING:
     from pathlib import Path
 
-from vos.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
-from vos.agentcore.reviewkit import ReviewFinding, ReviewResult, ReviewVerdict, Severity
-from vos.agentcore.storekit import JsonRunStore, RunRecord, RunStatus, RunStore, TaskExecution
-from vos.agentcore.taskkit import TaskOutcome, TaskStatus
+from stitch.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
+from stitch.agentcore.reviewkit import ReviewFinding, ReviewResult, ReviewVerdict, Severity
+from stitch.agentcore.storekit import JsonRunStore, RunRecord, RunStatus, RunStore, TaskExecution
+from stitch.agentcore.taskkit import TaskOutcome, TaskStatus
 
 
 @pytest.fixture()

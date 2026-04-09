@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from vos.agentcore.executorkit.mock import MockExecutor
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.storekit import JsonRunStore
-from vos.apps.project_stitcher.api import create_router
+from stitch.agentcore.executorkit.mock import MockExecutor
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.storekit import JsonRunStore
+from stitch.apps.project_stitcher.api import create_router
 
 if TYPE_CHECKING:
     from pathlib import Path

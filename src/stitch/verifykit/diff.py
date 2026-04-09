@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.modelkit.diff import CheckDiff, DiffSummary, LinkDiff, VerificationDiff
+from stitch.modelkit.diff import CheckDiff, DiffSummary, LinkDiff, VerificationDiff
 
 if TYPE_CHECKING:
-    from vos.modelkit.verification import CheckResult, VerificationReport
+    from stitch.modelkit.verification import CheckResult, VerificationReport
 
 
 def diff_reports(before: VerificationReport, after: VerificationReport) -> VerificationDiff:

@@ -6,10 +6,10 @@ from unittest.mock import patch
 
 import httpx
 
-from vos.agentcore.executorkit import ExecutorProtocol
-from vos.agentcore.executorkit.topology import TopologyExecutor, TopologyExecutorConfig
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.taskkit import TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorProtocol
+from stitch.agentcore.executorkit.topology import TopologyExecutor, TopologyExecutorConfig
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.taskkit import TaskRecord, TaskStatus
 
 
 def _config(**overrides) -> TopologyExecutorConfig:
@@ -242,7 +242,7 @@ def test_registry_skips_for_other_domain():
 
 
 async def test_full_pipeline_topology():
-    from vos.agentcore.plannerkit import WorkRequest, plan_request
+    from stitch.agentcore.plannerkit import WorkRequest, plan_request
 
     reg = ExecutorRegistry()
     reg.register(TopologyExecutor(_config()))

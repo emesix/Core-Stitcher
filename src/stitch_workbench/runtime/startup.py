@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING
 
 import structlog
 
-from vos_workbench.uri.parser import VosReference
+from stitch_workbench.uri.parser import VosReference
 
 if TYPE_CHECKING:
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
 logger = structlog.get_logger()
 

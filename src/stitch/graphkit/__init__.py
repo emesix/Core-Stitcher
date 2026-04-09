@@ -4,11 +4,16 @@ Pure library. Neighbors, BFS/DFS, subgraph extraction, VLAN filtering.
 Depends on: contractkit, modelkit. No spine dependency, no network I/O.
 """
 
-from vos.graphkit.diagnostics import dangling_ports, diagnostics, missing_endpoints, orphan_devices
-from vos.graphkit.neighbors import neighbors
-from vos.graphkit.subgraph import subgraph
-from vos.graphkit.traversal import bfs
-from vos.graphkit.vlan import vlan_ports
+from stitch.graphkit.diagnostics import (
+    dangling_ports,
+    diagnostics,
+    missing_endpoints,
+    orphan_devices,
+)
+from stitch.graphkit.neighbors import neighbors
+from stitch.graphkit.subgraph import subgraph
+from stitch.graphkit.traversal import bfs
+from stitch.graphkit.vlan import vlan_ports
 
 __all__ = [
     "bfs",

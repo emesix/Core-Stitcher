@@ -1,12 +1,12 @@
 def test_merge_two_scalars_override():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     result = merge_two({"a": 1}, {"a": 2})
     assert result == {"a": 2}
 
 
 def test_merge_two_dict_deep():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     base = {"a": {"x": 1, "y": 2}}
     override = {"a": {"y": 3, "z": 4}}
@@ -15,28 +15,28 @@ def test_merge_two_dict_deep():
 
 
 def test_merge_two_list_replaces():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     result = merge_two({"tags": ["a", "b"]}, {"tags": ["c"]})
     assert result == {"tags": ["c"]}
 
 
 def test_merge_two_null_removes():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     result = merge_two({"debug": True, "keep": 1}, {"debug": None})
     assert result == {"keep": 1}
 
 
 def test_merge_two_absent_inherits():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     result = merge_two({"a": 1, "b": 2}, {"b": 3})
     assert result == {"a": 1, "b": 3}
 
 
 def test_merge_two_preserves_vos_refs():
-    from vos_workbench.config.merge import merge_two
+    from stitch_workbench.config.merge import merge_two
 
     result = merge_two(
         {"key": "module://old"},
@@ -46,7 +46,7 @@ def test_merge_two_preserves_vos_refs():
 
 
 def test_merge_layers_precedence():
-    from vos_workbench.config.merge import merge_layers
+    from stitch_workbench.config.merge import merge_layers
 
     # Precedence: managed > bootstrap > project > local > runtime
     # Applied lowest-first: runtime, local, project, bootstrap, managed
@@ -67,7 +67,7 @@ def test_merge_layers_precedence():
 
 
 def test_merge_layers_tracing():
-    from vos_workbench.config.merge import merge_layers
+    from stitch_workbench.config.merge import merge_layers
 
     _, sources = merge_layers(
         managed={},
@@ -81,7 +81,7 @@ def test_merge_layers_tracing():
 
 
 def test_merge_layers_null_removes():
-    from vos_workbench.config.merge import merge_layers
+    from stitch_workbench.config.merge import merge_layers
 
     effective, _ = merge_layers(
         managed={},
@@ -94,7 +94,7 @@ def test_merge_layers_null_removes():
 
 
 def test_merge_layers_managed_wins():
-    from vos_workbench.config.merge import merge_layers
+    from stitch_workbench.config.merge import merge_layers
 
     effective, sources = merge_layers(
         managed={"security": "strict"},

@@ -9,11 +9,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
 
 if TYPE_CHECKING:
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 def trace_vlan_path(snapshot: TopologySnapshot, request: TraceRequest) -> TraceResult:

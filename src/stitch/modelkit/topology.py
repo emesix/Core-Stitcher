@@ -4,9 +4,9 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.device import Device
-from vos.modelkit.link import Link
-from vos.modelkit.vlan import VlanMetadata
+from stitch.modelkit.device import Device
+from stitch.modelkit.link import Link
+from stitch.modelkit.vlan import VlanMetadata
 
 __all__ = [
     "TopologyMeta",

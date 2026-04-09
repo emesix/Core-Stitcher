@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import pytest
 
-from vos.agentcore.executorkit import ExecutorCapability, ExecutorHealth, ExecutorProtocol
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.registry.executor_registry import ExecutorNotFoundError
-from vos.agentcore.taskkit import TaskOutcome, TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorCapability, ExecutorHealth, ExecutorProtocol
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.registry.executor_registry import ExecutorNotFoundError
+from stitch.agentcore.taskkit import TaskOutcome, TaskRecord, TaskStatus
 
 
 class FakeExecutor:

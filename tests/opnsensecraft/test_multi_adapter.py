@@ -11,12 +11,12 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from vos.apps.preflight import PreflightWorkflow
-from vos.opnsensecraft.normalizer import normalize_device_identity, normalize_interfaces
-from vos.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.opnsensecraft.normalizer import normalize_device_identity, normalize_interfaces
+from stitch.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 TOPO_FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"
 SWITCH_FIXTURE = Path(__file__).parent.parent / "fixtures" / "switchcraft_onti_backend.json"
@@ -106,7 +106,7 @@ async def test_cross_adapter_link_verified():
 
 async def test_observed_snapshot_has_both_devices():
     """The merged observed snapshot should contain devices from both adapters."""
-    from vos.collectkit.merger import merge_observations
+    from stitch.collectkit.merger import merge_observations
 
     all_obs = _switch_observations() + _opnsense_observations()
     snapshot, conflicts = merge_observations(all_obs)

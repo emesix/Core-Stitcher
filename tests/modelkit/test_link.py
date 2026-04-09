@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from vos.modelkit.enums import LinkType
-from vos.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.enums import LinkType
+from stitch.modelkit.link import Link, LinkEndpoint
 
 
 def test_link_endpoint_minimal():

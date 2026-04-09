@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 if TYPE_CHECKING:
     from uuid import UUID
 
-    from vos.agentcore.storekit.models import RunRecord
+    from stitch.agentcore.storekit.models import RunRecord
 
 
 @runtime_checkable

@@ -10,18 +10,18 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from vos.graphkit.diagnostics import diagnostics
-from vos.graphkit.neighbors import neighbors
-from vos.graphkit.vlan import vlan_ports
-from vos.storekit import load_topology
-from vos.tracekit.impact import preview_impact
-from vos.tracekit.tracer import trace_vlan_path
+from stitch.graphkit.diagnostics import diagnostics
+from stitch.graphkit.neighbors import neighbors
+from stitch.graphkit.vlan import vlan_ports
+from stitch.storekit import load_topology
+from stitch.tracekit.impact import preview_impact
+from stitch.tracekit.tracer import trace_vlan_path
 
 if TYPE_CHECKING:
-    from vos.modelkit.explorer import Neighbor, TopologyDiagnostics, VlanPortEntry
-    from vos.modelkit.impact import ImpactRequest, ImpactResult
-    from vos.modelkit.topology import TopologySnapshot
-    from vos.modelkit.trace import TraceRequest, TraceResult
+    from stitch.modelkit.explorer import Neighbor, TopologyDiagnostics, VlanPortEntry
+    from stitch.modelkit.impact import ImpactRequest, ImpactResult
+    from stitch.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.trace import TraceRequest, TraceResult
 
 
 class ExplorerWorkflow:

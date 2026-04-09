@@ -3,7 +3,7 @@
 Defines what executors must implement. No concrete executor implementations.
 """
 
-from vos.agentcore.executorkit.protocol import (
+from stitch.agentcore.executorkit.protocol import (
     ExecutorCapability,
     ExecutorHealth,
     ExecutorProtocol,

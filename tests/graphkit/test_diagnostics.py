@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from vos.graphkit.diagnostics import (
+from stitch.graphkit.diagnostics import (
     dangling_ports,
     diagnostics,
     missing_endpoints,
     orphan_devices,
 )
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, LinkType, PortType
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.port import Port
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, LinkType, PortType
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.port import Port
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
 
 META = TopologyMeta(version="1.0", name="test")
 

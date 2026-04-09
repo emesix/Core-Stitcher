@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.proxmoxcraft.collector import ProxmoxcraftCollector
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.proxmoxcraft.collector import ProxmoxcraftCollector
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 
 class ProxmoxcraftConfig(BaseModel):

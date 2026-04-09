@@ -9,7 +9,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy import event
 from sqlmodel import Session, create_engine
 
-import vos_workbench.storage.models  # noqa: F401
+import stitch_workbench.storage.models  # noqa: F401
 from alembic import command
 
 # Alembic directory is at project root: <repo>/alembic/
@@ -17,7 +17,7 @@ _ALEMBIC_DIR = Path(__file__).resolve().parents[3] / "alembic"
 _ALEMBIC_INI = _ALEMBIC_DIR.parent / "alembic.ini"
 
 
-def create_db_engine(db_url: str = "sqlite:///vos_workbench.db"):
+def create_db_engine(db_url: str = "sqlite:///stitch_workbench.db"):
     engine = create_engine(db_url, echo=False)
 
     if db_url.startswith("sqlite"):

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from vos.agentcore.storekit.models import RunRecord
+from stitch.agentcore.storekit.models import RunRecord
 
 if TYPE_CHECKING:
     from uuid import UUID

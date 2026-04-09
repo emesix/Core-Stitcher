@@ -1,5 +1,5 @@
 def test_workbench_error_creation():
-    from vos_workbench.errors import WorkbenchError
+    from stitch_workbench.errors import WorkbenchError
 
     err = WorkbenchError(
         source_module=None,
@@ -15,7 +15,7 @@ def test_workbench_error_creation():
 
 
 def test_workbench_error_with_details():
-    from vos_workbench.errors import WorkbenchError
+    from stitch_workbench.errors import WorkbenchError
 
     err = WorkbenchError(
         source_module="2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3",

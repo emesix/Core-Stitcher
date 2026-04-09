@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 def bfs(

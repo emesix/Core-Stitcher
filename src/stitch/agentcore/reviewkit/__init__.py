@@ -4,7 +4,7 @@ Pure data types for review requests, findings, and verdicts.
 No LLM calls, no I/O. The actual review execution comes later.
 """
 
-from vos.agentcore.reviewkit.models import (
+from stitch.agentcore.reviewkit.models import (
     ReviewFinding,
     ReviewRequest,
     ReviewResult,

@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.verifykit.engine import verify_topology
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.verifykit.engine import verify_topology
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.topology import TopologySnapshot
-    from vos.modelkit.verification import VerificationReport
+    from stitch.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.verification import VerificationReport
 
 
 class VerifykitConfig(BaseModel):

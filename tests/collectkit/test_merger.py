@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from vos.collectkit.merger import merge_observations
-from vos.modelkit.enums import DeviceType, ObservationSource, PortType
-from vos.modelkit.observation import Observation
+from stitch.collectkit.merger import merge_observations
+from stitch.modelkit.enums import DeviceType, ObservationSource, PortType
+from stitch.modelkit.observation import Observation
 
 
 def _obs(

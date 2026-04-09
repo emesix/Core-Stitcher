@@ -9,7 +9,7 @@ import pytest
 import yaml
 from httpx import ASGITransport, AsyncClient
 
-from vos_workbench.events.models import VosEvent
+from stitch_workbench.events.models import VosEvent
 
 
 def _create_project(tmp_path: Path) -> Path:
@@ -29,7 +29,7 @@ def project_path(tmp_path):
 
 @pytest.fixture
 def app(project_path, tmp_path):
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     db_url = f"sqlite:///{tmp_path / 'events.db'}"
     return create_app(project_root=project_path, db_url=db_url)

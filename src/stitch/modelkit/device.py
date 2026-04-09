@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from vos.modelkit.enums import DeviceType
-from vos.modelkit.port import Port
+from stitch.modelkit.enums import DeviceType
+from stitch.modelkit.port import Port
 
 __all__ = [
     "Position",

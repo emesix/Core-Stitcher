@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from vos.agentcore.executorkit import ExecutorCapability, ExecutorHealth, ExecutorProtocol
-from vos.agentcore.taskkit import TaskOutcome, TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorCapability, ExecutorHealth, ExecutorProtocol
+from stitch.agentcore.taskkit import TaskOutcome, TaskRecord, TaskStatus
 
 
 class FakeExecutor:

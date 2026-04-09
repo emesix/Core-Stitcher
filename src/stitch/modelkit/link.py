@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from vos.modelkit.enums import LinkType
+from stitch.modelkit.enums import LinkType
 
 __all__ = [
     "LinkEndpoint",

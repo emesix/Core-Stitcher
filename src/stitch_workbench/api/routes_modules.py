@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, HTTPException
 
-from vos_workbench.api.responses import ApiResponse
+from stitch_workbench.api.responses import ApiResponse
 
 if TYPE_CHECKING:
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
 
 def create_module_routes(runtime: Runtime) -> APIRouter:

@@ -9,9 +9,9 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from vos.agentcore.plannerkit.models import PlanRecord, WorkRequest  # noqa: TC001
-from vos.agentcore.reviewkit.models import ReviewResult  # noqa: TC001
-from vos.agentcore.taskkit.models import TaskOutcome  # noqa: TC001
+from stitch.agentcore.plannerkit.models import PlanRecord, WorkRequest  # noqa: TC001
+from stitch.agentcore.reviewkit.models import ReviewResult  # noqa: TC001
+from stitch.agentcore.taskkit.models import TaskOutcome  # noqa: TC001
 
 # --- Orchestration policy types (here to avoid circular imports) ---
 

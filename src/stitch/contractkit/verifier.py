@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from vos.modelkit.topology import TopologySnapshot
-    from vos.modelkit.verification import VerificationReport
+    from stitch.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.verification import VerificationReport
 
 
 @runtime_checkable

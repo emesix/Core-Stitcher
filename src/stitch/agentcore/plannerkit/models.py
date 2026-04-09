@@ -7,7 +7,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from vos.agentcore.taskkit.models import TaskPriority
+from stitch.agentcore.taskkit.models import TaskPriority
 
 
 class SubtaskSpec(BaseModel, frozen=True):

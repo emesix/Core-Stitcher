@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from vos.modelkit.device import Device, Position
-from vos.modelkit.enums import (
+from stitch.modelkit.device import Device, Position
+from stitch.modelkit.enums import (
     CheckCategory,
     CheckSeverity,
     DeviceType,
@@ -10,15 +10,15 @@ from vos.modelkit.enums import (
     PortType,
     VlanMode,
 )
-from vos.modelkit.explorer import DanglingPort, Neighbor, TopologyDiagnostics, VlanPortEntry
-from vos.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.observation import MergeConflict, Mismatch, Observation
-from vos.modelkit.port import ExpectedNeighbor, Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
-from vos.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
-from vos.modelkit.verification import CheckResult, LinkVerification, VerificationReport
-from vos.modelkit.vlan import VlanMetadata
+from stitch.modelkit.explorer import DanglingPort, Neighbor, TopologyDiagnostics, VlanPortEntry
+from stitch.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.observation import MergeConflict, Mismatch, Observation
+from stitch.modelkit.port import ExpectedNeighbor, Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
+from stitch.modelkit.verification import CheckResult, LinkVerification, VerificationReport
+from stitch.modelkit.vlan import VlanMetadata
 
 __all__ = [
     # enums

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vos.modelkit.explorer import VlanPortEntry
+from stitch.modelkit.explorer import VlanPortEntry
 
 if TYPE_CHECKING:
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 def _port_carries_vlan(vlans, vlan_id: int) -> bool:

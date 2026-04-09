@@ -12,9 +12,9 @@ import json
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from vos.agentcore.orchestration.budget import BudgetPolicy, EscalationAction
-from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
-from vos.agentcore.storekit.models import (
+from stitch.agentcore.orchestration.budget import BudgetPolicy, EscalationAction
+from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
+from stitch.agentcore.storekit.models import (
     ExecutorSelection,
     RunStatus,
     SelectionReason,
@@ -23,13 +23,13 @@ from vos.agentcore.storekit.models import (
     StepStatus,
     TaskExecution,
 )
-from vos.agentcore.taskkit.models import TaskRecord, TaskStatus
+from stitch.agentcore.taskkit.models import TaskRecord, TaskStatus
 
 if TYPE_CHECKING:
-    from vos.agentcore.executorkit.protocol import ExecutorProtocol
-    from vos.agentcore.registry.executor_registry import ExecutorRegistry
-    from vos.agentcore.storekit.json_store import JsonRunStore
-    from vos.agentcore.storekit.models import RunRecord
+    from stitch.agentcore.executorkit.protocol import ExecutorProtocol
+    from stitch.agentcore.registry.executor_registry import ExecutorRegistry
+    from stitch.agentcore.storekit.json_store import JsonRunStore
+    from stitch.agentcore.storekit.models import RunRecord
 
 
 class OrchestrationError(Exception):

@@ -9,11 +9,14 @@ from unittest.mock import patch
 import httpx
 import pytest
 
-from vos.agentcore.executorkit import ExecutorProtocol
-from vos.agentcore.executorkit.openai_compat import OpenAICompatibleExecutor, OpenAIExecutorConfig
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.reviewkit import ReviewRequest, ReviewVerdict
-from vos.agentcore.taskkit import TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorProtocol
+from stitch.agentcore.executorkit.openai_compat import (
+    OpenAICompatibleExecutor,
+    OpenAIExecutorConfig,
+)
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.reviewkit import ReviewRequest, ReviewVerdict
+from stitch.agentcore.taskkit import TaskRecord, TaskStatus
 
 
 def _config(**overrides) -> OpenAIExecutorConfig:

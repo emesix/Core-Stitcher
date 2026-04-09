@@ -7,7 +7,7 @@ from uuid import uuid4
 import yaml
 from httpx import ASGITransport, AsyncClient
 
-from vos_workbench.events.models import VosEvent
+from stitch_workbench.events.models import VosEvent
 
 
 def _create_full_project(tmp_path: Path) -> Path:
@@ -51,7 +51,7 @@ def _write_module(
 
 
 async def test_full_boot_to_health(tmp_path):
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project_root = _create_full_project(tmp_path)
     db_url = f"sqlite:///{tmp_path / 'integration.db'}"

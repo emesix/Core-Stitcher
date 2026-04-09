@@ -7,14 +7,14 @@ import structlog
 from sqlalchemy import text
 from sqlmodel import Session, select
 
-from vos_workbench.config.loader import load_module_configs, load_workbench_config
-from vos_workbench.events.bus import EventBus
-from vos_workbench.registry.registry import ModuleTypeRegistry
-from vos_workbench.runtime.resolver import RuntimeCapabilityResolver
-from vos_workbench.runtime.startup import StartupPlan, compute_startup_order
-from vos_workbench.sdk.context import ModuleContext
-from vos_workbench.storage.database import create_db_engine, run_migrations
-from vos_workbench.storage.models import EventRecord, ModuleHealthRecord
+from stitch_workbench.config.loader import load_module_configs, load_workbench_config
+from stitch_workbench.events.bus import EventBus
+from stitch_workbench.registry.registry import ModuleTypeRegistry
+from stitch_workbench.runtime.resolver import RuntimeCapabilityResolver
+from stitch_workbench.runtime.startup import StartupPlan, compute_startup_order
+from stitch_workbench.sdk.context import ModuleContext
+from stitch_workbench.storage.database import create_db_engine, run_migrations
+from stitch_workbench.storage.models import EventRecord, ModuleHealthRecord
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -22,8 +22,8 @@ if TYPE_CHECKING:
 
     from sqlalchemy import Engine
 
-    from vos_workbench.config.models import ModuleConfig, WorkbenchConfig
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.config.models import ModuleConfig, WorkbenchConfig
+    from stitch_workbench.events.models import VosEvent
 
 logger = structlog.get_logger()
 
@@ -44,7 +44,7 @@ class Runtime:
     def __init__(
         self,
         project_root: Path,
-        db_url: str = "sqlite:///vos_workbench.db",
+        db_url: str = "sqlite:///stitch_workbench.db",
         migration_policy: Literal["auto", "strict"] = "auto",
     ) -> None:
         self._project_root = project_root
@@ -97,7 +97,7 @@ class Runtime:
         )
 
         # Emit system.loaded — MUST be after on_publish is wired (step 3)
-        from vos_workbench.events.models import VosEvent as _VosEvent
+        from stitch_workbench.events.models import VosEvent as _VosEvent
 
         boot_event = _VosEvent(
             type="system.loaded",

@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING
 
 from fastapi import APIRouter, Query
 
-from vos_workbench.api.responses import PaginatedApiResponse, PaginationMeta
+from stitch_workbench.api.responses import PaginatedApiResponse, PaginationMeta
 
 if TYPE_CHECKING:
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
 
 def create_event_routes(runtime: Runtime) -> APIRouter:

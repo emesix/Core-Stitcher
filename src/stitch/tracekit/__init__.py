@@ -11,14 +11,14 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.tracekit.impact import preview_impact
-from vos.tracekit.tracer import trace_vlan_path
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.tracekit.impact import preview_impact
+from stitch.tracekit.tracer import trace_vlan_path
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
-    from vos.modelkit.impact import ImpactRequest, ImpactResult
-    from vos.modelkit.topology import TopologySnapshot
-    from vos.modelkit.trace import TraceRequest, TraceResult
+    from stitch.modelkit.impact import ImpactRequest, ImpactResult
+    from stitch.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.trace import TraceRequest, TraceResult
 
 
 class TracekitConfig(BaseModel):

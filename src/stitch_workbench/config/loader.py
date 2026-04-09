@@ -8,7 +8,7 @@ import yaml
 if TYPE_CHECKING:
     from pathlib import Path
 
-from vos_workbench.config.models import ModuleConfig, WorkbenchConfig
+from stitch_workbench.config.models import ModuleConfig, WorkbenchConfig
 
 logger = structlog.get_logger()
 

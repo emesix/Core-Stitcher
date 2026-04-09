@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from vos_workbench.sdk.capabilities import CapabilityResolver
-from vos_workbench.sdk.config import ConfigAccessor
-from vos_workbench.sdk.context import ModuleContext
-from vos_workbench.sdk.events import EventPublisher
-from vos_workbench.sdk.manifest import ModuleManifest
-from vos_workbench.sdk.module_type import ModuleType
+from stitch_workbench.sdk.capabilities import CapabilityResolver
+from stitch_workbench.sdk.config import ConfigAccessor
+from stitch_workbench.sdk.context import ModuleContext
+from stitch_workbench.sdk.events import EventPublisher
+from stitch_workbench.sdk.manifest import ModuleManifest
+from stitch_workbench.sdk.module_type import ModuleType
 
 __all__ = [
     "CapabilityResolver",

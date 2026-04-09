@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import HTMLResponse
 
-from vos.modelkit.impact import ImpactRequest  # noqa: TC001 (FastAPI runtime)
-from vos.modelkit.trace import TraceRequest  # noqa: TC001 (FastAPI runtime)
+from stitch.modelkit.impact import ImpactRequest  # noqa: TC001 (FastAPI runtime)
+from stitch.modelkit.trace import TraceRequest  # noqa: TC001 (FastAPI runtime)
 
 _STATIC_DIR = Path(__file__).parent / "static"
 
 if TYPE_CHECKING:
-    from vos.contractkit.explorer import ExplorerWorkflowProtocol
+    from stitch.contractkit.explorer import ExplorerWorkflowProtocol
 
 
 def create_explorer_router(workflow: ExplorerWorkflowProtocol) -> APIRouter:

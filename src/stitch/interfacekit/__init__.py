@@ -11,11 +11,11 @@ from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel
 
-from vos.contractkit.explorer import ExplorerWorkflowProtocol
-from vos.contractkit.workflow import PreflightWorkflowProtocol
-from vos.interfacekit.explorer_routes import create_explorer_router
-from vos.interfacekit.routes import create_preflight_router
-from vos_workbench.sdk import ModuleContext, ModuleManifest
+from stitch.contractkit.explorer import ExplorerWorkflowProtocol
+from stitch.contractkit.workflow import PreflightWorkflowProtocol
+from stitch.interfacekit.explorer_routes import create_explorer_router
+from stitch.interfacekit.routes import create_preflight_router
+from stitch_workbench.sdk import ModuleContext, ModuleManifest
 
 if TYPE_CHECKING:
     from fastapi import APIRouter

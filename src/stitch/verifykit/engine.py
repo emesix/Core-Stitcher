@@ -9,13 +9,13 @@ from __future__ import annotations
 from collections import Counter
 from typing import TYPE_CHECKING, Any
 
-from vos.modelkit.enums import CheckCategory, CheckSeverity, LinkType, ObservationSource
-from vos.modelkit.verification import CheckResult, LinkVerification, VerificationReport
+from stitch.modelkit.enums import CheckCategory, CheckSeverity, LinkType, ObservationSource
+from stitch.modelkit.verification import CheckResult, LinkVerification, VerificationReport
 
 if TYPE_CHECKING:
-    from vos.modelkit.link import Link
-    from vos.modelkit.port import Port
-    from vos.modelkit.topology import TopologySnapshot
+    from stitch.modelkit.link import Link
+    from stitch.modelkit.port import Port
+    from stitch.modelkit.topology import TopologySnapshot
 
 
 # --- Category and severity mapping ---
