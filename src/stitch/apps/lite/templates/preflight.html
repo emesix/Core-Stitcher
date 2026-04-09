@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Run Preflight</h1>
+<div class="card">
+    <form method="post" action="/preflight/run">
+        <div class="kv" style="margin-bottom: 0.75rem">
+            <span class="kv-key">Scope (optional)</span>
+            <input type="text" name="scope" placeholder="e.g. sw-core-01" style="background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem 0.6rem; font-family: inherit; flex: 1;">
+        </div>
+        <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1rem;">
+            Leave scope empty to verify all devices. Enter a device name to verify a single device.
+        </p>
+        <button type="submit" class="btn">Run Preflight</button>
+    </form>
+</div>
+{% endblock %}

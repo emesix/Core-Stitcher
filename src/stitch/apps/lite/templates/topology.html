@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Topology</h1>
+{% if topology %}
+<div class="card">
+    <div class="kv"><span class="kv-key">Devices</span><span>{{ topology.device_count | default(topology.devices | default([]) | length) }}</span></div>
+    <div class="kv"><span class="kv-key">Links</span><span>{{ topology.link_count | default(topology.links | default([]) | length) }}</span></div>
+    <div class="kv"><span class="kv-key">VLANs</span><span>{{ topology.vlan_count | default(topology.vlans | default([]) | length) }}</span></div>
+    {% if topology.name %}
+    <div class="kv"><span class="kv-key">Name</span><span>{{ topology.name }}</span></div>
+    {% endif %}
+    {% if topology.updated_at %}
+    <div class="kv"><span class="kv-key">Updated</span><span>{{ topology.updated_at }}</span></div>
+    {% endif %}
+</div>
+
+{% if topology.devices %}
+<h2>Devices</h2>
+<table>
+    <thead><tr><th>Name</th><th>Type</th></tr></thead>
+    <tbody>
+    {% for dev in topology.devices %}
+        <tr>
+            <td><a href="/devices/{{ dev.id or dev.name }}">{{ dev.name | default(dev.id) }}</a></td>
+            <td>{{ dev.type | default('-') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% else %}
+<div class="card">
+    <p style="color: var(--text-dim);">No topology data available.</p>
+</div>
+{% endif %}
+{% endblock %}
