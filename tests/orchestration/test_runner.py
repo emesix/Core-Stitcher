@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from vos.agentcore.executorkit.mock import MockExecutor
+from vos.agentcore.executorkit.protocol import ExecutorCapability
 from vos.agentcore.orchestration import (
     BudgetPolicy,
     RunOrchestrator,
@@ -235,6 +236,173 @@ async def test_feedback_loop_persisted(store: JsonRunStore, tmp_path: Path):
     loaded = s.get(UUID(run_id))
     assert len(loaded.reviews) == 2
     assert any(s.kind == StepKind.CORRECTION for s in loaded.steps)
+
+
+# --- Health-aware executor selection ---
+
+
+async def test_unhealthy_executor_skipped(store: JsonRunStore, tmp_path: Path):
+    """An unhealthy domain executor is skipped; task falls back to general."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo-sick", domains=["topology"], healthy=False))
+    reg.register(MockExecutor("ai-exec"))
+
+    s = JsonRunStore(tmp_path / "health_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    assert run.status == RunStatus.COMPLETED
+    # The unhealthy domain executor should not have been selected
+    domain_steps = [st for st in run.steps if st.kind == StepKind.DOMAIN_CALL]
+    for step in domain_steps:
+        if step.selection and step.selection.executor_id:
+            assert step.selection.executor_id != "topo-sick"
+
+
+async def test_all_executors_unhealthy_skips_domain(store: JsonRunStore, tmp_path: Path):
+    """When all executors are unhealthy, domain tasks are skipped."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo-sick", domains=["topology"], healthy=False))
+    # No general-purpose executor either
+
+    s = JsonRunStore(tmp_path / "all_sick_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    assert run.status == RunStatus.COMPLETED
+    domain_steps = [st for st in run.steps if st.kind == StepKind.DOMAIN_CALL]
+    assert all(st.status == StepStatus.SKIPPED for st in domain_steps)
+
+
+async def test_healthy_executor_preferred_over_unhealthy(store: JsonRunStore, tmp_path: Path):
+    """When both healthy and unhealthy domain executors exist, healthy is chosen."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo-sick", domains=["topology"], healthy=False))
+    reg.register(MockExecutor("topo-ok", domains=["topology"], healthy=True))
+    reg.register(MockExecutor("ai-exec"))
+
+    s = JsonRunStore(tmp_path / "prefer_healthy_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    domain_steps = [st for st in run.steps if st.kind == StepKind.DOMAIN_CALL]
+    for step in domain_steps:
+        if step.selection and step.selection.executor_id:
+            assert step.selection.executor_id == "topo-ok"
+
+
+# --- Escalation ---
+
+
+class FailingExecutor:
+    """Executor that raises on execute/review after N successes."""
+
+    def __init__(
+        self,
+        executor_id: str = "failing-exec",
+        fail_after: int = 0,
+    ) -> None:
+        self._id = executor_id
+        self._fail_after = fail_after
+        self._call_count = 0
+        self._capability = ExecutorCapability()
+
+    @property
+    def executor_id(self) -> str:
+        return self._id
+
+    @property
+    def capability(self) -> ExecutorCapability:
+        return self._capability
+
+    async def execute(self, task):
+        self._call_count += 1
+        if self._call_count > self._fail_after:
+            raise RuntimeError(f"executor crash #{self._call_count}")
+        from vos.agentcore.taskkit.models import TaskOutcome, TaskStatus
+
+        return TaskOutcome(
+            status=TaskStatus.COMPLETED,
+            result="ok",
+            executor_id=self._id,
+        )
+
+    async def review(self, request):
+        self._call_count += 1
+        if self._call_count > self._fail_after:
+            raise RuntimeError(f"review crash #{self._call_count}")
+        from vos.agentcore.reviewkit.models import ReviewResult, ReviewVerdict
+
+        return ReviewResult(
+            request_id=request.review_id,
+            verdict=ReviewVerdict.APPROVE,
+            findings=[],
+            summary="ok",
+        )
+
+    async def health(self):
+        from vos.agentcore.executorkit.protocol import ExecutorHealth
+
+        return ExecutorHealth(status="ok")
+
+
+async def test_review_crash_continues_loop(store: JsonRunStore, tmp_path: Path):
+    """Review failure doesn't kill the run — escalation allows retry."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo", domains=["topology"]))
+    # Executor that crashes on first call (summary), so review uses MockExecutor
+    # Actually: let's use a failing AI executor + a working fallback
+    failing = FailingExecutor("ai-crash", fail_after=1)  # succeeds once (summary), then crashes
+    reg.register(failing)
+    reg.register(MockExecutor("ai-backup"))  # healthy backup
+
+    s = JsonRunStore(tmp_path / "crash_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    # Run should still complete — crash didn't kill orchestration
+    assert run.status == RunStatus.COMPLETED
+
+
+async def test_escalation_tracks_failures(store: JsonRunStore, tmp_path: Path):
+    """Executor failures are tracked and influence selection."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo", domains=["topology"]))
+
+    # Single AI executor that crashes on first execute call
+    failing = FailingExecutor("ai-only", fail_after=0)
+    reg.register(failing)
+
+    s = JsonRunStore(tmp_path / "escalation_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    # Run completes (doesn't raise)
+    assert run.status == RunStatus.COMPLETED
+    # Summary should have failed
+    summary_steps = [st for st in run.steps if st.kind == StepKind.AI_SUMMARY]
+    assert any(st.status == StepStatus.FAILED for st in summary_steps)
+
+
+# --- Feedback loop resilience ---
+
+
+async def test_review_failure_recorded_not_fatal(store: JsonRunStore, tmp_path: Path):
+    """When review crashes, step is FAILED but run still completes."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo", domains=["topology"]))
+
+    # Executor succeeds on execute (summary) but fails on review
+    failing = FailingExecutor("ai-review-fail", fail_after=1)
+    reg.register(failing)
+
+    s = JsonRunStore(tmp_path / "resilient_runs")
+    run_id = _create_run(s, description="verify", domain="topology")
+    run = await RunOrchestrator(reg, s).orchestrate(run_id)
+
+    assert run.status == RunStatus.COMPLETED
+    review_steps = [st for st in run.steps if st.kind == StepKind.AI_REVIEW]
+    assert any(st.status == StepStatus.FAILED for st in review_steps)
 
 
 # --- Error paths ---

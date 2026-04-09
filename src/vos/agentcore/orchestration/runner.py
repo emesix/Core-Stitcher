@@ -2,7 +2,8 @@
 
 Produces a full audit trail via StepRecords. Supports feedback loops:
 when review rejects, creates correction steps and re-reviews up to
-max_corrections times.
+max_corrections times. Uses health-aware executor selection and
+escalation policy (REUSE → SWITCH → STOP) on repeated failures.
 """
 
 from __future__ import annotations
@@ -11,7 +12,7 @@ import json
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
-from vos.agentcore.orchestration.budget import BudgetPolicy
+from vos.agentcore.orchestration.budget import BudgetPolicy, EscalationAction
 from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
 from vos.agentcore.storekit.models import (
     ExecutorSelection,
@@ -25,6 +26,7 @@ from vos.agentcore.storekit.models import (
 from vos.agentcore.taskkit.models import TaskRecord, TaskStatus
 
 if TYPE_CHECKING:
+    from vos.agentcore.executorkit.protocol import ExecutorProtocol
     from vos.agentcore.registry.executor_registry import ExecutorRegistry
     from vos.agentcore.storekit.json_store import JsonRunStore
     from vos.agentcore.storekit.models import RunRecord
@@ -47,6 +49,7 @@ class RunOrchestrator:
         self._store = store
         self._policy = policy or BudgetPolicy()
         self._ai_steps_used = 0
+        self._executor_failures: dict[str, int] = {}
 
     async def orchestrate(self, run_id: str) -> RunRecord:
         from uuid import UUID
@@ -60,6 +63,7 @@ class RunOrchestrator:
         run.status = RunStatus.EXECUTING
         run.steps = []
         self._ai_steps_used = 0
+        self._executor_failures = {}
 
         # Step 1: Execute domain tasks
         executions = await self._execute_domain_tasks(run)
@@ -87,7 +91,12 @@ class RunOrchestrator:
 
                 review = await self._review(run, iteration=iteration)
                 if review is None:
-                    break
+                    # Review failed (executor error) — escalation decides next action
+                    action = self._check_escalation("__ai_review__")
+                    if action == EscalationAction.STOP:
+                        break
+                    # REUSE or SWITCH: continue to next iteration (new executor selected)
+                    continue
 
                 run.reviews.append(review)
 
@@ -141,7 +150,7 @@ class RunOrchestrator:
                 metadata=run.request.metadata if run.request else {},
             )
 
-            executor, selection = self._select_executor(record)
+            executor, selection = await self._select_executor(record)
 
             if executor is None:
                 run.steps.append(
@@ -167,6 +176,8 @@ class RunOrchestrator:
                 outcome = await executor.execute(record)
                 is_ok = outcome.status == TaskStatus.COMPLETED
                 status = StepStatus.COMPLETED if is_ok else StepStatus.FAILED
+                if not is_ok:
+                    self._record_executor_failure(executor.executor_id)
                 run.steps.append(
                     StepRecord(
                         kind=StepKind.DOMAIN_CALL,
@@ -181,6 +192,7 @@ class RunOrchestrator:
                 )
             except Exception as e:
                 outcome = None
+                self._record_executor_failure(executor.executor_id)
                 run.steps.append(
                     StepRecord(
                         kind=StepKind.DOMAIN_CALL,
@@ -213,7 +225,7 @@ class RunOrchestrator:
         iteration: int = 0,
     ) -> str | None:
         started = datetime.now(UTC)
-        ai_executor = self._find_ai_executor()
+        ai_executor = await self._find_ai_executor()
 
         if ai_executor is None:
             run.steps.append(
@@ -260,6 +272,7 @@ class RunOrchestrator:
             )
             return str(outcome.result) if outcome.status == TaskStatus.COMPLETED else None
         except Exception as e:
+            self._record_executor_failure(ai_executor.executor_id)
             run.steps.append(
                 StepRecord(
                     kind=StepKind.AI_SUMMARY,
@@ -276,7 +289,7 @@ class RunOrchestrator:
 
     async def _review(self, run: RunRecord, *, iteration: int = 0):
         started = datetime.now(UTC)
-        ai_executor = self._find_ai_executor()
+        ai_executor = await self._find_ai_executor()
 
         if ai_executor is None or not hasattr(ai_executor, "review"):
             run.steps.append(
@@ -326,6 +339,7 @@ class RunOrchestrator:
             )
             return result
         except Exception as e:
+            self._record_executor_failure(ai_executor.executor_id)
             run.steps.append(
                 StepRecord(
                     kind=StepKind.AI_REVIEW,
@@ -342,7 +356,7 @@ class RunOrchestrator:
 
     async def _correct(self, run: RunRecord, review, *, iteration: int) -> str | None:
         started = datetime.now(UTC)
-        ai_executor = self._find_ai_executor()
+        ai_executor = await self._find_ai_executor()
 
         if ai_executor is None:
             run.steps.append(
@@ -397,6 +411,7 @@ class RunOrchestrator:
             )
             return str(outcome.result) if outcome.status == TaskStatus.COMPLETED else None
         except Exception as e:
+            self._record_executor_failure(ai_executor.executor_id)
             run.steps.append(
                 StepRecord(
                     kind=StepKind.CORRECTION,
@@ -411,10 +426,16 @@ class RunOrchestrator:
             )
             return None
 
-    def _select_executor(self, task: TaskRecord) -> tuple:
+    async def _select_executor(
+        self, task: TaskRecord
+    ) -> tuple[ExecutorProtocol | None, ExecutorSelection]:
         all_matches = self._registry.find_for_task(task)
+
+        # Filter to healthy executors (skip those that have failed too many times)
+        healthy = await self._filter_healthy(all_matches)
+
         domain_matches = [
-            m for m in all_matches if task.domain and task.domain in m.capability.domains
+            m for m in healthy if task.domain and task.domain in m.capability.domains
         ]
 
         if domain_matches:
@@ -425,9 +446,9 @@ class RunOrchestrator:
                 domain_matches=len(domain_matches),
             )
 
-        if all_matches:
-            return all_matches[0], ExecutorSelection(
-                executor_id=all_matches[0].executor_id,
+        if healthy:
+            return healthy[0], ExecutorSelection(
+                executor_id=healthy[0].executor_id,
                 reason=SelectionReason.GENERAL_FALLBACK,
                 candidates_considered=len(all_matches),
                 domain_matches=0,
@@ -435,22 +456,56 @@ class RunOrchestrator:
 
         return None, ExecutorSelection(
             reason=SelectionReason.NO_EXECUTOR,
-            candidates_considered=0,
+            candidates_considered=len(all_matches),
         )
 
-    def _find_ai_executor(self):
+    async def _filter_healthy(
+        self, executors: list[ExecutorProtocol]
+    ) -> list[ExecutorProtocol]:
+        """Filter executors to those reporting ok/degraded health."""
+        healthy: list[ExecutorProtocol] = []
+        for executor in executors:
+            try:
+                h = await executor.health()
+                if h.status in ("ok", "degraded"):
+                    healthy.append(executor)
+            except Exception:
+                continue
+        return healthy
+
+    async def _find_ai_executor(self) -> ExecutorProtocol | None:
         """Find a general-purpose AI executor, preferring local if policy says so."""
         candidates = [e for e in self._registry.list_all() if not e.capability.domains]
         if not candidates:
             return None
 
+        # Filter to healthy, but fall back to all candidates if none are healthy
+        healthy = await self._filter_healthy(candidates)
+        pool = healthy or candidates
+
         if self._policy.prefer_local:
-            local = [e for e in candidates if "local" in e.capability.tags]
-            # Only prefer local if it reports as available
+            local = [e for e in pool if "local" in e.capability.tags]
             available_local = [
                 e for e in local if not hasattr(e, "available") or e.available is not False
             ]
             if available_local:
                 return available_local[0]
 
-        return candidates[0]
+        # Apply escalation: skip executors that have failed too many times
+        for executor in pool:
+            action = self._policy.should_escalate(
+                self._executor_failures.get(executor.executor_id, 0)
+            )
+            if action != EscalationAction.STOP:
+                return executor
+
+        return pool[0] if pool else None
+
+    def _record_executor_failure(self, executor_id: str) -> None:
+        self._executor_failures[executor_id] = (
+            self._executor_failures.get(executor_id, 0) + 1
+        )
+
+    def _check_escalation(self, executor_id: str) -> EscalationAction:
+        failures = self._executor_failures.get(executor_id, 0)
+        return self._policy.should_escalate(failures)
