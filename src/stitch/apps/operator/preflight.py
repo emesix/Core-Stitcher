@@ -27,7 +27,28 @@ def preflight_run(
             fmt = get_formatter()
             typer.echo(fmt.format_result_raw(result))
             if watch:
-                typer.echo("(--watch streaming will be implemented in Task 10)", err=True)
+                run_id = result.get("run_id")
+                if not run_id:
+                    typer.echo("No run_id in response, cannot watch.", err=True)
+                    return
+                from stitch.apps.operator._watch import (
+                    _TERMINAL_STATUSES,
+                    render_watch_complete,
+                    render_watch_event,
+                )
+
+                typer.echo(f"Watching run {run_id}...", err=True)
+                try:
+                    stream = await client.stream_connect(f"/ws/runs/{run_id}")
+                    async for event in stream.events():
+                        render_watch_event(event)
+                        status = event.payload.get("status", "")
+                        if status in _TERMINAL_STATUSES:
+                            render_watch_complete(event.payload)
+                            break
+                except Exception as e:
+                    typer.echo(f"Stream error: {e}", err=True)
+                    typer.echo("Falling back to poll mode.", err=True)
         finally:
             await client.close()
 
