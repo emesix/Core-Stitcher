@@ -1,0 +1,20 @@
+:root {
+  --bg: #1a1a2e;
+  --bg-sidebar: #16162e;
+  --bg-panel: #12122a;
+  --bg-card: #222244;
+  --text: #e0e0e0;
+  --text-dim: #888;
+  --accent: #7ec8e3;
+  --ok: #4ade80;
+  --warning: #f97316;
+  --error: #ef4444;
+  --running: #facc15;
+  --border: #333;
+  --hover: rgba(126, 200, 227, 0.08);
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-size: 13px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-mono); font-size: var(--font-size); background: var(--bg); color: var(--text); }

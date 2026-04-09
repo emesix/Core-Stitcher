@@ -1,0 +1,11 @@
+.activity-bar {
+  width: 48px; background: var(--bg-panel); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; padding-top: 8px;
+}
+.activity-item {
+  width: 36px; height: 36px; border: none; background: none; color: var(--text-dim);
+  font-size: 18px; cursor: pointer; border-radius: 4px; margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: center;
+}
+.activity-item:hover { background: var(--hover); color: var(--text); }
+.activity-item.active { color: var(--accent); border-left: 2px solid var(--accent); }

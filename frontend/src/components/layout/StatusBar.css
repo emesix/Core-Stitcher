@@ -1,0 +1,6 @@
+.status-bar {
+  height: 28px; background: var(--bg-panel); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 12px; font-size: 12px; color: var(--text-dim);
+}
+.status-profile { color: var(--accent); }
