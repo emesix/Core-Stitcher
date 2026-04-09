@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ device.name or 'Unknown Device' }}</h1>
+<div class="card">
+    <div class="kv"><span class="kv-key">Type</span><span>{{ device.type or '-' }}</span></div>
+    <div class="kv"><span class="kv-key">Model</span><span>{{ device.model or '-' }}</span></div>
+    <div class="kv"><span class="kv-key">IP</span><span>{{ device.management_ip or '-' }}</span></div>
+    <div class="kv"><span class="kv-key">Source</span><span>{{ device.mcp_source or '-' }}</span></div>
+</div>
+
+{% if device.ports %}
+<h2>Ports ({{ device.ports|length }})</h2>
+<table>
+    <thead><tr><th>Name</th><th>Type</th><th>Speed</th><th>VLAN</th></tr></thead>
+    <tbody>
+    {% for port in device.ports %}
+        <tr>
+            <td>{{ port.name }}</td>
+            <td>{{ port.type }}</td>
+            <td>{{ port.speed or '-' }}</td>
+            <td>{{ port.vlans.mode if port.vlans else '-' }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if neighbors %}
+<h2>Neighbors ({{ neighbors|length }})</h2>
+<table>
+    <thead><tr><th>Device</th><th>Local Port</th><th>Remote Port</th></tr></thead>
+    <tbody>
+    {% for n in neighbors %}
+        <tr>
+            <td><a href="/devices/{{ n.device }}">{{ n.device }}</a></td>
+            <td>{{ n.local_port or '-' }}</td>
+            <td>{{ n.remote_port or '-' }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<p style="margin-top: 1rem"><a href="/devices">&larr; Back to devices</a></p>
+{% endblock %}
