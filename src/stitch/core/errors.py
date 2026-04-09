@@ -1,4 +1,5 @@
 """Shared error types across commands, queries, and streams."""
+
 from __future__ import annotations
 
 from pydantic import BaseModel
@@ -28,3 +29,35 @@ class TransportError(BaseModel):
     message: str
     retryable: bool
     detail: dict | None = None
+
+
+class StitchAPIError(Exception):
+    """Raiseable wrapper around StitchError."""
+
+    def __init__(self, error: StitchError) -> None:
+        self.error = error
+        super().__init__(error.message)
+
+    @property
+    def code(self) -> str:
+        return self.error.code
+
+    @property
+    def retryable(self) -> bool:
+        return self.error.retryable
+
+
+class StitchTransportError(Exception):
+    """Raiseable wrapper around TransportError."""
+
+    def __init__(self, error: TransportError) -> None:
+        self.error = error
+        super().__init__(error.message)
+
+    @property
+    def kind(self) -> str:
+        return self.error.kind
+
+    @property
+    def retryable(self) -> bool:
+        return self.error.retryable
