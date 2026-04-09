@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.trace import BreakPoint, TraceHop, TraceRequest, TraceResult
 
 
 def test_trace_request_minimal():

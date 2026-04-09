@@ -11,15 +11,15 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from vos.apps.preflight import PreflightWorkflow
-from vos.opnsensecraft.normalizer import normalize_device_identity as opnsense_identity
-from vos.opnsensecraft.normalizer import normalize_interfaces
-from vos.proxmoxcraft.normalizer import normalize_network
-from vos.proxmoxcraft.normalizer import normalize_node_identity as proxmox_identity
-from vos.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.opnsensecraft.normalizer import normalize_device_identity as opnsense_identity
+from stitch.opnsensecraft.normalizer import normalize_interfaces
+from stitch.proxmoxcraft.normalizer import normalize_network
+from stitch.proxmoxcraft.normalizer import normalize_node_identity as proxmox_identity
+from stitch.switchcraft.normalizer import normalize_ports, normalize_status, normalize_vlans
 
 if TYPE_CHECKING:
-    from vos.modelkit.observation import Observation
+    from stitch.modelkit.observation import Observation
 
 TOPO_FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"
 SWITCH_FIXTURE = Path(__file__).parent.parent / "fixtures" / "switchcraft_onti_backend.json"
@@ -140,7 +140,7 @@ async def test_bridge_membership_link():
 
 async def test_observed_snapshot_has_all_three():
     """Merged observed snapshot contains devices from all three adapters."""
-    from vos.collectkit.merger import merge_observations
+    from stitch.collectkit.merger import merge_observations
 
     all_obs = _switch_observations() + _opnsense_observations() + _proxmox_observations()
     snapshot, _conflicts = merge_observations(all_obs)

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel
 
-import vos_workbench.storage.models  # noqa: F401 — registers tables
+import stitch_workbench.storage.models  # noqa: F401 — registers tables
+from alembic import context
 
 target_metadata = SQLModel.metadata
 

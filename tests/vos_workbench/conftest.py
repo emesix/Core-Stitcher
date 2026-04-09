@@ -5,7 +5,7 @@ import pytest
 import yaml
 from sqlmodel import Session
 
-from vos_workbench.storage.database import create_db_engine, run_migrations
+from stitch_workbench.storage.database import create_db_engine, run_migrations
 
 
 @pytest.fixture

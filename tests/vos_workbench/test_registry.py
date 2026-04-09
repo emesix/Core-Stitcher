@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 
 def test_registry_register_and_get():
-    from vos_workbench.registry.registry import ModuleTypeRegistry
+    from stitch_workbench.registry.registry import ModuleTypeRegistry
 
     registry = ModuleTypeRegistry()
 
@@ -23,14 +23,14 @@ def test_registry_register_and_get():
 
 
 def test_registry_get_unknown():
-    from vos_workbench.registry.registry import ModuleTypeRegistry
+    from stitch_workbench.registry.registry import ModuleTypeRegistry
 
     registry = ModuleTypeRegistry()
     assert registry.get("nonexistent.type") is None
 
 
 def test_registry_has_type():
-    from vos_workbench.registry.registry import ModuleTypeRegistry
+    from stitch_workbench.registry.registry import ModuleTypeRegistry
 
     registry = ModuleTypeRegistry()
 
@@ -47,7 +47,7 @@ def test_registry_has_type():
 
 
 def test_registry_duplicate_raises():
-    from vos_workbench.registry.registry import ModuleTypeRegistry
+    from stitch_workbench.registry.registry import ModuleTypeRegistry
 
     registry = ModuleTypeRegistry()
 

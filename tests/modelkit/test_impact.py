@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from vos.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
+from stitch.modelkit.impact import ImpactEffect, ImpactRequest, ImpactResult
 
 
 def test_impact_request_minimal():

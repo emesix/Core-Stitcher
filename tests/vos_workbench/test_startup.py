@@ -1,6 +1,6 @@
 import pytest
 
-from vos_workbench.config.models import ModuleConfig
+from stitch_workbench.config.models import ModuleConfig
 
 
 def _mod(
@@ -27,7 +27,7 @@ def _mod(
 
 
 def test_startup_no_deps():
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     modules = [_mod("a"), _mod("b"), _mod("c")]
     plan = compute_startup_order(modules)
@@ -37,7 +37,7 @@ def test_startup_no_deps():
 
 
 def test_startup_linear_chain():
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     modules = [
         _mod("c", depends=["b"]),
@@ -53,7 +53,7 @@ def test_startup_linear_chain():
 
 
 def test_startup_parallel_groups():
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     modules = [
         _mod("router", type_="core.router", depends=["policy", "memory"]),
@@ -68,7 +68,7 @@ def test_startup_parallel_groups():
 
 
 def test_startup_circular_dependency():
-    from vos_workbench.runtime.startup import CircularDependencyError, compute_startup_order
+    from stitch_workbench.runtime.startup import CircularDependencyError, compute_startup_order
 
     modules = [
         _mod("a", depends=["b"]),
@@ -80,7 +80,7 @@ def test_startup_circular_dependency():
 
 def test_startup_disabled_module_hard_dep_fails_dependent():
     """Hard dependency on disabled module → dependent fails."""
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     mod_a = _mod("a")
     mod_b = _mod("b", depends=["a"])  # hard dep on a
@@ -97,7 +97,7 @@ def test_startup_disabled_module_hard_dep_fails_dependent():
 
 def test_startup_disabled_module_soft_dep_still_starts():
     """Soft dependency on disabled module → dependent still starts."""
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     mod_a = _mod("a")
     mod_b = _mod("b", soft_depends=["a"])  # soft dep on a
@@ -112,7 +112,7 @@ def test_startup_disabled_module_soft_dep_still_starts():
 
 def test_startup_missing_hard_dep_cascades():
     """If A hard-depends on B and B fails, A also fails."""
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     # c depends on b, b depends on nonexistent x
     modules = [
@@ -128,7 +128,7 @@ def test_startup_missing_hard_dep_cascades():
 
 def test_startup_mixed_hard_soft():
     """Module with both hard and soft deps — hard satisfied, soft missing."""
-    from vos_workbench.runtime.startup import compute_startup_order
+    from stitch_workbench.runtime.startup import compute_startup_order
 
     modules = [
         _mod("a"),

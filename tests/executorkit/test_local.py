@@ -8,14 +8,14 @@ from unittest.mock import patch
 
 import httpx
 
-from vos.agentcore.executorkit import ExecutorProtocol
-from vos.agentcore.executorkit.local import LocalExecutor, LocalExecutorConfig
-from vos.agentcore.executorkit.mock import MockExecutor
-from vos.agentcore.orchestration import BudgetPolicy, RunOrchestrator, StepKind
-from vos.agentcore.plannerkit import WorkRequest, plan_request
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
-from vos.agentcore.taskkit import TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorProtocol
+from stitch.agentcore.executorkit.local import LocalExecutor, LocalExecutorConfig
+from stitch.agentcore.executorkit.mock import MockExecutor
+from stitch.agentcore.orchestration import BudgetPolicy, RunOrchestrator, StepKind
+from stitch.agentcore.plannerkit import WorkRequest, plan_request
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
+from stitch.agentcore.taskkit import TaskRecord, TaskStatus
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -96,7 +96,7 @@ def test_capability_tags():
 
 
 def test_tier():
-    from vos.agentcore.orchestration.budget import ExecutorTier
+    from stitch.agentcore.orchestration.budget import ExecutorTier
 
     ex = LocalExecutor(_config())
     assert ex.tier == ExecutorTier.LOCAL
@@ -270,7 +270,7 @@ async def test_no_recheck_when_health_fresh():
 
 async def test_review_when_unavailable():
     """Review returns REQUEST_CHANGES when local executor is down."""
-    from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
+    from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
 
     ex = LocalExecutor(_config(health_ttl=9999.0))
     ex._available = False
@@ -284,7 +284,7 @@ async def test_review_when_unavailable():
 
 async def test_review_when_available():
     """Review works normally when executor is up."""
-    from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
+    from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
 
     ex = LocalExecutor(_config())
     ex._available = True

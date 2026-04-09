@@ -6,13 +6,13 @@ trace the path across declared links and report hops and break points.
 
 from __future__ import annotations
 
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.port import Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
-from vos.modelkit.trace import TraceRequest
-from vos.tracekit.tracer import trace_vlan_path
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.port import Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.trace import TraceRequest
+from stitch.tracekit.tracer import trace_vlan_path
 
 META = TopologyMeta(version="1.0", name="test")
 

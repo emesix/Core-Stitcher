@@ -12,10 +12,10 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from vos.apps.preflight import PreflightWorkflow
-from vos.interfacekit.routes import create_preflight_router
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.observation import Observation
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.interfacekit.routes import create_preflight_router
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.observation import Observation
 
 TOPO_FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"
 

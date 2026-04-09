@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from vos.modelkit.enums import ObservationSource, PortType
-from vos.opnsensecraft.normalizer import (
+from stitch.modelkit.enums import ObservationSource, PortType
+from stitch.opnsensecraft.normalizer import (
     _classify_port,
     _parse_speed,
     normalize_device_identity,

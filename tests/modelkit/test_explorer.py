@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from vos.modelkit.explorer import (
+from stitch.modelkit.explorer import (
     DanglingPort,
     Neighbor,
     TopologyDiagnostics,

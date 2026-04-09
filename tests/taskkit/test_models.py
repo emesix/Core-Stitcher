@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from vos.agentcore.taskkit import TaskOutcome, TaskPriority, TaskRecord, TaskStatus
+from stitch.agentcore.taskkit import TaskOutcome, TaskPriority, TaskRecord, TaskStatus
 
 
 def test_task_defaults():

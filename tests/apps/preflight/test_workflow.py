@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from vos.apps.preflight import PreflightWorkflow
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.observation import Observation
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.observation import Observation
 
 FIXTURE = Path(__file__).parent.parent.parent / "fixtures" / "topology_sample.json"
 
@@ -224,7 +224,7 @@ async def test_declared_topology_property():
 
 
 async def test_trace_vlan_through_workflow():
-    from vos.modelkit.trace import TraceRequest
+    from stitch.modelkit.trace import TraceRequest
 
     collector = FakeCollector([])
     workflow = PreflightWorkflow(FIXTURE, collectors=[collector])
@@ -236,7 +236,7 @@ async def test_trace_vlan_through_workflow():
 
 
 async def test_impact_preview_through_workflow():
-    from vos.modelkit.impact import ImpactRequest
+    from stitch.modelkit.impact import ImpactRequest
 
     collector = FakeCollector([])
     workflow = PreflightWorkflow(FIXTURE, collectors=[collector])

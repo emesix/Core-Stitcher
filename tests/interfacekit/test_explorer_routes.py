@@ -9,8 +9,8 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from vos.apps.explorer.workflow import ExplorerWorkflow
-from vos.interfacekit.explorer_routes import create_explorer_router
+from stitch.apps.explorer.workflow import ExplorerWorkflow
+from stitch.interfacekit.explorer_routes import create_explorer_router
 
 
 @pytest.fixture()

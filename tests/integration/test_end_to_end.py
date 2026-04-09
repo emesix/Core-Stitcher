@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from vos.agentcore.executorkit import ExecutorProtocol
-from vos.agentcore.executorkit.mock import MockExecutor
-from vos.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.reviewkit import ReviewRequest, ReviewVerdict, Severity
-from vos.agentcore.taskkit import TaskRecord, TaskStatus
+from stitch.agentcore.executorkit import ExecutorProtocol
+from stitch.agentcore.executorkit.mock import MockExecutor
+from stitch.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.reviewkit import ReviewRequest, ReviewVerdict, Severity
+from stitch.agentcore.taskkit import TaskRecord, TaskStatus
 
 # --- MockExecutor unit tests ---
 

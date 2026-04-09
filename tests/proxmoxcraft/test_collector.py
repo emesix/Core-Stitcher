@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from unittest.mock import AsyncMock
 
-from vos.proxmoxcraft.collector import ProxmoxcraftCollector
+from stitch.proxmoxcraft.collector import ProxmoxcraftCollector
 
 FIXTURE = Path(__file__).parent.parent / "fixtures" / "proxmox_pve_hx310_db.json"
 

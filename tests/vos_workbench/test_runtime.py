@@ -25,7 +25,7 @@ def _create_project(tmp_path: Path) -> Path:
 
 
 def _runtime(tmp_path: Path):
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
     project_root = _create_project(tmp_path)
     db_path = tmp_path / "runtime.db"
@@ -80,7 +80,7 @@ def test_runtime_health(tmp_path):
 
 
 async def test_runtime_event_persistence(tmp_path):
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     rt = _runtime(tmp_path)
     await rt.event_bus.publish(
@@ -93,7 +93,7 @@ async def test_runtime_event_persistence(tmp_path):
 
 
 async def test_runtime_event_query_filtered(tmp_path):
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     rt = _runtime(tmp_path)
     await rt.event_bus.publish(VosEvent(type="a", source="module://name/test", project_id="test"))
@@ -105,7 +105,7 @@ async def test_runtime_event_query_filtered(tmp_path):
 
 async def test_runtime_emits_system_loaded_event(tmp_path):
     """Runtime.load() emits system.loaded after persistence is wired."""
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
     project_root = _create_project(tmp_path)
     db_path = tmp_path / "loaded.db"
@@ -120,7 +120,7 @@ async def test_runtime_emits_system_loaded_event(tmp_path):
 async def test_runtime_event_bus_subscribe(tmp_path):
     import asyncio
 
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     rt = _runtime(tmp_path)
     received = []

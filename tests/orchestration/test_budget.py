@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from vos.agentcore.executorkit.mock import MockExecutor
-from vos.agentcore.orchestration import BudgetPolicy, RunOrchestrator, StepKind, StepStatus
-from vos.agentcore.orchestration.budget import EscalationAction
-from vos.agentcore.plannerkit import WorkRequest, plan_request
-from vos.agentcore.registry import ExecutorRegistry
-from vos.agentcore.reviewkit import ReviewVerdict
-from vos.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
-from vos.agentcore.storekit.models import SelectionReason
+from stitch.agentcore.executorkit.mock import MockExecutor
+from stitch.agentcore.orchestration import BudgetPolicy, RunOrchestrator, StepKind, StepStatus
+from stitch.agentcore.orchestration.budget import EscalationAction
+from stitch.agentcore.plannerkit import WorkRequest, plan_request
+from stitch.agentcore.registry import ExecutorRegistry
+from stitch.agentcore.reviewkit import ReviewVerdict
+from stitch.agentcore.storekit import JsonRunStore, RunRecord, RunStatus
+from stitch.agentcore.storekit.models import SelectionReason
 
 if TYPE_CHECKING:
     from pathlib import Path

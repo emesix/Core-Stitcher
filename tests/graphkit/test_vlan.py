@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from vos.graphkit.vlan import vlan_ports
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, PortType, VlanMode
-from vos.modelkit.port import Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.graphkit.vlan import vlan_ports
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, PortType, VlanMode
+from stitch.modelkit.port import Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
 
 META = TopologyMeta(version="1.0", name="test")
 

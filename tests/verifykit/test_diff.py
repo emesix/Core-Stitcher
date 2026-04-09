@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from vos.modelkit.diff import VerificationDiff
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.verification import CheckResult, LinkVerification, VerificationReport
-from vos.verifykit.diff import diff_reports
+from stitch.modelkit.diff import VerificationDiff
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.verification import CheckResult, LinkVerification, VerificationReport
+from stitch.verifykit.diff import diff_reports
 
 
 def _check(

@@ -1,4 +1,4 @@
 def test_import():
-    import vos_workbench
+    import stitch_workbench
 
-    assert vos_workbench is not None
+    assert stitch_workbench is not None

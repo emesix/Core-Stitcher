@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from vos.contractkit import (
+from stitch.contractkit import (
     CollectorProtocol,
     ExplorerWorkflowProtocol,
     MergerProtocol,

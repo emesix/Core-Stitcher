@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, LinkType
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
-from vos.modelkit.vlan import VlanMetadata
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, LinkType
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.modelkit.vlan import VlanMetadata
 
 
 def test_topology_meta_minimal():

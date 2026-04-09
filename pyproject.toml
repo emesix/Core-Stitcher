@@ -14,31 +14,34 @@ dependencies = [
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
     "pyyaml>=6.0.3",
+    "rich>=14.0.0",
     "sqlmodel>=0.0.38",
     "structlog>=25.5.0",
+    "typer[all]>=0.15.0",
     "uvicorn[standard]>=0.42.0",
     "websockets>=16.0",
 ]
 
 [project.scripts]
-vos-workbench = "vos_workbench:main"
-project-stitcher = "vos.apps.project_stitcher.cli:main"
+stitch-workbench = "stitch_workbench:main"
+project-stitcher = "stitch.apps.project_stitcher.cli:main"
+stitch = "stitch.apps.operator.app:main"
 
-[project.entry-points."vos.modules"]
-"resource.switchcraft" = "vos.switchcraft:SwitchcraftModule"
-"resource.opnsensecraft" = "vos.opnsensecraft:OpnsensecraftModule"
-"resource.proxmoxcraft" = "vos.proxmoxcraft:ProxmoxcraftModule"
-"resource.collectkit" = "vos.collectkit:CollectkitModule"
-"core.verifykit" = "vos.verifykit:VerifykitModule"
-"core.tracekit" = "vos.tracekit:TracekitModule"
-"integration.interfacekit" = "vos.interfacekit:InterfacekitModule"
+[project.entry-points."stitch.modules"]
+"resource.switchcraft" = "stitch.switchcraft:SwitchcraftModule"
+"resource.opnsensecraft" = "stitch.opnsensecraft:OpnsensecraftModule"
+"resource.proxmoxcraft" = "stitch.proxmoxcraft:ProxmoxcraftModule"
+"resource.collectkit" = "stitch.collectkit:CollectkitModule"
+"core.verifykit" = "stitch.verifykit:VerifykitModule"
+"core.tracekit" = "stitch.tracekit:TracekitModule"
+"integration.interfacekit" = "stitch.interfacekit:InterfacekitModule"
 
 [build-system]
 requires = ["uv_build>=0.11.1,<0.12.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = "vos_workbench"
+module-name = "stitch_workbench"
 
 [dependency-groups]
 dev = [
@@ -63,7 +66,8 @@ select = ["E", "W", "F", "I", "UP", "B", "SIM", "TCH"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["TCH003", "B017"]
-"src/vos/modelkit/**" = ["TCH001", "TCH003"]
+"src/stitch/modelkit/**" = ["TCH001", "TCH003"]
+"src/stitch/apps/operator/app.py" = ["TCH001", "TCH003"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["vos_workbench", "vos"]
+known-first-party = ["stitch_workbench", "stitch"]

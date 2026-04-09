@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from vos.modelkit.device import Device
-from vos.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
-from vos.modelkit.link import Link, LinkEndpoint
-from vos.modelkit.port import ExpectedNeighbor, Port, VlanMembership
-from vos.modelkit.topology import TopologyMeta, TopologySnapshot
-from vos.verifykit.engine import verify_topology
+from stitch.modelkit.device import Device
+from stitch.modelkit.enums import DeviceType, LinkType, PortType, VlanMode
+from stitch.modelkit.link import Link, LinkEndpoint
+from stitch.modelkit.port import ExpectedNeighbor, Port, VlanMembership
+from stitch.modelkit.topology import TopologyMeta, TopologySnapshot
+from stitch.verifykit.engine import verify_topology
 
 META = TopologyMeta(version="1.0", name="test")
 

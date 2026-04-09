@@ -33,7 +33,7 @@ def project_path(tmp_path):
 
 @pytest.fixture
 def app(project_path):
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     return create_app(project_root=project_path, db_url="sqlite:///:memory:")
 

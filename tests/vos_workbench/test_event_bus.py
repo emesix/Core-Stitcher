@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from vos_workbench.events.models import VosEvent
+from stitch_workbench.events.models import VosEvent
 
 
 def _event(type_: str = "test.event", source: str = "module://name/test") -> VosEvent:
@@ -11,7 +11,7 @@ def _event(type_: str = "test.event", source: str = "module://name/test") -> Vos
 
 @pytest.fixture
 def bus():
-    from vos_workbench.events.bus import EventBus
+    from stitch_workbench.events.bus import EventBus
 
     return EventBus()
 

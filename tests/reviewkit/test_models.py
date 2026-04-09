@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from vos.agentcore.reviewkit import (
+from stitch.agentcore.reviewkit import (
     ReviewFinding,
     ReviewRequest,
     ReviewResult,

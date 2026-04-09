@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from vos.modelkit.enums import PortType, VlanMode
-from vos.modelkit.port import ExpectedNeighbor, Port, VlanMembership
+from stitch.modelkit.enums import PortType, VlanMode
+from stitch.modelkit.port import ExpectedNeighbor, Port, VlanMembership
 
 
 def test_vlan_membership_minimal():

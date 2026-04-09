@@ -2,7 +2,7 @@ from importlib.metadata import entry_points
 
 
 def test_vos_modules_entry_points_registered():
-    eps = entry_points(group="vos.modules")
+    eps = entry_points(group="stitch.modules")
     names = {ep.name for ep in eps}
     expected = {
         "resource.switchcraft",
@@ -17,7 +17,7 @@ def test_vos_modules_entry_points_registered():
 
 
 def test_entry_points_load():
-    eps = entry_points(group="vos.modules")
+    eps = entry_points(group="stitch.modules")
     for ep in eps:
         module_type = ep.load()
         assert hasattr(module_type, "type_name")

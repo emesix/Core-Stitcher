@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 from uuid import UUID
 
-from vos_workbench.sdk import (
+from stitch_workbench.sdk import (
     CapabilityResolver,
     ConfigAccessor,
     EventPublisher,

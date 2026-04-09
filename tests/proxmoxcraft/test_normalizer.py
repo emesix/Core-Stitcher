@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from vos.modelkit.enums import ObservationSource, PortType
-from vos.proxmoxcraft.normalizer import (
+from stitch.modelkit.enums import ObservationSource, PortType
+from stitch.proxmoxcraft.normalizer import (
     _classify_port,
     normalize_network,
     normalize_node_identity,

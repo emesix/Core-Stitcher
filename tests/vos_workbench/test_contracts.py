@@ -13,8 +13,8 @@ import pytest
 import yaml
 from httpx import ASGITransport, AsyncClient
 
-from vos_workbench.events.bus import EventBus
-from vos_workbench.events.models import VosEvent
+from stitch_workbench.events.bus import EventBus
+from stitch_workbench.events.models import VosEvent
 
 
 def _write_project(root: Path, modules: list[dict] | None = None) -> Path:
@@ -38,7 +38,7 @@ def _write_project(root: Path, modules: list[dict] | None = None) -> Path:
 
 async def test_contract_boot_persistence(tmp_path: Path):
     """system.loaded survives process restart (new Runtime, same DB)."""
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
     db_path = tmp_path / "persist.db"
     db_url = f"sqlite:///{db_path}"
@@ -63,7 +63,7 @@ async def test_contract_boot_persistence(tmp_path: Path):
 
 async def test_contract_overflow_visibility(tmp_path: Path):
     """Overflow marks subscriber degraded and emits bus.subscriber.overflow."""
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
     db_path = tmp_path / "overflow.db"
     db_url = f"sqlite:///{db_path}"
@@ -105,7 +105,7 @@ async def test_contract_overflow_visibility(tmp_path: Path):
 
 async def test_contract_partial_startup_in_health(tmp_path: Path):
     """Failed modules appear in /readyz (503) and /health diagnostic."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     modules = [
         {"uuid": str(uuid4()), "name": "good-mod", "type": "exec.shell"},
@@ -141,7 +141,7 @@ async def test_contract_partial_startup_in_health(tmp_path: Path):
 
 def test_contract_db_unavailable_at_boot(tmp_path: Path):
     """Unreachable DB produces a clear error, not a raw traceback."""
-    from vos_workbench.runtime.runtime import Runtime
+    from stitch_workbench.runtime.runtime import Runtime
 
     project = _write_project(tmp_path)
     db_url = "sqlite:////nonexistent/path/to/impossible.db"
@@ -159,7 +159,7 @@ def test_contract_db_unavailable_at_boot(tmp_path: Path):
 
 async def test_contract_readyz_reflects_startup_plan(tmp_path: Path):
     """readyz failed_modules matches startup plan failures exactly."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     modules = [
         {"uuid": str(uuid4()), "name": "healthy-mod", "type": "exec.shell"},
@@ -193,7 +193,7 @@ async def test_contract_readyz_reflects_startup_plan(tmp_path: Path):
 
 async def test_contract_events_pagination_consistency(tmp_path: Path):
     """Pages do not overlap or skip events under stable dataset."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project = _write_project(tmp_path)
     db_url = f"sqlite:///{tmp_path / 'pagination.db'}"

@@ -21,7 +21,7 @@ def _create_project(tmp_path: Path) -> Path:
 
 async def test_health_minimal_no_project():
     """Health without project_root returns minimal status."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     app = create_app()
     transport = ASGITransport(app=app)
@@ -34,7 +34,7 @@ async def test_health_minimal_no_project():
 
 async def test_health_with_project(tmp_path):
     """Health with project_root returns full system status."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project_root = _create_project(tmp_path)
     app = create_app(project_root=project_root, db_url=f"sqlite:///{tmp_path / 'health.db'}")
@@ -54,7 +54,7 @@ async def test_health_with_project(tmp_path):
 
 
 async def test_health_response_format(tmp_path):
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project_root = _create_project(tmp_path)
     app = create_app(project_root=project_root, db_url=f"sqlite:///{tmp_path / 'health.db'}")
@@ -68,7 +68,7 @@ async def test_health_response_format(tmp_path):
 
 async def test_livez_always_200():
     """livez returns 200 even without a runtime."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     app = create_app()
     transport = ASGITransport(app=app)
@@ -80,7 +80,7 @@ async def test_livez_always_200():
 
 async def test_livez_with_runtime(tmp_path):
     """livez still returns 200 with a runtime loaded."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project_root = _create_project(tmp_path)
     db_url = f"sqlite:///{tmp_path / 'livez.db'}"
@@ -94,7 +94,7 @@ async def test_livez_with_runtime(tmp_path):
 
 async def test_readyz_503_without_runtime():
     """readyz returns 503 when no runtime is loaded."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     app = create_app()
     transport = ASGITransport(app=app)
@@ -108,7 +108,7 @@ async def test_readyz_503_without_runtime():
 
 async def test_readyz_200_with_healthy_runtime(tmp_path):
     """readyz returns 200 when runtime is booted and healthy."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     project_root = _create_project(tmp_path)
     db_url = f"sqlite:///{tmp_path / 'readyz.db'}"
@@ -127,7 +127,7 @@ async def test_readyz_200_with_healthy_runtime(tmp_path):
 
 async def test_readyz_503_with_failed_modules(tmp_path):
     """readyz returns 503 when hard dependencies are unsatisfied."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     workbench = {
         "schema_version": 1,
@@ -158,7 +158,7 @@ async def test_readyz_503_with_failed_modules(tmp_path):
 
 async def test_readyz_soft_degradation_does_not_affect_status(tmp_path):
     """Modules with missing soft dependencies do NOT cause 503."""
-    from vos_workbench.api.app import create_app
+    from stitch_workbench.api.app import create_app
 
     workbench = {
         "schema_version": 1,

@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from unittest.mock import AsyncMock
 
-from vos.switchcraft.collector import SwitchcraftCollector
+from stitch.switchcraft.collector import SwitchcraftCollector
 
 FIXTURE = Path(__file__).parent.parent / "fixtures" / "switchcraft_onti_backend.json"
 

@@ -17,11 +17,11 @@ Layer C ── Executors
            Claude | OpenAI | Local LLM (A770)
 ```
 
-### Spine (`vos_workbench`)
+### Spine (`stitch_workbench`)
 
 Runtime framework: module registry via entry points, topological startup ordering, typed YAML config with Pydantic validation, async event bus, SQLModel persistence, FastAPI endpoints.
 
-### Topology Domain (`vos.*`)
+### Topology Domain (`stitch.*`)
 
 | Module | Type | Purpose |
 |---|---|---|
@@ -37,7 +37,7 @@ Runtime framework: module registry via entry points, topological startup orderin
 | **tracekit** | engine | VLAN path tracing + change impact preview |
 | **interfacekit** | integration | HTTP API + MCP tool exposure |
 
-### AI Orchestrator (`vos.agentcore`)
+### AI Orchestrator (`stitch.agentcore`)
 
 | Module | Purpose |
 |---|---|

@@ -3,7 +3,7 @@ from pydantic import ValidationError
 
 
 def test_workbench_config_minimal():
-    from vos_workbench.config.models import WorkbenchConfig
+    from stitch_workbench.config.models import WorkbenchConfig
 
     cfg = WorkbenchConfig(
         project={"id": "test-project", "name": "Test Project"},
@@ -14,7 +14,7 @@ def test_workbench_config_minimal():
 
 
 def test_workbench_config_precedence_default():
-    from vos_workbench.config.models import SettingsLayer, WorkbenchConfig
+    from stitch_workbench.config.models import SettingsLayer, WorkbenchConfig
 
     cfg = WorkbenchConfig(
         project={"id": "test", "name": "Test"},
@@ -29,7 +29,7 @@ def test_workbench_config_precedence_default():
 
 
 def test_workbench_config_invalid_project_id():
-    from vos_workbench.config.models import WorkbenchConfig
+    from stitch_workbench.config.models import WorkbenchConfig
 
     with pytest.raises(ValidationError, match="pattern"):
         WorkbenchConfig(
@@ -38,7 +38,7 @@ def test_workbench_config_invalid_project_id():
 
 
 def test_module_config_valid():
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
     cfg = ModuleConfig(
         uuid="2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3",
@@ -51,7 +51,7 @@ def test_module_config_valid():
 
 
 def test_module_config_name_rejects_uuid_format():
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
     with pytest.raises(ValidationError, match="UUID"):
         ModuleConfig(
@@ -62,7 +62,7 @@ def test_module_config_name_rejects_uuid_format():
 
 
 def test_module_config_invalid_type_format():
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
     with pytest.raises(ValidationError, match="pattern"):
         ModuleConfig(
@@ -73,7 +73,7 @@ def test_module_config_invalid_type_format():
 
 
 def test_module_config_family_derived():
-    from vos_workbench.config.models import ModuleConfig, ModuleFamily
+    from stitch_workbench.config.models import ModuleConfig, ModuleFamily
 
     cfg = ModuleConfig(
         uuid="2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3",
@@ -84,7 +84,7 @@ def test_module_config_family_derived():
 
 
 def test_module_config_with_dependencies():
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
     cfg = ModuleConfig(
         uuid="2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3",
@@ -104,14 +104,14 @@ def test_module_config_with_dependencies():
 
 
 def test_dependency_rejects_uuid_ref():
-    from vos_workbench.config.models import Dependency
+    from stitch_workbench.config.models import Dependency
 
     with pytest.raises(ValidationError, match="module names"):
         Dependency(ref="module://uuid/2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3")
 
 
 def test_module_config_budget():
-    from vos_workbench.config.models import ModuleConfig
+    from stitch_workbench.config.models import ModuleConfig
 
     cfg = ModuleConfig(
         uuid="2db742d5-5f23-4ce0-9c83-7d4dbf18e2c3",

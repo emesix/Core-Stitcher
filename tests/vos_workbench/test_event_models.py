@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 def test_vos_event_minimal():
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     event = VosEvent(
         type="module.started",
@@ -19,7 +19,7 @@ def test_vos_event_minimal():
 def test_vos_event_full():
     from uuid import uuid4
 
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     corr = uuid4()
     cause = uuid4()
@@ -38,7 +38,7 @@ def test_vos_event_full():
 
 
 def test_vos_event_severity_values():
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     for sev in ("debug", "info", "warning", "error"):
         event = VosEvent(
@@ -51,7 +51,7 @@ def test_vos_event_severity_values():
 
 
 def test_vos_event_time_is_utc():
-    from vos_workbench.events.models import VosEvent
+    from stitch_workbench.events.models import VosEvent
 
     event = VosEvent(
         type="test",

@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from unittest.mock import AsyncMock
 
-from vos.opnsensecraft.collector import OpnsensecraftCollector
+from stitch.opnsensecraft.collector import OpnsensecraftCollector
 
 FIXTURE = Path(__file__).parent.parent / "fixtures" / "opnsense_interfaces.json"
 

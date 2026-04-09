@@ -18,11 +18,11 @@ import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from vos.apps.explorer.workflow import ExplorerWorkflow
-from vos.apps.preflight import PreflightWorkflow
-from vos.modelkit.enums import ObservationSource
-from vos.modelkit.observation import Observation
-from vos_workbench.runtime.runtime import Runtime
+from stitch.apps.explorer.workflow import ExplorerWorkflow
+from stitch.apps.preflight import PreflightWorkflow
+from stitch.modelkit.enums import ObservationSource
+from stitch.modelkit.observation import Observation
+from stitch_workbench.runtime.runtime import Runtime
 
 TOPO_FIXTURE = Path(__file__).parent.parent / "fixtures" / "topology_sample.json"
 

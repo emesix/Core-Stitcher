@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from vos.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
-from vos.apps.project_stitcher.cli import _format_plan, main
+from stitch.agentcore.plannerkit import SubtaskSpec, WorkRequest, plan_request
+from stitch.apps.project_stitcher.cli import _format_plan, main
 
 
 def test_main_single_task(capsys):
