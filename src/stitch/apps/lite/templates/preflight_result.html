@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Preflight Result</h1>
+<div class="card">
+    <div class="kv"><span class="kv-key">Total</span><span>{{ result.total | default(0) }}</span></div>
+    <div class="kv"><span class="kv-key">OK</span><span class="badge badge-ok">{{ result.ok | default(0) }}</span></div>
+    <div class="kv"><span class="kv-key">Warnings</span><span class="badge badge-warning">{{ result.warning | default(0) }}</span></div>
+    <div class="kv"><span class="kv-key">Errors</span><span class="badge badge-error">{{ result.error | default(0) }}</span></div>
+</div>
+
+{% if result.checks %}
+<h2>Checks</h2>
+<table>
+    <thead><tr><th>Check</th><th>Status</th><th>Message</th></tr></thead>
+    <tbody>
+    {% for check in result.checks %}
+        <tr>
+            <td>{{ check.name | default('-') }}</td>
+            <td>
+                {% if check.status == 'ok' %}<span class="badge badge-ok">OK</span>
+                {% elif check.status == 'warning' %}<span class="badge badge-warning">WARNING</span>
+                {% elif check.status == 'error' %}<span class="badge badge-error">ERROR</span>
+                {% else %}<span class="badge badge-pending">{{ check.status | default('-') }}</span>
+                {% endif %}
+            </td>
+            <td>{{ check.message | default('-') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<p style="margin-top: 1rem"><a href="/preflight">&larr; Run another preflight</a></p>
+{% endblock %}

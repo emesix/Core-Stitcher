@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Run {{ run.id or run.run_id or 'Unknown' }}</h1>
+<div class="card">
+    <div class="kv"><span class="kv-key">Status</span>
+        <span>
+        {% if run.status == 'completed' %}<span class="badge badge-ok">completed</span>
+        {% elif run.status == 'running' %}<span class="badge badge-running">running</span>
+        {% elif run.status == 'failed' %}<span class="badge badge-error">failed</span>
+        {% else %}<span class="badge badge-pending">{{ run.status | default('-') }}</span>
+        {% endif %}
+        </span>
+    </div>
+    <div class="kv"><span class="kv-key">Description</span><span>{{ run.description | default('-') }}</span></div>
+    <div class="kv"><span class="kv-key">Created</span><span>{{ run.created_at | default('-') }}</span></div>
+</div>
+
+{% if run.tasks %}
+<h2>Tasks ({{ run.tasks|length }})</h2>
+<table>
+    <thead><tr><th>Task</th><th>Status</th><th>Executor</th></tr></thead>
+    <tbody>
+    {% for task in run.tasks %}
+        <tr>
+            <td>{{ task.description | default(task.id | default('-')) }}</td>
+            <td>
+                {% if task.status == 'completed' %}<span class="badge badge-ok">completed</span>
+                {% elif task.status == 'running' %}<span class="badge badge-running">running</span>
+                {% elif task.status == 'failed' %}<span class="badge badge-error">failed</span>
+                {% else %}<span class="badge badge-pending">{{ task.status | default('-') }}</span>
+                {% endif %}
+            </td>
+            <td>{{ task.executor | default('-') }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<p style="margin-top: 1rem"><a href="/runs">&larr; Back to runs</a></p>
+{% endblock %}

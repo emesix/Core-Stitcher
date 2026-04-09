@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Devices</h1>
+<table>
+    <thead>
+        <tr><th>Name</th><th>Type</th><th>Model</th><th>IP</th></tr>
+    </thead>
+    <tbody>
+    {% for dev in devices %}
+        <tr>
+            <td><a href="/devices/{{ dev.id or dev.name }}">{{ dev.name }}</a></td>
+            <td>{{ dev.type }}</td>
+            <td>{{ dev.model or '-' }}</td>
+            <td>{{ dev.management_ip or '-' }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="4">No devices found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

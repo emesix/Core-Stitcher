@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Review {{ review.id or review.run_id or 'Unknown' }}</h1>
+<div class="card">
+    <div class="kv"><span class="kv-key">Status</span>
+        <span>
+        {% if review.review_status == 'approved' %}<span class="badge badge-ok">approved</span>
+        {% elif review.review_status == 'rejected' %}<span class="badge badge-error">rejected</span>
+        {% elif review.review_status == 'pending' %}<span class="badge badge-warning">pending</span>
+        {% else %}<span class="badge badge-pending">{{ review.review_status | default(review.status | default('-')) }}</span>
+        {% endif %}
+        </span>
+    </div>
+    <div class="kv"><span class="kv-key">Description</span><span>{{ review.description | default('-') }}</span></div>
+    <div class="kv"><span class="kv-key">Created</span><span>{{ review.created_at | default('-') }}</span></div>
+</div>
+
+{% if review.findings %}
+<h2>Findings ({{ review.findings|length }})</h2>
+<table>
+    <thead><tr><th>Finding</th><th>Severity</th><th>Detail</th></tr></thead>
+    <tbody>
+    {% for finding in review.findings %}
+        <tr>
+            <td>{{ finding.title | default(finding.name | default('-')) }}</td>
+            <td>
+                {% if finding.severity == 'error' %}<span class="badge badge-error">error</span>
+                {% elif finding.severity == 'warning' %}<span class="badge badge-warning">warning</span>
+                {% else %}<span class="badge badge-ok">{{ finding.severity | default('info') }}</span>
+                {% endif %}
+            </td>
+            <td>{{ finding.detail | default(finding.message | default('-')) }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if not review.review_status or review.review_status == 'pending' %}
+<h2>Actions</h2>
+<div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <div class="card" style="flex: 1; min-width: 250px;">
+        <form method="post" action="/reviews/{{ review.id or review.run_id }}/approve">
+            <p style="margin-bottom: 0.5rem; color: var(--ok);">Approve this review</p>
+            <textarea name="comment" placeholder="Comment (optional)" rows="2" style="width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem; font-family: inherit; margin-bottom: 0.5rem; resize: vertical;"></textarea>
+            <button type="submit" class="btn">Approve</button>
+        </form>
+    </div>
+    <div class="card" style="flex: 1; min-width: 250px;">
+        <form method="post" action="/reviews/{{ review.id or review.run_id }}/reject">
+            <p style="margin-bottom: 0.5rem; color: var(--error);">Reject this review</p>
+            <textarea name="comment" placeholder="Reason for rejection" rows="2" style="width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem; font-family: inherit; margin-bottom: 0.5rem; resize: vertical;"></textarea>
+            <button type="submit" class="btn btn-danger">Reject</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<p style="margin-top: 1rem"><a href="/reviews">&larr; Back to reviews</a></p>
+{% endblock %}

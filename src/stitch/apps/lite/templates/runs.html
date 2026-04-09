@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Runs</h1>
+<table>
+    <thead>
+        <tr><th>Run ID</th><th>Status</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {% for run in runs %}
+        <tr>
+            <td><a href="/runs/{{ run.id or run.run_id }}">{{ run.id or run.run_id }}</a></td>
+            <td>
+                {% if run.status == 'completed' %}<span class="badge badge-ok">completed</span>
+                {% elif run.status == 'running' %}<span class="badge badge-running">running</span>
+                {% elif run.status == 'failed' %}<span class="badge badge-error">failed</span>
+                {% elif run.status == 'pending' %}<span class="badge badge-pending">pending</span>
+                {% else %}<span class="badge badge-pending">{{ run.status | default('-') }}</span>
+                {% endif %}
+            </td>
+            <td>{{ run.description | default('-') }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="3">No runs found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p style="margin-top: 1rem"><a href="/preflight" class="btn">Run Preflight</a></p>
+{% endblock %}

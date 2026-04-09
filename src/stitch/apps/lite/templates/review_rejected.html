@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Review Rejected</h1>
+<div class="card">
+    <p style="color: var(--error);">Review <strong>{{ review_id }}</strong> has been rejected.</p>
+</div>
+<p style="margin-top: 1rem">
+    <a href="/reviews/{{ review_id }}">&larr; Back to review</a>
+    &nbsp;|&nbsp;
+    <a href="/reviews">All reviews</a>
+</p>
+{% endblock %}

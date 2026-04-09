@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Reviews</h1>
+<table>
+    <thead>
+        <tr><th>Review ID</th><th>Status</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+    {% for review in reviews %}
+        <tr>
+            <td><a href="/reviews/{{ review.id or review.run_id }}">{{ review.id or review.run_id }}</a></td>
+            <td>
+                {% if review.review_status == 'approved' %}<span class="badge badge-ok">approved</span>
+                {% elif review.review_status == 'rejected' %}<span class="badge badge-error">rejected</span>
+                {% elif review.review_status == 'pending' %}<span class="badge badge-warning">pending</span>
+                {% else %}<span class="badge badge-pending">{{ review.review_status | default(review.status | default('-')) }}</span>
+                {% endif %}
+            </td>
+            <td>{{ review.description | default('-') }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="3">No reviews found.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
