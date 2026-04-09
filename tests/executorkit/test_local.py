@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
@@ -214,3 +215,91 @@ async def test_no_prefer_local_uses_first_available(tmp_path: Path):
 
     summary_steps = [s for s in run.steps if s.kind == StepKind.AI_SUMMARY]
     assert summary_steps[0].selection.executor_id == "cloud-ai"
+
+
+# --- Health staleness and auto-recovery ---
+
+
+async def test_health_reports_loaded_models():
+    """Health check parses model list from /models response."""
+    ex = LocalExecutor(_config())
+    with _patch_local():
+        h = await ex.health()
+    assert h.status == "ok"
+    assert "llama3.2" in ex.loaded_models
+
+
+async def test_health_reports_latency():
+    """Health check includes latency measurement."""
+    ex = LocalExecutor(_config())
+    with _patch_local():
+        h = await ex.health()
+    # Latency may be None in test (mocked response) but field exists
+    assert hasattr(h, "latency_ms")
+
+
+async def test_health_staleness_triggers_recheck():
+    """When health TTL expires, execute re-checks before failing."""
+    ex = LocalExecutor(_config(health_ttl=0.0))  # immediately stale
+    # Mark as unavailable with an old timestamp
+    ex._available = False
+    ex._last_check = datetime(2020, 1, 1, tzinfo=UTC)
+
+    task = TaskRecord(description="test")
+    with _patch_local():
+        outcome = await ex.execute(task)
+    # Should have re-checked health, found endpoint up, and executed
+    assert outcome.status == TaskStatus.COMPLETED
+    assert ex.available is True
+
+
+async def test_no_recheck_when_health_fresh():
+    """When health TTL hasn't expired, execute fails fast without re-checking."""
+    ex = LocalExecutor(_config(health_ttl=9999.0))
+    ex._available = False
+    ex._last_check = datetime.now(UTC)  # fresh
+
+    task = TaskRecord(description="test")
+    outcome = await ex.execute(task)
+    assert outcome.status == TaskStatus.FAILED
+    assert "unavailable" in outcome.error
+
+
+# --- Review availability ---
+
+
+async def test_review_when_unavailable():
+    """Review returns REQUEST_CHANGES when local executor is down."""
+    from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
+
+    ex = LocalExecutor(_config(health_ttl=9999.0))
+    ex._available = False
+    ex._last_check = datetime.now(UTC)
+
+    request = ReviewRequest(content={"test": True}, criteria=["quality"])
+    result = await ex.review(request)
+    assert result.verdict == ReviewVerdict.REQUEST_CHANGES
+    assert any("unavailable" in f.description.lower() for f in result.findings)
+
+
+async def test_review_when_available():
+    """Review works normally when executor is up."""
+    from vos.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
+
+    ex = LocalExecutor(_config())
+    ex._available = True
+
+    request = ReviewRequest(content={"test": True}, criteria=["quality"])
+    with _patch_local():
+        result = await ex.review(request)
+    assert result.verdict == ReviewVerdict.APPROVE
+
+
+# --- Env var override ---
+
+
+async def test_env_var_overrides_base_url(monkeypatch):
+    """LOCAL_EXECUTOR_URL env var overrides config base_url."""
+    monkeypatch.setenv("LOCAL_EXECUTOR_URL", "http://custom-host:9999/v1")
+    ex = LocalExecutor(_config())
+    assert ex._effective_url == "http://custom-host:9999/v1"

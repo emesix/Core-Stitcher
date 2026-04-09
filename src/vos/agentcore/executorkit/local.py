@@ -5,11 +5,14 @@ discovery via health heartbeat, graceful unavailability handling, and
 tier-aware registration for budget policy routing.
 
 When the local endpoint is unreachable, the executor reports itself as
-unhealthy so the registry can fall back to cloud executors.
+unhealthy so the registry can fall back to cloud executors. Automatically
+re-checks health after a configurable TTL so it recovers when the
+hardware comes back online.
 """
 
 from __future__ import annotations
 
+import os
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
@@ -25,6 +28,8 @@ if TYPE_CHECKING:
     from vos.agentcore.reviewkit.models import ReviewRequest, ReviewResult
     from vos.agentcore.taskkit.models import TaskRecord
 
+LOCAL_EXECUTOR_URL_ENV = "LOCAL_EXECUTOR_URL"
+
 
 class LocalExecutorConfig(BaseModel):
     """Configuration for a local inference executor."""
@@ -37,6 +42,7 @@ class LocalExecutorConfig(BaseModel):
     temperature: float = 0.0
     tier: ExecutorTier = ExecutorTier.LOCAL
     tags: list[str] = Field(default_factory=lambda: ["local", "a770"])
+    health_ttl: float = 60.0
 
 
 class LocalExecutor:
@@ -44,9 +50,11 @@ class LocalExecutor:
 
     def __init__(self, config: LocalExecutorConfig | None = None) -> None:
         self._config = config or LocalExecutorConfig()
+        # Environment override for base_url (supports IP migration)
+        effective_url = os.environ.get(LOCAL_EXECUTOR_URL_ENV, self._config.base_url)
         self._inner = OpenAICompatibleExecutor(
             OpenAIExecutorConfig(
-                base_url=self._config.base_url,
+                base_url=effective_url,
                 model=self._config.model,
                 api_key_env="__LOCAL_NO_KEY__",
                 timeout=self._config.timeout,
@@ -55,8 +63,10 @@ class LocalExecutor:
                 executor_id=self._config.executor_id,
             )
         )
+        self._effective_url = effective_url
         self._available: bool | None = None
         self._last_check: datetime | None = None
+        self._loaded_models: list[str] = []
 
     @property
     def executor_id(self) -> str:
@@ -79,26 +89,56 @@ class LocalExecutor:
     def available(self) -> bool | None:
         return self._available
 
+    @property
+    def loaded_models(self) -> list[str]:
+        return self._loaded_models
+
+    def _health_stale(self) -> bool:
+        if self._last_check is None:
+            return True
+        elapsed = (datetime.now(UTC) - self._last_check).total_seconds()
+        return elapsed > self._config.health_ttl
+
     async def health(self) -> ExecutorHealth:
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
-                resp = await client.get(f"{self._config.base_url}/models")
+                resp = await client.get(f"{self._effective_url}/models")
                 self._last_check = datetime.now(UTC)
+                try:
+                    latency = resp.elapsed.total_seconds() * 1000
+                except RuntimeError:
+                    latency = None
                 if resp.status_code == 200:
                     self._available = True
-                    return ExecutorHealth(status="ok", message="local endpoint reachable")
+                    data = resp.json()
+                    self._loaded_models = [
+                        m.get("id", "") for m in data.get("data", data.get("models", []))
+                    ]
+                    model_info = ", ".join(self._loaded_models) if self._loaded_models else "none"
+                    return ExecutorHealth(
+                        status="ok",
+                        message=f"models: {model_info}",
+                        latency_ms=latency,
+                    )
                 self._available = False
                 return ExecutorHealth(
                     status="error",
                     message=f"local endpoint returned {resp.status_code}",
+                    latency_ms=latency,
                 )
         except httpx.HTTPError:
             self._available = False
             self._last_check = datetime.now(UTC)
             return ExecutorHealth(status="error", message="local endpoint unreachable")
 
+    async def _ensure_available(self) -> bool:
+        """Re-check health if stale, return availability."""
+        if self._available is False and self._health_stale():
+            await self.health()
+        return self._available is not False
+
     async def execute(self, task: TaskRecord) -> TaskOutcome:
-        if self._available is False:
+        if not await self._ensure_available():
             return TaskOutcome(
                 status=TaskStatus.FAILED,
                 error="local executor unavailable",
@@ -109,4 +149,19 @@ class LocalExecutor:
         return await self._inner.execute(task)
 
     async def review(self, request: ReviewRequest) -> ReviewResult:
+        if not await self._ensure_available():
+            from vos.agentcore.reviewkit.models import ReviewFinding, ReviewVerdict, Severity
+            from vos.agentcore.reviewkit.models import ReviewResult as RR
+
+            return RR(
+                request_id=request.review_id,
+                verdict=ReviewVerdict.REQUEST_CHANGES,
+                findings=[
+                    ReviewFinding(
+                        description="Local executor unavailable",
+                        severity=Severity.ERROR,
+                    )
+                ],
+                summary="Local executor unavailable — retry with cloud",
+            )
         return await self._inner.review(request)
