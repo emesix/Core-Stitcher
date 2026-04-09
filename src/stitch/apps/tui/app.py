@@ -3,13 +3,20 @@
 from __future__ import annotations
 
 import argparse
+import os
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 
 from stitch.apps.tui.layout import ThreeZoneLayout
+from stitch.apps.tui.panes.sidebar import Sidebar
+from stitch.apps.tui.screens.device_detail import DeviceDetailScreen
+from stitch.apps.tui.screens.device_list import DeviceListScreen
+from stitch.apps.tui.screens.run_detail import RunDetailScreen
 from stitch.apps.tui.state import AppState
 from stitch.apps.tui.theme import THEMES
+from stitch.sdk.client import StitchClient
+from stitch.sdk.config import Profile, load_config
 
 
 class StitchTUI(App):
@@ -36,11 +43,85 @@ class StitchTUI(App):
         self._profile = profile
         self._theme_name = theme_name
         self._no_animation = no_animation
+        self._client: StitchClient | None = None
         self.app_state = AppState()
         self.app_state.profile = profile
 
     def compose(self) -> ComposeResult:
         yield ThreeZoneLayout(profile=self._profile)
+
+    async def on_mount(self) -> None:
+        """Connect SDK client from config (STITCH_SERVER env > profile.server)."""
+        profile = self._resolve_profile()
+        if profile is None:
+            self.notify("No server configured", severity="warning")
+            return
+
+        try:
+            self._client = StitchClient(profile)
+            self.app_state.connected = True
+            self.app_state.server = profile.server
+            top_bar = self.query_one("#top-bar")
+            top_bar.set_connection(connected=True, server=profile.server)
+            await self._load_device_list()
+        except Exception as exc:
+            self.notify(f"Connection failed: {exc}", severity="error")
+
+    def _resolve_profile(self) -> Profile | None:
+        """Resolve server profile from env var or config file."""
+        env_server = os.environ.get("STITCH_SERVER")
+        if env_server:
+            return Profile(server=env_server)
+        try:
+            config = load_config()
+            return config.resolve_profile(self._profile)
+        except (KeyError, FileNotFoundError):
+            return None
+
+    async def navigate_to(self, resource_type: str, resource_id: str) -> None:
+        """Navigate center workspace to a resource detail view."""
+        self.app_state.navigate(f"stitch:/{resource_type}/{resource_id}")
+
+        if self._client is None:
+            self.notify("Not connected to server", severity="warning")
+            return
+
+        try:
+            if resource_type == "device":
+                result = await self._client.query("device", "get", resource_id=resource_id)
+                device = result.items[0] if result.items else {}
+                neighbors_result = await self._client.query(
+                    "device", "neighbors", resource_id=resource_id
+                )
+                await self._replace_center(
+                    DeviceDetailScreen(device=device, neighbors=neighbors_result.items)
+                )
+            elif resource_type == "run":
+                result = await self._client.query("run", "get", resource_id=resource_id)
+                run = result.items[0] if result.items else {}
+                await self._replace_center(RunDetailScreen(run=run))
+        except Exception as exc:
+            self.notify(f"Navigation failed: {exc}", severity="error")
+
+    async def _replace_center(self, new_widget) -> None:
+        """Replace the center workspace content."""
+        old = self.query_one("#center")
+        parent = old.parent
+        await old.remove()
+        await parent.mount(new_widget)
+
+    async def _load_device_list(self) -> None:
+        """Fetch devices and update sidebar + center."""
+        if self._client is None:
+            return
+        try:
+            result = await self._client.query("device", "list")
+            devices = result.items
+            sidebar = self.query_one(Sidebar)
+            sidebar.update_devices(devices)
+            await self._replace_center(DeviceListScreen(items=devices))
+        except Exception as exc:
+            self.notify(f"Failed to load devices: {exc}", severity="error")
 
     def action_toggle_sidebar(self) -> None:
         sidebar = self.query_one("#sidebar")

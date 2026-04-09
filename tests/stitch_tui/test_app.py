@@ -41,6 +41,17 @@ def test_app_theme_selection():
     assert app._theme_name == "light"
 
 
+def test_app_client_initially_none():
+    app = StitchTUI()
+    assert app._client is None
+
+
+def test_app_has_navigate_to():
+    app = StitchTUI()
+    assert hasattr(app, "navigate_to")
+    assert callable(app.navigate_to)
+
+
 @pytest.mark.asyncio
 async def test_app_mounts_zones():
     app = StitchTUI()
@@ -50,6 +61,26 @@ async def test_app_mounts_zones():
         assert app.query_one("#center") is not None
         assert app.query_one("#bottom-panel") is not None
         assert app.query_one("#footer") is not None
+
+
+@pytest.mark.asyncio
+async def test_app_starts_without_server():
+    """App should start gracefully when no server is configured."""
+    app = StitchTUI()
+    async with app.run_test() as _pilot:
+        assert app._client is None
+        assert app.app_state.connected is False
+        # Welcome screen should still be visible
+        assert app.query_one("#center") is not None
+
+
+@pytest.mark.asyncio
+async def test_navigate_to_updates_state():
+    """navigate_to should update history even without a client."""
+    app = StitchTUI()
+    async with app.run_test() as _pilot:
+        await app.navigate_to("device", "switch-01")
+        assert app.app_state.current_uri == "stitch:/device/switch-01"
 
 
 @pytest.mark.asyncio
