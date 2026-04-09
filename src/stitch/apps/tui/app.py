@@ -15,6 +15,7 @@ from stitch.apps.tui.screens.device_list import DeviceListScreen
 from stitch.apps.tui.screens.run_detail import RunDetailScreen
 from stitch.apps.tui.state import AppState
 from stitch.apps.tui.theme import THEMES
+from stitch.apps.tui.widgets.command_palette import CommandPalette
 from stitch.sdk.client import StitchClient
 from stitch.sdk.config import Profile, load_config
 
@@ -27,10 +28,13 @@ class StitchTUI(App):
 
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit", priority=True),
+        Binding("ctrl+p", "command_palette", "Command palette"),
         Binding("ctrl+e", "toggle_sidebar", "Toggle sidebar"),
         Binding("ctrl+b", "toggle_bottom", "Toggle bottom panel"),
         Binding("tab", "focus_next", "Next pane"),
         Binding("shift+tab", "focus_previous", "Previous pane"),
+        Binding("r", "refresh", "Refresh", show=False),
+        Binding("question_mark", "help", "Help", show=False),
     ]
 
     def __init__(
@@ -132,6 +136,18 @@ class StitchTUI(App):
         panel = self.query_one("#bottom-panel")
         panel.display = not panel.display
         self.app_state.bottom_visible = panel.display
+
+    def action_command_palette(self) -> None:
+        self.push_screen(CommandPalette())
+
+    async def action_refresh(self) -> None:
+        await self._load_device_list()
+
+    def action_help(self) -> None:
+        bindings = "\n".join(
+            f"  {b.key:<16} {b.description}" for b in self.BINDINGS if b.description
+        )
+        self.notify(f"Keybindings:\n{bindings}", timeout=8)
 
 
 def _build_app(
