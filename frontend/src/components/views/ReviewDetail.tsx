@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useRun, useReviewApprove, useReviewReject } from '../../api/hooks'
 import { StatusBadge } from '../common/StatusBadge'
 import type { ReviewFinding } from '../../types'
@@ -98,7 +99,7 @@ export function ReviewDetail({ reviewId }: Props) {
         )}
       </div>
 
-      <a href="#/runs" className="back-link">&larr; Back to runs</a>
+      <Link to="/runs" className="back-link">&larr; Back to runs</Link>
     </div>
   )
 }

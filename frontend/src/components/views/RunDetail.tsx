@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useRun } from '../../api/hooks'
 import { StatusBadge } from '../common/StatusBadge'
 
@@ -53,7 +54,7 @@ export function RunDetail({ runId }: Props) {
       )}
 
       <div className="actions" style={{ marginTop: '1rem' }}>
-        <a href="#/runs" className="back-link">&larr; Back to runs</a>
+        <Link to="/runs" className="back-link">&larr; Back to runs</Link>
       </div>
     </div>
   )

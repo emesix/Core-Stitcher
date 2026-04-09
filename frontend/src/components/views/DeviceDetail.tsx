@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useDevice, useDeviceNeighbors } from '../../api/hooks'
 
 interface Props { deviceId: string }
@@ -45,7 +46,11 @@ export function DeviceDetail({ deviceId }: Props) {
             <tbody>
               {neighbors.map((n, i) => (
                 <tr key={i}>
-                  <td><a href={`#/devices/${n.device}`}>{n.device}</a></td>
+                  <td>
+                    <Link to="/devices/$deviceId" params={{ deviceId: n.device }}>
+                      {n.device}
+                    </Link>
+                  </td>
                   <td>{n.local_port}</td>
                   <td>{n.remote_port}</td>
                 </tr>
@@ -55,7 +60,7 @@ export function DeviceDetail({ deviceId }: Props) {
         </>
       ) : null}
 
-      <p className="back-link"><a href="#/devices">&larr; Back to devices</a></p>
+      <p className="back-link"><Link to="/devices">&larr; Back to devices</Link></p>
     </div>
   )
 }

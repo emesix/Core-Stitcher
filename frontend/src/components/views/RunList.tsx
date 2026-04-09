@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useRuns } from '../../api/hooks'
 import { StatusBadge } from '../common/StatusBadge'
 
@@ -17,7 +18,11 @@ export function RunList() {
         <tbody>
           {runs.map(run => (
             <tr key={run.run_id}>
-              <td><a href={`#/runs/${run.run_id}`}>{run.run_id}</a></td>
+              <td>
+                <Link to="/runs/$runId" params={{ runId: run.run_id }}>
+                  {run.run_id}
+                </Link>
+              </td>
               <td><StatusBadge status={run.status} /></td>
               <td>{run.description}</td>
             </tr>

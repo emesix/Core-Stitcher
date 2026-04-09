@@ -1,18 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Outlet } from '@tanstack/react-router'
 import { ActivityBar } from './ActivityBar'
 import { Sidebar } from './Sidebar'
 import { BottomPanel } from './BottomPanel'
 import { StatusBar } from './StatusBar'
+import { CommandPalette } from '../common/CommandPalette'
 import '../../styles/theme.css'
 import './Layout.css'
 
-interface LayoutProps {
-  children: React.ReactNode
-}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout() {
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const [bottomVisible, setBottomVisible] = useState(true)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'p') {
+        e.preventDefault()
+        setPaletteOpen(v => !v)
+      }
+      if (e.ctrlKey && e.key === 'e') {
+        e.preventDefault()
+        setSidebarVisible(v => !v)
+      }
+      if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault()
+        setBottomVisible(v => !v)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   return (
     <div className="layout">
@@ -24,7 +42,7 @@ export function Layout({ children }: LayoutProps) {
         />
         {sidebarVisible && <Sidebar />}
         <div className="layout-main">
-          <div className="layout-center">{children}</div>
+          <div className="layout-center"><Outlet /></div>
           {bottomVisible && <BottomPanel />}
         </div>
       </div>
@@ -32,6 +50,7 @@ export function Layout({ children }: LayoutProps) {
         <span>Ctrl+E: sidebar · Ctrl+B: panel · Ctrl+P: palette</span>
         <span>Stitch WebUI</span>
       </div>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   )
 }

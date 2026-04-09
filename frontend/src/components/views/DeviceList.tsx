@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { useDevices } from '../../api/hooks'
 
 export function DeviceList() {
@@ -17,7 +18,11 @@ export function DeviceList() {
         <tbody>
           {devices.map(dev => (
             <tr key={dev.id || dev.name}>
-              <td><a href={`#/devices/${dev.id || dev.name}`}>{dev.name}</a></td>
+              <td>
+                <Link to="/devices/$deviceId" params={{ deviceId: dev.id || dev.name }}>
+                  {dev.name}
+                </Link>
+              </td>
               <td>{dev.type}</td>
               <td>{dev.model || '-'}</td>
               <td>{dev.management_ip || '-'}</td>
