@@ -98,6 +98,10 @@ def _root(
 system_app = typer.Typer(name="system", help="System information and diagnostics.")
 app.add_typer(system_app)
 
+from stitch.apps.operator.device import device_app  # noqa: E402
+
+app.add_typer(device_app)
+
 
 @system_app.command("version")
 def system_version() -> None:
