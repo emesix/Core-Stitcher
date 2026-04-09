@@ -67,6 +67,7 @@ select = ["E", "W", "F", "I", "UP", "B", "SIM", "TCH"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["TCH003", "B017"]
 "src/stitch/modelkit/**" = ["TCH001", "TCH003"]
+"src/stitch/apps/operator/app.py" = ["TCH001", "TCH003"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["stitch_workbench", "stitch"]
