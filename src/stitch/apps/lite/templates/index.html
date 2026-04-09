@@ -1,8 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head><title>{{ title }}</title></head>
-<body>
-  <h1>Stitch Lite</h1>
-  <p>Operator console ready.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h1>Operator Console</h1>
+<div class="card">
+    <p>Stitch Lite — minimal HTML operator interface.</p>
+    <p style="margin-top: 0.5rem; color: var(--text-dim);">Select a section from the navigation.</p>
+</div>
+{% endblock %}

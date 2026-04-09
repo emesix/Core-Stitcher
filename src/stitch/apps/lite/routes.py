@@ -12,8 +12,6 @@ def create_routes() -> APIRouter:
     @router.get("/", response_class=HTMLResponse)
     async def index(request: Request) -> HTMLResponse:
         templates = request.app.state.templates
-        return templates.TemplateResponse(
-            "index.html", {"request": request, "title": "Stitch Lite"}
-        )
+        return templates.TemplateResponse(request, "index.html")
 
     return router
