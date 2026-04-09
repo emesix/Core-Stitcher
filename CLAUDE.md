@@ -34,38 +34,38 @@ Stitcher apps are behavior templates loaded onto the backbone.
 
 ## Package Structure
 ### Spine
-- `src/vos_workbench/` — runtime spine (unchanged, do NOT rename)
-- `src/vos_workbench/sdk/` — public SDK for modules (the ONLY allowed spine import surface)
+- `src/stitch_workbench/` — runtime spine
+- `src/stitch_workbench/sdk/` — public SDK for modules (the ONLY allowed spine import surface)
 
 ### Topology Domain (network-stitcher)
-- `src/vos/` — implicit namespace package (NO __init__.py here)
-- `src/vos/contractkit/` — module interaction protocols (no logic, no domain objects)
-- `src/vos/modelkit/` — domain data types (Device, Port, Link, VLAN, etc.)
-- `src/vos/graphkit/` — graph traversal
-- `src/vos/storekit/` — topology serialization
-- `src/vos/{switchcraft,opnsensecraft,proxmoxcraft}/` — adapter modules
-- `src/vos/{collectkit,verifykit,tracekit,interfacekit}/` — engine modules
-- `src/vos/apps/preflight/` — preflight workflow app shell
-- `src/vos/apps/explorer/` — topology explorer app shell
+- `src/stitch/` — implicit namespace package (NO __init__.py here)
+- `src/stitch/contractkit/` — module interaction protocols (no logic, no domain objects)
+- `src/stitch/modelkit/` — domain data types (Device, Port, Link, VLAN, etc.)
+- `src/stitch/graphkit/` — graph traversal
+- `src/stitch/storekit/` — topology serialization
+- `src/stitch/{switchcraft,opnsensecraft,proxmoxcraft}/` — adapter modules
+- `src/stitch/{collectkit,verifykit,tracekit,interfacekit}/` — engine modules
+- `src/stitch/apps/preflight/` — preflight workflow app shell
+- `src/stitch/apps/explorer/` — topology explorer app shell
 
 ### AI Orchestrator (project-stitcher)
-- `src/vos/agentcore/` — orchestration core
-- `src/vos/agentcore/taskkit/` — task models
-- `src/vos/agentcore/executorkit/` — executor protocol + implementations (mock, openai, topology, local)
-- `src/vos/agentcore/plannerkit/` — work request planning
-- `src/vos/agentcore/reviewkit/` — review models + verdicts
-- `src/vos/agentcore/storekit/` — run persistence (JSON file store)
-- `src/vos/agentcore/orchestration/` — runner, budget policy, feedback loop
-- `src/vos/agentcore/registry/` — executor registry
-- `src/vos/apps/project_stitcher/` — CLI + HTTP API app shell
+- `src/stitch/agentcore/` — orchestration core
+- `src/stitch/agentcore/taskkit/` — task models
+- `src/stitch/agentcore/executorkit/` — executor protocol + implementations (mock, openai, topology, local)
+- `src/stitch/agentcore/plannerkit/` — work request planning
+- `src/stitch/agentcore/reviewkit/` — review models + verdicts
+- `src/stitch/agentcore/storekit/` — run persistence (JSON file store)
+- `src/stitch/agentcore/orchestration/` — runner, budget policy, feedback loop
+- `src/stitch/agentcore/registry/` — executor registry
+- `src/stitch/apps/project_stitcher/` — CLI + HTTP API app shell
 
 ## Dependency Rules (HARD)
 - `contractkit` → nothing
 - Pure libraries (modelkit, graphkit, storekit) → contractkit only
-- Runtime modules → pure libraries + contractkit + vos_workbench.sdk.*
+- Runtime modules → pure libraries + contractkit + stitch_workbench.sdk.*
 - Apps → public module interfaces (contractkit protocols) + spine bootstrap
 - `agentcore` → standalone, no spine dependency (uses executorkit protocols)
-- NEVER import from vos_workbench.runtime, .storage, .events.bus, etc.
+- NEVER import from stitch_workbench.runtime, .storage, .events.bus, etc.
 - NEVER import between adapter modules (switchcraft must not import opnsensecraft)
 
 ## Architecture Rules
