@@ -63,6 +63,24 @@ class StitchClient:
         self._check_response(response)
         return response.json()
 
+    async def stream_connect(
+        self, path: str = "/ws", last_event_id: str | None = None
+    ):
+        """Connect to WebSocket stream endpoint. Returns a StreamClient."""
+        import websockets
+
+        from stitch.sdk.streaming import StreamClient
+
+        ws_url = self._profile.server.replace("http://", "ws://").replace(
+            "https://", "wss://"
+        )
+        ws_url = f"{ws_url}{path}"
+        headers = {}
+        if last_event_id:
+            headers["Last-Event-ID"] = last_event_id
+        ws = await websockets.connect(ws_url, additional_headers=headers)
+        return StreamClient(ws)
+
     def _check_response(self, response: httpx.Response) -> None:
         if response.status_code >= 400:
             try:
