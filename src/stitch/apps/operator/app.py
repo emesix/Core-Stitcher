@@ -99,14 +99,26 @@ system_app = typer.Typer(name="system", help="System information and diagnostics
 app.add_typer(system_app)
 
 from stitch.apps.operator.device import device_app  # noqa: E402
+from stitch.apps.operator.impact import impact_app  # noqa: E402
 from stitch.apps.operator.preflight import preflight_app  # noqa: E402
+from stitch.apps.operator.report import report_app  # noqa: E402
+from stitch.apps.operator.review import review_app  # noqa: E402
 from stitch.apps.operator.run_cmds import run_app  # noqa: E402
+from stitch.apps.operator.search import search_command  # noqa: E402
+from stitch.apps.operator.show import show_command  # noqa: E402
+from stitch.apps.operator.topology import topology_app  # noqa: E402
 from stitch.apps.operator.trace import trace_app  # noqa: E402
 
 app.add_typer(device_app)
+app.add_typer(impact_app)
 app.add_typer(preflight_app)
+app.add_typer(report_app)
+app.add_typer(review_app)
 app.add_typer(run_app)
+app.add_typer(topology_app)
 app.add_typer(trace_app)
+app.command("search")(search_command)
+app.command("show")(show_command)
 
 
 @system_app.command("version")
