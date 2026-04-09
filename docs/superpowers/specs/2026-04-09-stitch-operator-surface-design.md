@@ -151,7 +151,7 @@ Commands are actions that change state. Every mutation goes through a command, n
 ```python
 @dataclass
 class Command:
-    action: str                  # structured: "preflight.run", "trace.vlan.run"
+    action: str                  # structured: "preflight.run", "trace.run"
     target: str | None           # stitch URI (None for system-level commands)
     params: dict[str, Any]       # action-specific parameters
     source: CommandSource        # which client issued it
@@ -175,7 +175,7 @@ class CommandSource(StrEnum):
 
 ```
 preflight.run
-trace.vlan.run
+trace.run
 impact.preview
 run.create
 run.execute
@@ -231,7 +231,7 @@ class ExecutionMode(StrEnum):
 |---|---|---|---|
 | `device.inspect` | sync | DeviceDetail | no |
 | `preflight.run` | async | RunHandle | yes |
-| `trace.vlan.run` | sync | TraceResult | no |
+| `trace.run` | sync | TraceResult | no |
 | `impact.preview` | sync | ImpactResult | no |
 | `run.execute` | async | RunHandle | yes (continues existing) |
 | `review.request` | async | ReviewHandle | yes |
@@ -731,7 +731,7 @@ vlan            show, list                      show includes member ports
 topology        show, export, diff, diagnostics show = summary, export = full snapshot
 report          show, list, diff                generic: preflight, audit, etc.
 trace           run, show, list                 VLAN path tracing
-impact          preview, show                   change impact analysis
+impact          preview, show, list             change impact analysis
 run             create, show, list, watch,      full orchestration lifecycle
                 execute, cancel
 task            show, list                      always scoped to run
@@ -751,7 +751,7 @@ system          health, info, version           system-level queries
 | `stitch device show` | `device.show` | sync | low |
 | `stitch device inspect` | `device.inspect` | sync | low |
 | `stitch preflight run` | `preflight.run` | async | low |
-| `stitch trace run` | `trace.vlan.run` | sync | low |
+| `stitch trace run` | `trace.run` | sync | low |
 | `stitch impact preview` | `impact.preview` | sync/async | low |
 | `stitch topology diff` | `topology.diff` | sync | low |
 | `stitch run create` | `run.create` | sync | low |
@@ -765,6 +765,8 @@ system          health, info, version           system-level queries
 | `stitch topology diagnostics` | `topology.diagnostics` | sync | low |
 | `stitch report diff` | `report.diff` | sync | low |
 | `stitch search` | `search.run` | sync | low |
+
+**Default rule for unlisted actions:** All `show`, `list`, `inspect`, `health`, `info`, `version`, `diagnostics`, `export`, `validate`, `read`, and `dismiss` actions are sync, low risk, and return their corresponding resource type or result schema. Only actions that deviate from this default (async, medium/high risk, or creating runs) need explicit table entries.
 
 ### Piping and composition
 
@@ -844,7 +846,8 @@ stitch
 |
 |-- impact
 |   |-- preview --action <action> --device <id> --port <port> [--watch]
-|   +-- show <id>
+|   |-- show <id>
+|   +-- list [--filter ...]
 |
 |-- run
 |   |-- create <description> [--domain ...] [--priority ...]
@@ -1459,7 +1462,7 @@ stitch review approve rev_001A --comment "VLAN 42 issue is known, accepting"
 | Convention | Pattern |
 |---|---|
 | URI scheme | `stitch:/{type}/{id}` |
-| Action naming | `{namespace}.{verb}` for resource actions (e.g., `run.create`, `review.approve`), `{namespace}.{qualifier}.{verb}` when disambiguation needed (e.g., `trace.vlan.run`) |
+| Action naming | `{namespace}.{verb}` (e.g., `run.create`, `review.approve`, `trace.run`). `{namespace}.{qualifier}.{verb}` reserved for future disambiguation if needed. |
 | Canonical IDs | Opaque, prefixed: `dev_`, `port_`, `lnk_`, `run_`, `tsk_`, `stp_`, `rev_`, `rpt_`, `trc_`, `imp_`, `snap_`. Exceptions: VLANs use numeric IDs (`42`), modules use names (`switchcraft`), `topology/current` is a well-known alias. |
 | Error codes | `{resource}.{condition}` or `{system}.{condition}` |
 | Filter grammar | `--filter field<op>value`, ops: `= != > >= < <= ~ in` |
