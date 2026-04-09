@@ -1,0 +1,9 @@
+.layout { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+.layout-body { display: flex; flex: 1; overflow: hidden; }
+.layout-main { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.layout-center { flex: 1; overflow: auto; padding: 16px; }
+.layout-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  height: 24px; padding: 0 8px; background: var(--bg-panel);
+  color: var(--text-dim); font-size: 11px; border-top: 1px solid var(--border);
+}

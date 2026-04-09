@@ -29,3 +29,8 @@ htmlcov/
 *.db
 .superpowers/
 .worktrees/
+
+# Frontend
+node_modules/
+frontend/dist/
+bun.lock

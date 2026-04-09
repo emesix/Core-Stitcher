@@ -1,0 +1,10 @@
+.bottom-panel { height: 200px; background: var(--bg-panel); border-top: 1px solid var(--border); display: flex; flex-direction: column; }
+.bottom-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.bottom-tab {
+  padding: 4px 12px; background: none; border: none; color: var(--text-dim);
+  cursor: pointer; font-family: var(--font-mono); font-size: 12px;
+}
+.bottom-tab:hover { color: var(--text); }
+.bottom-tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+.bottom-content { flex: 1; padding: 8px 12px; overflow-y: auto; font-size: 12px; }
+.dim { color: var(--text-dim); }
