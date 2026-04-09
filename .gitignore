@@ -28,3 +28,4 @@ htmlcov/
 # Database
 *.db
 .superpowers/
+.worktrees/
