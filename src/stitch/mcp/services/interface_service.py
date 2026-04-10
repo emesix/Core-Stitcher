@@ -229,7 +229,8 @@ class InterfaceService:
         opn_host = os.environ.get("OPNSENSE_SSH_HOST", "172.16.0.1")
         opn_user = os.environ.get("OPNSENSE_SSH_USER", "root")
         opn_pass = os.environ.get("OPNSENSE_SSH_PASS", "")
-        if not opn_pass:
+        # Guard against unexpanded template vars (e.g. "${OPNSENSE_SSH_PASS}")
+        if not opn_pass or opn_pass.startswith("$"):
             # Fall back to config file
             config_path = Path.home() / ".stitch" / "ssh.json"
             if config_path.exists():
