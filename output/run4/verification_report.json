@@ -1,0 +1,713 @@
+{
+  "timestamp": "2026-04-08T18:14:52.823527Z",
+  "results": [
+    {
+      "link": "phys-opnsense-ix0-to-onti-fe",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "port_exists",
+          "port": "opnsense/ix0",
+          "expected": "ix0",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Port 'ix0' not found on device 'opnsense'",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "onti-fe/port1",
+          "expected": "port1",
+          "observed": "port1",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "opnsense/ix0",
+          "expected": "onti-fe/port1",
+          "observed": "onti-fe/port1",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "vlan_compatibility",
+          "port": "opnsense/ix0",
+          "expected": "shared VLANs with onti-fe/port1",
+          "observed": "shared: [25, 254]",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-opnsense-ix1-to-onti-be",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "port_exists",
+          "port": "opnsense/ix1",
+          "expected": "ix1",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Port 'ix1' not found on device 'opnsense'",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "onti-be/port1",
+          "expected": "port1",
+          "observed": "port1",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "opnsense/ix1",
+          "expected": "onti-be/port1",
+          "observed": "onti-be/port1",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "vlan_compatibility",
+          "port": "opnsense/ix1",
+          "expected": "shared VLANs with onti-be/port1",
+          "observed": "shared: [254]",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-91tsm-to-hx310-db",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/eth0",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "91tsm/port8",
+          "expected": "port8",
+          "observed": "port8",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "91tsm/port8",
+          "expected": "pve-hx310-db/eth0",
+          "observed": "pve-hx310-db/eth0",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "vlan_compatibility",
+          "port": "91tsm/port8",
+          "expected": "shared VLANs with pve-hx310-db/eth0",
+          "observed": "shared: [25, 254]",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-91tsm-to-hx310-arr",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/eth0",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "91tsm/port7",
+          "expected": "port7",
+          "observed": "port7",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "91tsm/port7",
+          "expected": "pve-hx310-arr/eth0",
+          "observed": "pve-hx310-arr/eth0",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "vlan_compatibility",
+          "port": "91tsm/port7",
+          "expected": "shared VLANs with pve-hx310-arr/eth0",
+          "observed": "shared: [25, 254]",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-onti-be-to-hx310-db",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/port1",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "onti-be/port7",
+          "expected": "port7",
+          "observed": "port7",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-onti-be-to-hx310-arr",
+      "link_type": "physical_cable",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/port1",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "port_exists",
+          "port": "onti-be/port8",
+          "expected": "port8",
+          "observed": "port8",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "bridge-qotom-igc1-vmbr0",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/igc1",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/vmbr0",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-qotom-1u/igc1",
+          "expected": "member of vmbr0",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'igc1' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-qotom-ix0-vmbr1",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/ix0",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/vmbr1",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-qotom-1u/ix0",
+          "expected": "member of vmbr1",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'ix0' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-qotom-ix1-vmbr2",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/ix1",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/vmbr2",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-qotom-1u/ix1",
+          "expected": "member of vmbr2",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'ix1' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-qotom-igc0-vmbr3",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/igc0",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-qotom-1u/vmbr3",
+          "expected": "pve-qotom-1u",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-qotom-1u' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-qotom-1u/igc0",
+          "expected": "member of vmbr3",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'igc0' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-hx310-db-eth0-vmbr0",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/eth0",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/vmbr0",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-hx310-db/eth0",
+          "expected": "member of vmbr0",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'eth0' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-hx310-db-eth1-vmbr1",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/port1",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-db/vmbr1",
+          "expected": "pve-hx310-db",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-db' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-hx310-db/port1",
+          "expected": "member of vmbr1",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'port1' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-hx310-arr-eth0-vmbr0",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/eth0",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/vmbr0",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-hx310-arr/eth0",
+          "expected": "member of vmbr0",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'eth0' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "bridge-hx310-arr-eth1-vmbr1",
+      "link_type": "bridge_member",
+      "status": "fail",
+      "highest_severity": "error",
+      "checks": [
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/port1",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "device_exists",
+          "port": "pve-hx310-arr/vmbr1",
+          "expected": "pve-hx310-arr",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Device 'pve-hx310-arr' not found in observed topology",
+          "category": "endpoint_missing",
+          "severity": "error"
+        },
+        {
+          "check": "bridge_membership",
+          "port": "pve-hx310-arr/port1",
+          "expected": "member of vmbr1",
+          "observed": null,
+          "source": "declared",
+          "flag": "missing",
+          "message": "Bridge member port 'port1' not found in observed topology",
+          "category": "bridge_membership_mismatch",
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "link": "phys-onti-fe-to-91tsm",
+      "link_type": "physical_cable",
+      "status": "pass",
+      "highest_severity": "info",
+      "checks": [
+        {
+          "check": "port_exists",
+          "port": "onti-fe/port2",
+          "expected": "port2",
+          "observed": "port2",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "port_exists",
+          "port": "91tsm/port1",
+          "expected": "port1",
+          "observed": "port1",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "onti-fe/port2",
+          "expected": "91tsm/port1",
+          "observed": "91tsm/port1",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "vlan_compatibility",
+          "port": "onti-fe/port2",
+          "expected": "shared VLANs with 91tsm/port1",
+          "observed": "shared: [25, 254]",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    },
+    {
+      "link": "phys-onti-fe-to-zyxel",
+      "link_type": "physical_cable",
+      "status": "pass",
+      "highest_severity": "info",
+      "checks": [
+        {
+          "check": "port_exists",
+          "port": "onti-fe/port8",
+          "expected": "port8",
+          "observed": "port8",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "port_exists",
+          "port": "zyxel-gs1900/port1",
+          "expected": "port1",
+          "observed": "port1",
+          "source": "mcp_live",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        },
+        {
+          "check": "neighbor_match",
+          "port": "onti-fe/port8",
+          "expected": "zyxel-gs1900/port1",
+          "observed": "zyxel-gs1900/port1",
+          "source": "declared",
+          "flag": "ok",
+          "message": null,
+          "category": null,
+          "severity": "info"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total": 16,
+    "pass": 2,
+    "fail": 14,
+    "warning": 0,
+    "by_category": {
+      "endpoint_missing": 22,
+      "bridge_membership_mismatch": 8
+    },
+    "by_severity": {
+      "error": 30,
+      "info": 21
+    },
+    "highlights": [
+      "14 of 16 links failed",
+      "22 endpoint missing",
+      "8 bridge membership mismatch"
+    ]
+  }
+}

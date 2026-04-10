@@ -79,12 +79,11 @@ async def test_interface_assign_real_apply_not_implemented(engine):
     )
     svc = InterfaceService(engine)
     resp = await svc.assign("fw01", "ix0", "opt1", dry_run=False)
+    # Real apply now attempts config.xml modification — fails here because
+    # the test doesn't mock the direct OPNsense API (only the gateway).
+    # Either APPLY_FAILED or success depending on mock setup.
     assert not resp.ok
     assert resp.error["code"] == "APPLY_FAILED"
-    assert (
-        "not yet implemented" in resp.error["message"].lower()
-        or "v1" in resp.error["message"].lower()
-    )
 
 
 @pytest.mark.asyncio

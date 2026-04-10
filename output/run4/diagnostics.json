@@ -1,0 +1,134 @@
+{
+  "dangling_ports": [
+    {
+      "device": "91tsm",
+      "port": "port2",
+      "reason": "No links attached"
+    },
+    {
+      "device": "91tsm",
+      "port": "port3",
+      "reason": "No links attached"
+    },
+    {
+      "device": "91tsm",
+      "port": "port4",
+      "reason": "No links attached"
+    },
+    {
+      "device": "91tsm",
+      "port": "port5",
+      "reason": "No links attached"
+    },
+    {
+      "device": "91tsm",
+      "port": "port6",
+      "reason": "No links attached"
+    },
+    {
+      "device": "91tsm",
+      "port": "port9",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-be",
+      "port": "port2",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-be",
+      "port": "port3",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-be",
+      "port": "port4",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-be",
+      "port": "port5",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-be",
+      "port": "port6",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-fe",
+      "port": "port3",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-fe",
+      "port": "port4",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-fe",
+      "port": "port5",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-fe",
+      "port": "port6",
+      "reason": "No links attached"
+    },
+    {
+      "device": "onti-fe",
+      "port": "port7",
+      "reason": "No links attached"
+    },
+    {
+      "device": "opnsense",
+      "port": "bridge0",
+      "reason": "No links attached"
+    },
+    {
+      "device": "opnsense",
+      "port": "igc0",
+      "reason": "No links attached"
+    },
+    {
+      "device": "opnsense",
+      "port": "igc1",
+      "reason": "No links attached"
+    },
+    {
+      "device": "pve-hx310-arr",
+      "port": "eth1",
+      "reason": "No links attached"
+    },
+    {
+      "device": "pve-hx310-db",
+      "port": "eth1",
+      "reason": "No links attached"
+    },
+    {
+      "device": "zyxel-gs1900",
+      "port": "port2",
+      "reason": "No links attached"
+    },
+    {
+      "device": "zyxel-gs1900",
+      "port": "port3",
+      "reason": "No links attached"
+    },
+    {
+      "device": "zyxel-gs1900",
+      "port": "sfp1",
+      "reason": "No links attached"
+    }
+  ],
+  "orphan_devices": [],
+  "missing_endpoints": [
+    "phys-onti-be-to-hx310-db: port 'pve-hx310-db/port1' not found",
+    "phys-onti-be-to-hx310-arr: port 'pve-hx310-arr/port1' not found",
+    "bridge-hx310-db-eth1-vmbr1: port 'pve-hx310-db/port1' not found",
+    "bridge-hx310-arr-eth1-vmbr1: port 'pve-hx310-arr/port1' not found"
+  ],
+  "total_devices": 8,
+  "total_ports": 50,
+  "total_links": 16
+}

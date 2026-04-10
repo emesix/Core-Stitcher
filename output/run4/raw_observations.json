@@ -1,0 +1,1433 @@
+[
+  {
+    "device": "zyxel-gs1900",
+    "port": null,
+    "field": "type",
+    "value": "switch",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536730Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": null,
+    "field": "name",
+    "value": "Zyxel GS1900-24HP",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536741Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": null,
+    "field": "reachable",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536745Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port1",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536755Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port1",
+    "field": "device_name",
+    "value": "Port1",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536757Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port1",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536760Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port1",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536763Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port2",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536767Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port2",
+    "field": "device_name",
+    "value": "Port2",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536769Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port2",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536772Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port2",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536774Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port3",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536777Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port3",
+    "field": "device_name",
+    "value": "Port3",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536779Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port3",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536781Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port3",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536783Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port4",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536785Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port4",
+    "field": "device_name",
+    "value": "Port4",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536787Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port4",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536788Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port4",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536790Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port5",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536793Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port5",
+    "field": "device_name",
+    "value": "Port5",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536800Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port5",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536802Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port5",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536803Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port6",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536805Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port6",
+    "field": "device_name",
+    "value": "Port6",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536807Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port6",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536809Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port6",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536811Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port7",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536813Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port7",
+    "field": "device_name",
+    "value": "Port7",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536819Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port7",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536821Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port7",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536822Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port8",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536825Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port8",
+    "field": "device_name",
+    "value": "Port8",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536826Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port8",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536828Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port8",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536830Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port9",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536832Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port9",
+    "field": "device_name",
+    "value": "Port9",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536834Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port9",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536836Z"
+  },
+  {
+    "device": "zyxel-gs1900",
+    "port": "port9",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536838Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": null,
+    "field": "type",
+    "value": "switch",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536872Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": null,
+    "field": "name",
+    "value": "ONTi-FE (Frontend)",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536875Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": null,
+    "field": "reachable",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536877Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port1",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536881Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port1",
+    "field": "device_name",
+    "value": "Port1",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536886Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port1",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536888Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port1",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536890Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port2",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536893Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port2",
+    "field": "device_name",
+    "value": "Port2",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536894Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port2",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536896Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port2",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536900Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port3",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536902Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port3",
+    "field": "device_name",
+    "value": "Port3",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536906Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port3",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536907Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port3",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536909Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port4",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536911Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port4",
+    "field": "device_name",
+    "value": "Port4",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536913Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port4",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536915Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port4",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536916Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port5",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536918Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port5",
+    "field": "device_name",
+    "value": "Port5",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536922Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port5",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536923Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port5",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536925Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port6",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536927Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port6",
+    "field": "device_name",
+    "value": "Port6",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536929Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port6",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536930Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port6",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536932Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port7",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536934Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port7",
+    "field": "device_name",
+    "value": "Port7",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536939Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port7",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536941Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port7",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536942Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port8",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536944Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port8",
+    "field": "device_name",
+    "value": "Port8",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536948Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port8",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536949Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port8",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536951Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port9",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536957Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port9",
+    "field": "device_name",
+    "value": "Port9",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536959Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port9",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536960Z"
+  },
+  {
+    "device": "onti-fe",
+    "port": "port9",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.536962Z"
+  },
+  {
+    "device": "onti-be",
+    "port": null,
+    "field": "type",
+    "value": "switch",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537406Z"
+  },
+  {
+    "device": "onti-be",
+    "port": null,
+    "field": "name",
+    "value": "ONTi-BE (Backend)",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537410Z"
+  },
+  {
+    "device": "onti-be",
+    "port": null,
+    "field": "reachable",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537413Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port1",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537418Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port1",
+    "field": "device_name",
+    "value": "Port1",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537424Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port1",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537426Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port1",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537428Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port2",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537432Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port2",
+    "field": "device_name",
+    "value": "Port2",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537435Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port2",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537439Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port2",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537442Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port3",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537446Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port3",
+    "field": "device_name",
+    "value": "Port3",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537450Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port3",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537451Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port3",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537453Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port4",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537456Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port4",
+    "field": "device_name",
+    "value": "Port4",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537457Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port4",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537461Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port4",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537463Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port5",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537467Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port5",
+    "field": "device_name",
+    "value": "Port5",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537470Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port5",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537472Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port5",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537474Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port6",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537475Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port6",
+    "field": "device_name",
+    "value": "Port6",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537477Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port6",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537479Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port6",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537481Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port7",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537485Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port7",
+    "field": "device_name",
+    "value": "Port7",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537486Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port7",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537488Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port7",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537489Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port8",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537491Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port8",
+    "field": "device_name",
+    "value": "Port8",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537493Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port8",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537494Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port8",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537496Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port9",
+    "field": "type",
+    "value": "sfp+",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537500Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port9",
+    "field": "device_name",
+    "value": "Port9",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537504Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port9",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537509Z"
+  },
+  {
+    "device": "onti-be",
+    "port": "port9",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537511Z"
+  },
+  {
+    "device": "91tsm",
+    "port": null,
+    "field": "type",
+    "value": "switch",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537540Z"
+  },
+  {
+    "device": "91tsm",
+    "port": null,
+    "field": "name",
+    "value": "91TSM (Copper Breakout)",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537543Z"
+  },
+  {
+    "device": "91tsm",
+    "port": null,
+    "field": "reachable",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537545Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port1",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537548Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port1",
+    "field": "device_name",
+    "value": "Port1",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537553Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port1",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537555Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port1",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537557Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port2",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537559Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port2",
+    "field": "device_name",
+    "value": "Port2",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537561Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port2",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537562Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port2",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537564Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port3",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537566Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port3",
+    "field": "device_name",
+    "value": "Port3",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537569Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port3",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537571Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port3",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537573Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port4",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537575Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port4",
+    "field": "device_name",
+    "value": "Port4",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537577Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port4",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537578Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port4",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537580Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port5",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537584Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port5",
+    "field": "device_name",
+    "value": "Port5",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537585Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port5",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537589Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port5",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537591Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port6",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537593Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port6",
+    "field": "device_name",
+    "value": "Port6",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537594Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port6",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537598Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port6",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537600Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port7",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537604Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port7",
+    "field": "device_name",
+    "value": "Port7",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537605Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port7",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537607Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port7",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537608Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port8",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537610Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port8",
+    "field": "device_name",
+    "value": "Port8",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537612Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port8",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537613Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port8",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537615Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port9",
+    "field": "type",
+    "value": "ethernet",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537619Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port9",
+    "field": "device_name",
+    "value": "Port9",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537620Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port9",
+    "field": "enabled",
+    "value": true,
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537622Z"
+  },
+  {
+    "device": "91tsm",
+    "port": "port9",
+    "field": "status",
+    "value": "unknown",
+    "source": "mcp_live",
+    "adapter": "switchcraft",
+    "timestamp": "2026-04-08T18:12:54.537624Z"
+  },
+  {
+    "device": "opnsense",
+    "port": null,
+    "field": "type",
+    "value": "firewall",
+    "source": "mcp_live",
+    "adapter": "opnsensecraft",
+    "timestamp": "2026-04-08T18:12:52.686839Z"
+  },
+  {
+    "device": "opnsense",
+    "port": null,
+    "field": "name",
+    "value": "OPNsense",
+    "source": "mcp_live",
+    "adapter": "opnsensecraft",
+    "timestamp": "2026-04-08T18:12:52.686852Z"
+  },
+  {
+    "device": "opnsense",
+    "port": null,
+    "field": "management_ip",
+    "value": "192.168.254.1",
+    "source": "mcp_live",
+    "adapter": "opnsensecraft",
+    "timestamp": "2026-04-08T18:12:52.686855Z"
+  }
+]
