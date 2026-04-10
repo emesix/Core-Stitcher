@@ -46,9 +46,7 @@ class ToolResponse:
         self.topology_path = topology_path
 
     @classmethod
-    def success(
-        cls, result: Any, summary: str, topology_path: str | None = None
-    ) -> ToolResponse:
+    def success(cls, result: Any, summary: str, topology_path: str | None = None) -> ToolResponse:
         return cls(ok=True, summary=summary, result=result, topology_path=topology_path)
 
     @classmethod

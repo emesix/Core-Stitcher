@@ -59,8 +59,7 @@ class TopologyService:
         return ToolResponse.success(
             result,
             summary=(
-                f"{len(topo.devices)} devices, {len(topo.links)} links,"
-                f" {len(topo.vlans)} VLANs"
+                f"{len(topo.devices)} devices, {len(topo.links)} links, {len(topo.vlans)} VLANs"
             ),
             topology_path=self._resolve_path(topology_path),
         )
@@ -94,9 +93,7 @@ class TopologyService:
             topology_path=self._resolve_path(topology_path),
         )
 
-    def device_detail(
-        self, device_id: str, topology_path: str | None = None
-    ) -> ToolResponse:
+    def device_detail(self, device_id: str, topology_path: str | None = None) -> ToolResponse:
         topo, err = self._load(topology_path)
         if err:
             return err
@@ -119,9 +116,7 @@ class TopologyService:
             topology_path=self._resolve_path(topology_path),
         )
 
-    def device_neighbors(
-        self, device_id: str, topology_path: str | None = None
-    ) -> ToolResponse:
+    def device_neighbors(self, device_id: str, topology_path: str | None = None) -> ToolResponse:
         topo, err = self._load(topology_path)
         if err:
             return err
