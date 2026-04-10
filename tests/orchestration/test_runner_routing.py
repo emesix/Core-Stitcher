@@ -180,6 +180,12 @@ async def test_fail_closed_blocks_execution(tmp_path: Path):
     assert summary_steps[0].status == StepStatus.SKIPPED
     assert summary_steps[0].selection.dispatch_type == "fail_closed"
 
+    # Review should also be skipped — and only ONCE (early break, not max_reviews times)
+    review_steps = [s for s in run.steps if s.kind == StepKind.AI_REVIEW]
+    assert len(review_steps) == 1
+    assert review_steps[0].status == StepStatus.SKIPPED
+    assert review_steps[0].selection.dispatch_type == "fail_closed"
+
 
 # --- Tags propagation ---
 

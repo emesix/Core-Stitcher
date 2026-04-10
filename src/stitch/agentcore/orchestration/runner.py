@@ -110,6 +110,14 @@ class RunOrchestrator:
 
                 review = await self._review(run, run_tags=run_tags, iteration=iteration)
                 if review is None:
+                    # Check if this was a fail-closed policy decision — no point retrying
+                    last_step = run.steps[-1] if run.steps else None
+                    if (
+                        last_step
+                        and last_step.selection
+                        and last_step.selection.dispatch_type == "fail_closed"
+                    ):
+                        break
                     # Review failed (executor error) — escalation decides next action
                     action = self._check_escalation("__ai_review__")
                     if action == EscalationAction.STOP:
