@@ -212,6 +212,71 @@ async def test_run_tags_propagated(tmp_path: Path):
     assert "write_path" in summary_steps[0].selection.effective_tags
 
 
+# --- Escalation ---
+
+
+async def test_reject_triggers_escalated_review(tmp_path: Path):
+    """REJECT verdict triggers escalation: re-review with escalation target."""
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo", domains=["topology"]))
+    # local-gpu rejects on review
+    reg.register(MockExecutor("local-gpu", review_verdicts=[ReviewVerdict.REJECT]))
+    # cloud-ai (escalation target) approves
+    reg.register(MockExecutor("cloud-ai", review_verdicts=[ReviewVerdict.APPROVE]))
+
+    store = JsonRunStore(tmp_path / "runs")
+    run_id = _create_run(store, description="verify", domain="topology")
+    routing = _simple_routing()
+
+    run = await RunOrchestrator(reg, store, routing=routing).orchestrate(run_id)
+
+    assert run.status == RunStatus.COMPLETED
+    review_steps = [s for s in run.steps if s.kind == StepKind.AI_REVIEW]
+    # First review: local-gpu REJECT, second review: cloud-ai APPROVE (escalated)
+    assert len(review_steps) >= 2
+    assert review_steps[0].selection.executor_id == "local-gpu"
+    assert review_steps[1].selection.executor_id == "cloud-ai"
+    assert review_steps[1].selection.dispatch_type == "escalated"
+    assert "escalated" in review_steps[1].description
+
+
+async def test_escalation_skipped_when_not_configured(tmp_path: Path):
+    """No escalation when routing rule has allow_escalation=False."""
+    routing = RoutingPolicy(
+        rules=[
+            RoutingRule(
+                step_kinds=[StepKind.AI_SUMMARY, StepKind.AI_REVIEW],
+                primary="local-gpu",
+                allow_escalation=False,  # no escalation
+            ),
+            RoutingRule(
+                step_kinds=[StepKind.CORRECTION],
+                primary="cloud-ai",
+            ),
+        ],
+    )
+
+    reg = ExecutorRegistry()
+    reg.register(MockExecutor("topo", domains=["topology"]))
+    reg.register(
+        MockExecutor(
+            "local-gpu",
+            review_verdicts=[ReviewVerdict.REQUEST_CHANGES, ReviewVerdict.APPROVE],
+        )
+    )
+    reg.register(MockExecutor("cloud-ai"))
+
+    store = JsonRunStore(tmp_path / "runs")
+    run_id = _create_run(store, description="verify", domain="topology")
+
+    run = await RunOrchestrator(reg, store, routing=routing).orchestrate(run_id)
+
+    # Should go straight to correction, no escalated review
+    review_steps = [s for s in run.steps if s.kind == StepKind.AI_REVIEW]
+    for step in review_steps:
+        assert step.selection.executor_id == "local-gpu"
+
+
 # --- No routing policy = legacy behavior ---
 
 

@@ -122,6 +122,27 @@ class RunOrchestrator:
                 if review.verdict == ReviewVerdict.APPROVE:
                     break
 
+                # Try escalation before correction: re-review with a stronger model
+                if review.verdict == ReviewVerdict.REJECT and self._routing is not None:
+                    from stitch.agentcore.orchestration.routing import EscalationTrigger
+
+                    escalated_executor, esc_sel = await self._maybe_escalate(
+                        StepKind.AI_REVIEW, run_tags, EscalationTrigger.VERDICT_REJECT
+                    )
+                    if escalated_executor is not None and self._can_use_ai_step(run):
+                        esc_review = await self._review_with_executor(
+                            run,
+                            escalated_executor,
+                            esc_sel,
+                            run_tags=run_tags,
+                            iteration=iteration,
+                        )
+                        if esc_review is not None:
+                            run.reviews.append(esc_review)
+                            if esc_review.verdict == ReviewVerdict.APPROVE:
+                                break
+                            # Escalated review also rejected — fall through to correction
+
                 # Check correction budget
                 if not self._policy.can_correct(corrections_done):
                     self._record_budget_skip(run, StepKind.CORRECTION, iteration + 1)
@@ -375,6 +396,65 @@ class RunOrchestrator:
                     kind=StepKind.AI_REVIEW,
                     status=StepStatus.FAILED,
                     description="AI review failed",
+                    selection=selection,
+                    iteration=iteration,
+                    error=str(e),
+                    started_at=started,
+                    finished_at=datetime.now(UTC),
+                )
+            )
+            return None
+
+    async def _review_with_executor(
+        self,
+        run: RunRecord,
+        executor: ExecutorProtocol,
+        selection: ExecutorSelection | None,
+        *,
+        run_tags: list[str] | None = None,
+        iteration: int = 0,
+    ):
+        """Run review using a specific (escalated) executor."""
+        started = datetime.now(UTC)
+
+        if not hasattr(executor, "review"):
+            return None
+
+        review_req = ReviewRequest(
+            plan_id=run.plan.plan_id if run.plan else None,
+            content={
+                "request": run.request.description if run.request else "",
+                "executions": [e.model_dump(mode="json") for e in run.executions],
+                "summary": run.summary,
+                "iteration": iteration,
+            },
+            criteria=["correctness", "completeness", "actionability"],
+        )
+
+        reviewer = cast("ReviewableExecutorProtocol", executor)
+        try:
+            result = await reviewer.review(review_req)
+            self._ai_steps_used += 1
+            run.steps.append(
+                StepRecord(
+                    kind=StepKind.AI_REVIEW,
+                    status=StepStatus.COMPLETED,
+                    description=f"AI review — escalated (iteration {iteration})",
+                    selection=selection,
+                    iteration=iteration,
+                    result=result.verdict,
+                    started_at=started,
+                    finished_at=datetime.now(UTC),
+                )
+            )
+            return result
+        except Exception as e:
+            self._record_executor_failure(executor.executor_id)
+            run.steps.append(
+                StepRecord(
+                    kind=StepKind.AI_REVIEW,
+                    status=StepStatus.FAILED,
+                    description="Escalated AI review failed",
                     selection=selection,
                     iteration=iteration,
                     error=str(e),
