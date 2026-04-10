@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from textual.widgets import Static
 
 _SYMBOLS: dict[str, str] = {
@@ -44,7 +46,7 @@ def status_class(status: str) -> str:
 
 
 class StatusBadge(Static):
-    def __init__(self, status: str, **kwargs: object) -> None:
+    def __init__(self, status: str, **kwargs: Any) -> None:
         self._status = status
         symbol = status_symbol(status)
         super().__init__(f"{symbol} {status.upper()}", **kwargs)

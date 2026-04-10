@@ -40,10 +40,10 @@ def create_preflight_router(workflow: PreflightWorkflowProtocol) -> APIRouter:
 
     @router.get("/topology")
     async def get_declared_topology():
-        if not hasattr(workflow, "declared_topology"):
+        declared_topology = getattr(workflow, "declared_topology", None)
+        if declared_topology is None:
             raise HTTPException(status_code=501, detail="Topology access not available")
-        snap = workflow.declared_topology
-        return snap.model_dump(mode="json")
+        return declared_topology.model_dump(mode="json")
 
     @router.post("/trace")
     async def run_trace(request: TraceRequest):

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import UUID  # noqa: TC003 (FastAPI needs UUID at runtime for path params)
 
 from fastapi import APIRouter, HTTPException
@@ -13,6 +13,7 @@ from stitch.agentcore.reviewkit import ReviewRequest
 from stitch.agentcore.storekit import RunRecord, RunStatus, TaskExecution
 
 if TYPE_CHECKING:
+    from stitch.agentcore.executorkit.protocol import ReviewableExecutorProtocol
     from stitch.agentcore.registry import ExecutorRegistry
     from stitch.agentcore.storekit import JsonRunStore
 
@@ -137,7 +138,8 @@ def create_router(
             criteria=["correctness", "completeness"],
         )
 
-        result = await reviewer.review(review_req)
+        reviewable = cast("ReviewableExecutorProtocol", reviewer)
+        result = await reviewable.review(review_req)
         run.reviews.append(result)
         run.status = RunStatus.COMPLETED
         store.save(run)

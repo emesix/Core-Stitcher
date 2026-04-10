@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from textual.containers import Vertical
 from textual.widgets import Static
 
@@ -19,7 +21,7 @@ _SEVERITY_CLASS: dict[str, str] = {
 class ReviewScreen(Vertical):
     """Center workspace showing review verdict and findings."""
 
-    def __init__(self, review: dict, **kwargs: object) -> None:
+    def __init__(self, review: dict, **kwargs: Any) -> None:
         super().__init__(id="center", **kwargs)
         self.review = review
 

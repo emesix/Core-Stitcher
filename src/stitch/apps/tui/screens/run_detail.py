@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from textual.containers import Vertical
 from textual.widgets import ProgressBar, Static
 
@@ -14,7 +16,7 @@ TASK_COLUMNS = ["task_id", "status", "description"]
 class RunDetailScreen(Vertical):
     """Center workspace showing run progress and task breakdown."""
 
-    def __init__(self, run: dict, **kwargs: object) -> None:
+    def __init__(self, run: dict, **kwargs: Any) -> None:
         super().__init__(id="center", **kwargs)
         self.run = run
 

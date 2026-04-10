@@ -42,7 +42,7 @@ class McpGatewayClient:
         arguments: dict[str, Any] | None = None,
         *,
         timeout: float = 60.0,
-    ) -> dict[str, Any] | None:
+    ) -> Any:
         """Call an MCP tool and return the parsed JSON result, or None on failure."""
         args = arguments or {}
         payload = {

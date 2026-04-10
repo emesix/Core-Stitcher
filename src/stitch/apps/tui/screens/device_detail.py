@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from textual.containers import Vertical
 from textual.widgets import Static
 
@@ -18,7 +20,7 @@ class DeviceDetailScreen(Vertical):
         self,
         device: dict,
         neighbors: list[dict] | None = None,
-        **kwargs: object,
+        **kwargs: Any,
     ) -> None:
         super().__init__(id="center", **kwargs)
         self.device = device

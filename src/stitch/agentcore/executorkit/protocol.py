@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Protocol, runtime_checkable
 from pydantic import BaseModel, Field
 
 if TYPE_CHECKING:
+    from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewResult
     from stitch.agentcore.taskkit.models import TaskOutcome, TaskRecord
 
 
@@ -43,3 +44,18 @@ class ExecutorProtocol(Protocol):
     async def execute(self, task: TaskRecord) -> TaskOutcome: ...
 
     async def health(self) -> ExecutorHealth: ...
+
+
+@runtime_checkable
+class ReviewableExecutorProtocol(ExecutorProtocol, Protocol):
+    """Executor that also supports review."""
+
+    async def review(self, request: ReviewRequest) -> ReviewResult: ...
+
+
+@runtime_checkable
+class AvailableExecutorProtocol(ExecutorProtocol, Protocol):
+    """Executor with an availability flag."""
+
+    @property
+    def available(self) -> bool: ...

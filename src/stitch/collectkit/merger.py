@@ -7,6 +7,7 @@ adapters disagree, and builds an observed TopologySnapshot.
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import Any, overload
 
 from stitch.modelkit.device import Device
 from stitch.modelkit.enums import DeviceType, PortType
@@ -122,13 +123,32 @@ def _build_devices(
     return devices
 
 
+@overload
+def _get_field[T](
+    resolved: dict[tuple[str, str | None, str], Observation],
+    device: str,
+    port: str | None,
+    field: str,
+    default: T,
+) -> T: ...
+
+
+@overload
 def _get_field(
     resolved: dict[tuple[str, str | None, str], Observation],
     device: str,
     port: str | None,
     field: str,
-    default: object = None,
-) -> object:
+) -> Any: ...
+
+
+def _get_field(
+    resolved: dict[tuple[str, str | None, str], Observation],
+    device: str,
+    port: str | None,
+    field: str,
+    default: Any = None,
+) -> Any:
     obs = resolved.get((device, port, field))
     if obs is not None:
         return obs.value

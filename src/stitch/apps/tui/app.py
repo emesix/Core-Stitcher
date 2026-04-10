@@ -10,6 +10,7 @@ from textual.binding import Binding
 
 from stitch.apps.tui.layout import ThreeZoneLayout
 from stitch.apps.tui.panes.sidebar import Sidebar
+from stitch.apps.tui.panes.top_bar import TopBar
 from stitch.apps.tui.screens.device_detail import DeviceDetailScreen
 from stitch.apps.tui.screens.device_list import DeviceListScreen
 from stitch.apps.tui.screens.run_detail import RunDetailScreen
@@ -65,7 +66,7 @@ class StitchTUI(App):
             self._client = StitchClient(profile)
             self.app_state.connected = True
             self.app_state.server = profile.server
-            top_bar = self.query_one("#top-bar")
+            top_bar = self.query_one("#top-bar", TopBar)
             top_bar.set_connection(connected=True, server=profile.server)
             await self._load_device_list()
         except Exception as exc:
@@ -109,10 +110,13 @@ class StitchTUI(App):
 
     async def _replace_center(self, new_widget) -> None:
         """Replace the center workspace content."""
+        from textual.widget import Widget
+
         old = self.query_one("#center")
         parent = old.parent
         await old.remove()
-        await parent.mount(new_widget)
+        if parent is not None and isinstance(parent, Widget):
+            await parent.mount(new_widget)
 
     async def _load_device_list(self) -> None:
         """Fetch devices and update sidebar + center."""
@@ -145,7 +149,9 @@ class StitchTUI(App):
 
     def action_help(self) -> None:
         bindings = "\n".join(
-            f"  {b.key:<16} {b.description}" for b in self.BINDINGS if b.description
+            f"  {b.key:<16} {b.description}"
+            for b in self.BINDINGS
+            if isinstance(b, Binding) and b.description
         )
         self.notify(f"Keybindings:\n{bindings}", timeout=8)
 

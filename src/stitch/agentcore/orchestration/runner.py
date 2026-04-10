@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from stitch.agentcore.orchestration.budget import BudgetPolicy, EscalationAction
 from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
@@ -26,7 +26,10 @@ from stitch.agentcore.storekit.models import (
 from stitch.agentcore.taskkit.models import TaskRecord, TaskStatus
 
 if TYPE_CHECKING:
-    from stitch.agentcore.executorkit.protocol import ExecutorProtocol
+    from stitch.agentcore.executorkit.protocol import (
+        ExecutorProtocol,
+        ReviewableExecutorProtocol,
+    )
     from stitch.agentcore.registry.executor_registry import ExecutorRegistry
     from stitch.agentcore.storekit.json_store import JsonRunStore
     from stitch.agentcore.storekit.models import RunRecord
@@ -140,6 +143,7 @@ class RunOrchestrator:
 
     async def _execute_domain_tasks(self, run: RunRecord) -> list[TaskExecution]:
         executions: list[TaskExecution] = []
+        assert run.plan is not None
 
         for task in run.plan.execution_order():
             started = datetime.now(UTC)
@@ -242,7 +246,9 @@ class RunOrchestrator:
             return None
 
         results_text = "\n".join(
-            f"- {e.description}: {json.dumps(e.outcome.result)}" for e in domain_results
+            f"- {e.description}: {json.dumps(e.outcome.result)}"
+            for e in domain_results
+            if e.outcome is not None
         )
         summary_task = TaskRecord(
             description=f"Summarize these domain results:\n{results_text}",
@@ -322,8 +328,9 @@ class RunOrchestrator:
             criteria=["correctness", "completeness", "actionability"],
         )
 
+        reviewer = cast("ReviewableExecutorProtocol", ai_executor)
         try:
-            result = await ai_executor.review(review_req)
+            result = await reviewer.review(review_req)
             self._ai_steps_used += 1
             run.steps.append(
                 StepRecord(
@@ -486,7 +493,9 @@ class RunOrchestrator:
         if self._policy.prefer_local:
             local = [e for e in pool if "local" in e.capability.tags]
             available_local = [
-                e for e in local if not hasattr(e, "available") or e.available is not False
+                e
+                for e in local
+                if not hasattr(e, "available") or e.available is not False  # type: ignore[attr-defined]
             ]
             if available_local:
                 return available_local[0]

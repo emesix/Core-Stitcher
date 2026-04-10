@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
     from stitch_workbench.config.models import ModuleConfig, WorkbenchConfig
     from stitch_workbench.events.models import VosEvent
+    from stitch_workbench.sdk.module_type import ModuleType
 
 logger = structlog.get_logger()
 
@@ -57,7 +58,7 @@ class Runtime:
         self._startup_plan: StartupPlan | None = None
         self._booted = False
 
-        self._module_instances: dict[str, object] = {}  # name → started instance
+        self._module_instances: dict[str, ModuleType] = {}  # name → started instance
 
         self.event_bus = EventBus()
         self.registry = ModuleTypeRegistry()
@@ -376,7 +377,7 @@ class Runtime:
         """
         self._resolver.register(instance, instance_id=instance_id, name=name)
 
-    def get_instance(self, name: str) -> object | None:
+    def get_instance(self, name: str) -> ModuleType | None:
         return self._module_instances.get(name)
 
     async def get_module_health(self) -> dict:
