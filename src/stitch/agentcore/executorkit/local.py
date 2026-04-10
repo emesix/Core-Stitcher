@@ -37,14 +37,16 @@ LOCAL_EXECUTOR_URL_ENV = "LOCAL_EXECUTOR_URL"
 class LocalExecutorConfig(BaseModel):
     """Configuration for a local inference executor."""
 
-    base_url: str = "http://192.168.254.50:11434/v1"
-    model: str = "llama3.2"
-    executor_id: str = "local-a770"
+    base_url: str = "http://172.16.0.109:8000"
+    api_path: str = "/v3/chat/completions"
+    models_path: str | None = None
+    model: str = "Qwen2.5-7B-Instruct-INT4"
+    executor_id: str = "local-gpu"
     timeout: float = 120.0
     max_tokens: int = 4096
     temperature: float = 0.0
     tier: ExecutorTier = ExecutorTier.LOCAL
-    tags: list[str] = Field(default_factory=lambda: ["local", "a770"])
+    tags: list[str] = Field(default_factory=lambda: ["local", "a770", "gpu"])
     health_ttl: float = 60.0
 
 
@@ -58,6 +60,8 @@ class LocalExecutor:
         self._inner = OpenAICompatibleExecutor(
             OpenAIExecutorConfig(
                 base_url=effective_url,
+                api_path=self._config.api_path,
+                models_path=self._config.models_path,
                 model=self._config.model,
                 api_key_env="__LOCAL_NO_KEY__",
                 timeout=self._config.timeout,
@@ -103,36 +107,52 @@ class LocalExecutor:
         return elapsed > self._config.health_ttl
 
     async def health(self) -> ExecutorHealth:
-        try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                resp = await client.get(f"{self._effective_url}/models")
-                self._last_check = datetime.now(UTC)
-                try:
-                    latency = resp.elapsed.total_seconds() * 1000
-                except RuntimeError:
-                    latency = None
-                if resp.status_code == 200:
-                    self._available = True
-                    data = resp.json()
-                    self._loaded_models = [
-                        m.get("id", "") for m in data.get("data", data.get("models", []))
-                    ]
-                    model_info = ", ".join(self._loaded_models) if self._loaded_models else "none"
+        self._last_check = datetime.now(UTC)
+
+        if self._config.models_path is not None:
+            # Full HTTP health probe via models endpoint
+            try:
+                async with httpx.AsyncClient(timeout=5.0) as client:
+                    resp = await client.get(
+                        f"{self._effective_url}{self._config.models_path}"
+                    )
+                    try:
+                        latency = resp.elapsed.total_seconds() * 1000
+                    except RuntimeError:
+                        latency = None
+                    if resp.status_code == 200:
+                        self._available = True
+                        data = resp.json()
+                        self._loaded_models = [
+                            m.get("id", "")
+                            for m in data.get("data", data.get("models", []))
+                        ]
+                        model_info = (
+                            ", ".join(self._loaded_models)
+                            if self._loaded_models
+                            else "none"
+                        )
+                        return ExecutorHealth(
+                            status="ok",
+                            message=f"models: {model_info}",
+                            latency_ms=latency,
+                        )
+                    self._available = False
                     return ExecutorHealth(
-                        status="ok",
-                        message=f"models: {model_info}",
+                        status="error",
+                        message=f"local endpoint returned {resp.status_code}",
                         latency_ms=latency,
                     )
+            except httpx.HTTPError:
                 self._available = False
                 return ExecutorHealth(
-                    status="error",
-                    message=f"local endpoint returned {resp.status_code}",
-                    latency_ms=latency,
+                    status="error", message="local endpoint unreachable"
                 )
-        except httpx.HTTPError:
-            self._available = False
-            self._last_check = datetime.now(UTC)
-            return ExecutorHealth(status="error", message="local endpoint unreachable")
+
+        # TCP-only health probe (models_path is None — e.g. OVMS)
+        h = await self._inner._health_tcp()
+        self._available = h.status == "ok"
+        return h
 
     async def _ensure_available(self) -> bool:
         """Re-check health if stale, return availability."""

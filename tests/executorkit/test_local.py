@@ -22,7 +22,12 @@ if TYPE_CHECKING:
 
 
 def _config(**overrides) -> LocalExecutorConfig:
-    return LocalExecutorConfig(base_url="http://fake-local:11434/v1", **overrides)
+    defaults = {
+        "base_url": "http://fake-local:11434",
+        "api_path": "/v1/chat/completions",
+        "models_path": "/v1/models",
+    }
+    return LocalExecutorConfig(**(defaults | overrides))
 
 
 def _patch_local(status_code: int = 200):

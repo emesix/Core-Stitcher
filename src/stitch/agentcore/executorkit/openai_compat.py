@@ -32,7 +32,9 @@ if TYPE_CHECKING:
 class OpenAIExecutorConfig(BaseModel):
     """Configuration for an OpenAI-compatible executor."""
 
-    base_url: str = "https://api.openai.com/v1"
+    base_url: str = "https://api.openai.com"
+    api_path: str = "/v1/chat/completions"
+    models_path: str | None = "/v1/models"
     model: str = "gpt-4o-mini"
     api_key_env: str = "OPENAI_API_KEY"
     timeout: float = 60.0
@@ -78,10 +80,13 @@ class OpenAICompatibleExecutor:
                 message=f"API key not set ({self._config.api_key_env})",
             )
 
+        if self._config.models_path is None:
+            return await self._health_tcp()
+
         try:
             async with httpx.AsyncClient(timeout=10.0) as client:
                 resp = await client.get(
-                    f"{self._config.base_url}/models",
+                    f"{self._config.base_url}{self._config.models_path}",
                     headers=self._headers(),
                 )
                 if resp.status_code == 200:
@@ -96,6 +101,26 @@ class OpenAICompatibleExecutor:
                 )
         except httpx.HTTPError as e:
             return ExecutorHealth(status="error", message=str(e))
+
+    async def _health_tcp(self) -> ExecutorHealth:
+        """TCP-only health probe — avoids burning inference tokens."""
+        import asyncio
+        from urllib.parse import urlparse
+
+        parsed = urlparse(self._config.base_url)
+        host = parsed.hostname or "localhost"
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+
+        try:
+            _, writer = await asyncio.wait_for(
+                asyncio.open_connection(host, port),
+                timeout=5.0,
+            )
+            writer.close()
+            await writer.wait_closed()
+            return ExecutorHealth(status="ok", message="tcp connect ok")
+        except (OSError, TimeoutError) as e:
+            return ExecutorHealth(status="error", message=f"tcp connect failed: {e}")
 
     async def execute(self, task: TaskRecord) -> TaskOutcome:
         started = datetime.now(UTC)
@@ -149,7 +174,7 @@ class OpenAICompatibleExecutor:
 
         async with httpx.AsyncClient(timeout=self._config.timeout) as client:
             resp = await client.post(
-                f"{self._config.base_url}/chat/completions",
+                f"{self._config.base_url}{self._config.api_path}",
                 headers=self._headers(),
                 json=payload,
             )
