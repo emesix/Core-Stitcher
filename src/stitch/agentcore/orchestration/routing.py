@@ -9,12 +9,10 @@ Routing is config-driven, not LLM-driven. Precedence:
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
 
-if TYPE_CHECKING:
-    from stitch.agentcore.storekit.models import StepKind
+from stitch.agentcore.storekit.models import StepKind  # noqa: TC001  # Pydantic needs at runtime
 
 
 class EscalationTrigger(StrEnum):
