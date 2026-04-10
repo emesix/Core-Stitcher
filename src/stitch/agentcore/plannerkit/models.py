@@ -27,6 +27,7 @@ class WorkRequest(BaseModel):
     priority: TaskPriority = TaskPriority.NORMAL
     subtasks: list[SubtaskSpec] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+    tags: list[str] = Field(default_factory=list)
 
 
 class PlannedTask(BaseModel):
@@ -38,6 +39,7 @@ class PlannedTask(BaseModel):
     priority: TaskPriority = TaskPriority.NORMAL
     depends_on: list[UUID] = Field(default_factory=list)
     is_root: bool = False
+    tags: list[str] = Field(default_factory=list)
 
 
 class PlanRecord(BaseModel):

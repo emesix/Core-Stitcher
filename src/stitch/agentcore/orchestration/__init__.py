@@ -8,13 +8,23 @@ from stitch.agentcore.orchestration.policy import (
     StepRecord,
     StepStatus,
 )
+from stitch.agentcore.orchestration.routing import (
+    EscalationTrigger,
+    RoutingDecision,
+    RoutingPolicy,
+    RoutingRule,
+)
 from stitch.agentcore.orchestration.runner import RunOrchestrator
 
 __all__ = [
     "BudgetPolicy",
     "EscalationAction",
+    "EscalationTrigger",
     "ExecutorSelection",
     "ExecutorTier",
+    "RoutingDecision",
+    "RoutingPolicy",
+    "RoutingRule",
     "RunOrchestrator",
     "SelectionReason",
     "StepKind",

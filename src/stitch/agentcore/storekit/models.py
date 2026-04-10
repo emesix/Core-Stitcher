@@ -21,6 +21,7 @@ class StepKind(StrEnum):
     AI_SUMMARY = "ai_summary"
     AI_REVIEW = "ai_review"
     CORRECTION = "correction"
+    COMPUTE_TASK = "compute_task"
 
 
 class StepStatus(StrEnum):
@@ -46,6 +47,9 @@ class ExecutorSelection(BaseModel, frozen=True):
     reason: SelectionReason
     candidates_considered: int = 0
     domain_matches: int = 0
+    matched_rule: int | None = None
+    dispatch_type: str | None = None
+    effective_tags: list[str] = Field(default_factory=list)
 
 
 class StepRecord(BaseModel):

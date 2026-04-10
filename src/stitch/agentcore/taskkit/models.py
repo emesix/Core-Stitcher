@@ -52,6 +52,7 @@ class TaskRecord(BaseModel):
     created_at: datetime = Field(default_factory=_utcnow)
     metadata: dict[str, Any] = Field(default_factory=dict)
     outcome: TaskOutcome | None = None
+    tags: list[str] = Field(default_factory=list)
 
     def is_terminal(self) -> bool:
         return self.status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED)
