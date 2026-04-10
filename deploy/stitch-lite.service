@@ -1,0 +1,16 @@
+[Unit]
+Description=Stitch Lite HTML UI
+After=stitch-backend.service
+Requires=stitch-backend.service
+
+[Service]
+Type=simple
+User=stitch
+WorkingDirectory=/opt/stitch
+ExecStart=/opt/stitch/.venv/bin/python -m stitch.apps.lite.app --host 0.0.0.0 --port 8080
+Restart=always
+RestartSec=5
+Environment=STITCH_SERVER=http://127.0.0.1:8000
+
+[Install]
+WantedBy=multi-user.target

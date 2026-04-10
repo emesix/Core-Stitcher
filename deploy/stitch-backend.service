@@ -1,0 +1,15 @@
+[Unit]
+Description=Stitch Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=stitch
+WorkingDirectory=/opt/stitch
+ExecStart=/opt/stitch/.venv/bin/uvicorn stitch_workbench.api.app:create_app --host 0.0.0.0 --port 8000 --factory
+Restart=always
+RestartSec=5
+Environment=STITCH_DB_URL=sqlite:///opt/stitch/data/stitch.db
+
+[Install]
+WantedBy=multi-user.target
