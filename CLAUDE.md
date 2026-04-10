@@ -7,7 +7,9 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - **project-stitcher**: AI orchestration (plan → execute → review → correct)
 
 ## Authority
-`docs/superpowers/specs/2026-04-07-ruggensgraat-architecture-design.md` is the authoritative architecture spec for the topology domain.
+- `docs/superpowers/specs/2026-04-07-ruggensgraat-architecture-design.md` — topology domain architecture
+- `docs/superpowers/specs/2026-04-10-stitch-mcp-server-design.md` — MCP server (9+3 tools)
+- `docs/specs/2026-04-10-core-stitcher-planning-after-claude-code-ga.md` — strategic direction
 
 ## Commands
 - **Lint:** `uv run ruff check src/ tests/`
@@ -59,6 +61,25 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - `src/stitch/agentcore/registry/` — executor registry
 - `src/stitch/apps/project_stitcher/` — CLI + HTTP API app shell
 
+### Operator Layer
+- `src/stitch/core/` — shared types (Resource, Command, Query, Filter, Stream, Lifecycle, errors)
+- `src/stitch/sdk/` — API client, stream client, config/auth
+- `src/stitch/mcp/` — MCP server (12 tools: topology, trace, impact, preflight, interface, snapshots)
+- `src/stitch/mcp/tools/` — thin tool wrappers (FastMCP decorators)
+- `src/stitch/mcp/services/` — use-case orchestration (preflight, topology, interface, snapshot)
+- `src/stitch/apps/operator/` — CLI (Typer, 11 command groups)
+- `src/stitch/apps/tui/` — Terminal UI (Textual, 3-zone layout)
+- `src/stitch/apps/lite/` — Minimal HTML UI (FastAPI + Jinja2)
+- `frontend/` — React WebUI (TypeScript, TanStack Router/Query)
+- `frontend/src-tauri/` — Desktop wrapper (Tauri v2)
+
+### Claude Code Extensions
+- `.mcp.json` — project-scoped MCP server config (stitch stdio server)
+- `.claude/settings.json` — hooks registration
+- `.claude/hooks/` — pre-tool-use safety, post-tool-use audit, stop session check
+- `.claude/skills/` — network-operator, topology-verifier, remediation-planner, network-diagnostician
+- `.claude/agents/` — topology-triage (read-only specialist)
+
 ## Dependency Rules (HARD)
 - `contractkit` → nothing
 - Pure libraries (modelkit, graphkit, storekit) → contractkit only
@@ -67,6 +88,9 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - `agentcore` → standalone, no spine dependency (uses executorkit protocols)
 - NEVER import from stitch_workbench.runtime, .storage, .events.bus, etc.
 - NEVER import between adapter modules (switchcraft must not import opnsensecraft)
+- `stitch.mcp` → domain packages (modelkit, storekit, verifykit, etc.) + contractkit gateway
+- `stitch.mcp` must NOT import from client packages (operator CLI, tui, lite, web)
+- Client packages must NOT import from `stitch.mcp`
 
 ## Architecture Rules
 - Service-primary interaction; events for audit/telemetry only

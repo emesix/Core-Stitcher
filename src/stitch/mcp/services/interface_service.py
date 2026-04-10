@@ -8,7 +8,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-import httpx
 import structlog
 
 from stitch.mcp.schemas import ErrorCode, ToolResponse
@@ -189,11 +188,17 @@ class InterfaceService:
             "assign_as": assign_as,
             "before": before_state,
             "after": real_after,
-            "verification": {"verified_identifier": verified_ident, "match": verified_ident == assign_as},
+            "verification": {
+                "verified_identifier": verified_ident,
+                "match": verified_ident == assign_as,
+            },
         }
         resp = ToolResponse.success(
             resp_result,
-            summary=f"Applied: {physical_interface} assigned as {assign_as} on {device_id}. Verified: {verified_ident}.",
+            summary=(
+                f"Applied: {physical_interface} assigned as {assign_as}"
+                f" on {device_id}. Verified: {verified_ident}."
+            ),
         )
         self._write_audit(
             audit_input=audit_input,
@@ -217,19 +222,39 @@ class InterfaceService:
         Option A from the design: SSH + configctl (native OPNsense path).
         """
         import asyncio
+        import os
         import subprocess
 
-        # Read OPNsense SSH credentials
-        opn_host = "172.16.0.1"
-        opn_user = "root"
-        opn_pass = "NikonD90"
+        # Read OPNsense SSH credentials from env or config
+        opn_host = os.environ.get("OPNSENSE_SSH_HOST", "172.16.0.1")
+        opn_user = os.environ.get("OPNSENSE_SSH_USER", "root")
+        opn_pass = os.environ.get("OPNSENSE_SSH_PASS", "")
+        if not opn_pass:
+            # Fall back to config file
+            config_path = Path.home() / ".stitch" / "ssh.json"
+            if config_path.exists():
+                with config_path.open() as f:
+                    ssh_cfg = json.load(f)
+                opn_pass = ssh_cfg.get("opnsense_pass", "")
+            if not opn_pass:
+                msg = "No SSH password: set OPNSENSE_SSH_PASS env or create ~/.stitch/ssh.json"
+                raise RuntimeError(msg)
 
         def _ssh(cmd: str, *, timeout: int = 30) -> str:
             result = subprocess.run(
-                ["sshpass", "-p", opn_pass, "ssh",
-                 "-o", "StrictHostKeyChecking=accept-new",
-                 f"{opn_user}@{opn_host}", cmd],
-                capture_output=True, text=True, timeout=timeout,
+                [
+                    "sshpass",
+                    "-p",
+                    opn_pass,
+                    "ssh",
+                    "-o",
+                    "StrictHostKeyChecking=accept-new",
+                    f"{opn_user}@{opn_host}",
+                    cmd,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
             )
             if result.returncode != 0:
                 msg = f"SSH command failed: {result.stderr.strip()}"
@@ -272,11 +297,20 @@ class InterfaceService:
         await asyncio.to_thread(_ssh, "cp /conf/config.xml /conf/config.xml.bak")
         # Write via stdin to avoid quoting issues
         write_result = subprocess.run(
-            ["sshpass", "-p", opn_pass, "ssh",
-             "-o", "StrictHostKeyChecking=accept-new",
-             f"{opn_user}@{opn_host}",
-             "cat > /conf/config.xml"],
-            input=modified_xml, capture_output=True, text=True, timeout=30,
+            [
+                "sshpass",
+                "-p",
+                opn_pass,
+                "ssh",
+                "-o",
+                "StrictHostKeyChecking=accept-new",
+                f"{opn_user}@{opn_host}",
+                "cat > /conf/config.xml",
+            ],
+            input=modified_xml,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         if write_result.returncode != 0:
             msg = f"Config write failed: {write_result.stderr.strip()}"
@@ -287,8 +321,11 @@ class InterfaceService:
         try:
             await asyncio.to_thread(_ssh, "configctl interface reconfigure", timeout=60)
         except Exception as exc:
-            log.warning("interface.reconfigure_warning", error=str(exc),
-                        note="config saved, may need manual reload")
+            log.warning(
+                "interface.reconfigure_warning",
+                error=str(exc),
+                note="config saved, may need manual reload",
+            )
 
         return {
             "device": physical_interface,

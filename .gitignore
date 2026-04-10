@@ -37,3 +37,4 @@ frontend/src-tauri/target/
 frontend/src-tauri/gen/schemas/
 bun.lock
 snapshots/
+output/

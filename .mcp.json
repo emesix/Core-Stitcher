@@ -7,7 +7,10 @@
       "env": {
         "MCP_GATEWAY_AUTH": "${MCP_GATEWAY_AUTH}",
         "STITCH_TOPOLOGY": "${STITCH_TOPOLOGY:-topologies/lab.json}",
-        "MCP_GATEWAY_URL": "${MCP_GATEWAY_URL:-http://localhost:4444}"
+        "MCP_GATEWAY_URL": "${MCP_GATEWAY_URL:-http://localhost:4444}",
+        "OPNSENSE_SSH_HOST": "${OPNSENSE_SSH_HOST:-172.16.0.1}",
+        "OPNSENSE_SSH_USER": "${OPNSENSE_SSH_USER:-root}",
+        "OPNSENSE_SSH_PASS": "${OPNSENSE_SSH_PASS}"
       }
     }
   }

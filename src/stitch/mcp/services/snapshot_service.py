@@ -72,7 +72,10 @@ class SnapshotService:
                 "failed": failed,
                 "section_count": len(captured),
             },
-            summary=f"Snapshot saved: {filename} ({len(captured)} sections captured, {len(failed)} failed).",
+            summary=(
+                f"Snapshot saved: {filename}"
+                f" ({len(captured)} sections captured, {len(failed)} failed)."
+            ),
         )
 
     def list_snapshots(self) -> ToolResponse:
@@ -85,15 +88,25 @@ class SnapshotService:
             try:
                 with f.open() as fh:
                     data = json.load(fh)
-                items.append({
-                    "file": f.name,
-                    "timestamp": data.get("timestamp", ""),
-                    "label": data.get("label", ""),
-                    "sections": list(data.get("sections", {}).keys()),
-                    "error_count": len(data.get("errors", [])),
-                })
+                items.append(
+                    {
+                        "file": f.name,
+                        "timestamp": data.get("timestamp", ""),
+                        "label": data.get("label", ""),
+                        "sections": list(data.get("sections", {}).keys()),
+                        "error_count": len(data.get("errors", [])),
+                    }
+                )
             except Exception:
-                items.append({"file": f.name, "timestamp": "", "label": "corrupt", "sections": [], "error_count": -1})
+                items.append(
+                    {
+                        "file": f.name,
+                        "timestamp": "",
+                        "label": "corrupt",
+                        "sections": [],
+                        "error_count": -1,
+                    }
+                )
 
         return ToolResponse.success(
             result={"snapshots": items, "total": len(files)},
@@ -106,9 +119,17 @@ class SnapshotService:
         after_path = SNAPSHOT_DIR / after_file
 
         if not before_path.exists():
-            return ToolResponse.failure(ErrorCode.TOPOLOGY_NOT_FOUND, f"Snapshot not found: {before_file}", f"Before snapshot '{before_file}' not found.")
+            return ToolResponse.failure(
+                ErrorCode.TOPOLOGY_NOT_FOUND,
+                f"Snapshot not found: {before_file}",
+                f"Before snapshot '{before_file}' not found.",
+            )
         if not after_path.exists():
-            return ToolResponse.failure(ErrorCode.TOPOLOGY_NOT_FOUND, f"Snapshot not found: {after_file}", f"After snapshot '{after_file}' not found.")
+            return ToolResponse.failure(
+                ErrorCode.TOPOLOGY_NOT_FOUND,
+                f"Snapshot not found: {after_file}",
+                f"After snapshot '{after_file}' not found.",
+            )
 
         with before_path.open() as f:
             before = json.load(f)
@@ -116,7 +137,9 @@ class SnapshotService:
             after = json.load(f)
 
         changes: dict[str, Any] = {}
-        all_sections = set(before.get("sections", {}).keys()) | set(after.get("sections", {}).keys())
+        all_sections = set(before.get("sections", {}).keys()) | set(
+            after.get("sections", {}).keys()
+        )
 
         for section in sorted(all_sections):
             b_data = before.get("sections", {}).get(section)
@@ -126,7 +149,9 @@ class SnapshotService:
                 changes[section] = {"change": "added", "detail": "Section newly captured."}
             elif b_data is not None and a_data is None:
                 changes[section] = {"change": "removed", "detail": "Section no longer captured."}
-            elif json.dumps(b_data, sort_keys=True, default=str) != json.dumps(a_data, sort_keys=True, default=str):
+            elif json.dumps(b_data, sort_keys=True, default=str) != json.dumps(
+                a_data, sort_keys=True, default=str
+            ):
                 # Section changed — compute a meaningful diff per section type
                 changes[section] = self._diff_section(section, b_data, a_data)
             # else: unchanged, skip
@@ -142,7 +167,11 @@ class SnapshotService:
                 "changed_sections": changed_count,
                 "unchanged_sections": unchanged_count,
             },
-            summary=f"Diff: {changed_count} sections changed, {unchanged_count} unchanged between {before_file} and {after_file}.",
+            summary=(
+                f"Diff: {changed_count} sections changed,"
+                f" {unchanged_count} unchanged"
+                f" between {before_file} and {after_file}."
+            ),
         )
 
     def _diff_section(self, section: str, before: Any, after: Any) -> dict[str, Any]:
@@ -158,7 +187,10 @@ class SnapshotService:
         if section == "system_routes":
             return self._diff_list_by_key(before, after, key="destination", label="routes")
         # Generic: just report changed
-        return {"change": "modified", "detail": "Content differs (no structured diff for this section)."}
+        return {
+            "change": "modified",
+            "detail": "Content differs (no structured diff for this section).",
+        }
 
     def _diff_list_by_key(self, before: Any, after: Any, key: str, label: str) -> dict[str, Any]:
         """Diff two lists of dicts by a key field."""
@@ -172,9 +204,10 @@ class SnapshotService:
         removed = [k for k in b_by_key if k not in a_by_key]
         modified = []
         for k in b_by_key:
-            if k in a_by_key:
-                if json.dumps(b_by_key[k], sort_keys=True, default=str) != json.dumps(a_by_key[k], sort_keys=True, default=str):
-                    modified.append(k)
+            if k in a_by_key and json.dumps(
+                b_by_key[k], sort_keys=True, default=str
+            ) != json.dumps(a_by_key[k], sort_keys=True, default=str):
+                modified.append(k)
 
         return {
             "change": "modified",
