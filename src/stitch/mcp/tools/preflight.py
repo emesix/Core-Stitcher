@@ -62,7 +62,7 @@ def register_preflight_tools(mcp: FastMCP, engine: StitchEngine) -> None:
 
         adapters = []
         for dev_id, dev in topo.devices.items():
-            d = dev.model_dump() if hasattr(dev, "model_dump") else dev
+            d: dict = dev.model_dump() if hasattr(dev, "model_dump") else dict(dev)  # type: ignore[arg-type]
             source = d.get("mcp_source", "")
             if source == "opnsensecraft":
                 adapters.append(
