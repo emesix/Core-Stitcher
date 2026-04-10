@@ -8,15 +8,36 @@ Stitcher apps are behavior templates loaded onto the backbone.
 
 ## Authority
 - `docs/superpowers/specs/2026-04-07-ruggensgraat-architecture-design.md` — topology domain architecture
-- `docs/superpowers/specs/2026-04-10-stitch-mcp-server-design.md` — MCP server (9+3 tools)
-- `docs/specs/2026-04-10-core-stitcher-planning-after-claude-code-ga.md` — strategic direction
+- `docs/superpowers/specs/2026-04-10-stitch-mcp-server-design.md` — MCP server (12 tools)
+- `docs/superpowers/specs/2026-04-10-alpha-executor-routing-design.md` — executor routing + backends
+- `docs/superpowers/specs/2026-04-10-strategic-direction-reassessment.md` — strategic direction (supersedes planning doc)
+
+Authority order:
+1. Explicit user instruction in the current session
+2. Specs and runbooks listed in Authority
+3. CLAUDE.md
+4. Incidental docs/comments
+
+If code appears to diverge from an authoritative spec, do not assume the divergence is intentional. Check tests, recent commits, and adjacent runbooks/specs before changing behavior.
 
 ## Commands
 - **Lint:** `uv run ruff check src/ tests/`
 - **Format:** `uv run ruff format src/ tests/`
-- **Test:** `uv run pytest tests/ -v`
+- **Test (unit):** `uv run pytest tests/ -v -m "not integration"`
+- **Test (live/integration):** `uv run pytest tests/ -v -m integration`
+- **Test (all):** `uv run pytest tests/ -v` — only when intentionally running both unit and integration
 - **Type check:** `uv run pyright src/`
-- **All checks:** `uv run ruff check src/ tests/ && uv run pytest tests/ -v && uv run pyright src/`
+- **All checks:** `uv run ruff check src/ tests/ && uv run pytest tests/ -v -m "not integration" && uv run pyright src/`
+
+## Operational Safety
+- **Only current write-path tool:** `stitch_interface_assign` with `dry_run=false`
+- Pre-tool-use hook blocks `dry_run=false` unless explicitly confirmed
+- Post-tool-use hook logs all write-path calls to `~/.stitch/audit.jsonl`
+- Stop hook reminds about unapplied changes
+- `.mcp.json` passes SSH credentials to the MCP server — stitch tools can SSH to OPNsense
+- Do NOT run `stitch_interface_assign` with `dry_run=false` without explicit user approval
+- Do NOT treat the sidecar as a general compute endpoint — it is intentionally thin (alpha only)
+- Integration tests (`@pytest.mark.integration`) hit live backends and may burn API credits
 
 ## Conventions
 - Python 3.14, async-first
@@ -24,8 +45,8 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - FastAPI for API layer
 - SQLModel for database models (spine only)
 - structlog for logging
-- YAML for config, Pydantic for validation
-- ruff for lint+format, pytest with pytest-asyncio, TDD
+- ruff for lint+format, pytest with pytest-asyncio
+- API keys: env var checked first, then `~/.stitch/secrets.json` (key map in `openai_compat.py`)
 
 ## Code Style
 - Line length: 100
@@ -53,11 +74,11 @@ Stitcher apps are behavior templates loaded onto the backbone.
 ### AI Orchestrator (project-stitcher)
 - `src/stitch/agentcore/` — orchestration core
 - `src/stitch/agentcore/taskkit/` — task models
-- `src/stitch/agentcore/executorkit/` — executor protocol + implementations (mock, openai, topology, local)
+- `src/stitch/agentcore/executorkit/` — executor protocol + implementations (mock, openai_compat, topology, local, sidecar)
 - `src/stitch/agentcore/plannerkit/` — work request planning
 - `src/stitch/agentcore/reviewkit/` — review models + verdicts
 - `src/stitch/agentcore/storekit/` — run persistence (JSON file store)
-- `src/stitch/agentcore/orchestration/` — runner, budget policy, feedback loop
+- `src/stitch/agentcore/orchestration/` — runner, budget policy, routing policy, feedback loop
 - `src/stitch/agentcore/registry/` — executor registry
 - `src/stitch/apps/project_stitcher/` — CLI + HTTP API app shell
 
@@ -67,7 +88,7 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - `src/stitch/mcp/` — MCP server (12 tools: topology, trace, impact, preflight, interface, snapshots)
 - `src/stitch/mcp/tools/` — thin tool wrappers (FastMCP decorators)
 - `src/stitch/mcp/services/` — use-case orchestration (preflight, topology, interface, snapshot)
-- `src/stitch/apps/operator/` — CLI (Typer, 11 command groups)
+- `src/stitch/apps/operator/` — CLI (Typer)
 - `src/stitch/apps/tui/` — Terminal UI (Textual, 3-zone layout)
 - `src/stitch/apps/lite/` — Minimal HTML UI (FastAPI + Jinja2)
 - `frontend/` — React WebUI (TypeScript, TanStack Router/Query)
@@ -79,6 +100,17 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - `.claude/hooks/` — pre-tool-use safety, post-tool-use audit, stop session check
 - `.claude/skills/` — network-operator, topology-verifier, remediation-planner, network-diagnostician
 - `.claude/agents/` — topology-triage (read-only specialist)
+
+## Executor Backends
+Four alpha backends, two categories:
+
+**Inference (chat completions):** `local-gpu`, `local-cpu`, `openrouter`
+**Compute (structured work):** `local-sidecar`
+
+- `base_url` is bare origin only (never include path). `api_path` and `models_path` are separate fields.
+- When `models_path=None`, health uses TCP connect (avoids burning inference tokens on OVMS).
+- Sidecar implements `ExecutorProtocol` only (no review). It is not a distributed job framework.
+- Backend addresses and model IDs are in `executorkit/local.py` defaults and `alpha_routing_policy()`.
 
 ## Dependency Rules (HARD)
 - `contractkit` → nothing
@@ -98,9 +130,8 @@ Stitcher apps are behavior templates loaded onto the backbone.
 - interfacekit resolves PreflightWorkflowProtocol, never low-level modules
 - Module config is typed and validated before module code sees it
 - One ModuleType can have multiple instances
-
-## Git
-- Check status before changes
-- Suggest commits at logical points
-- Never push without asking
-- Never commit secrets
+- Routing is deterministic and config-driven — never LLM-driven
+- Routing precedence: tag-based rules > step-kind rules > global default
+- Fallback = same capability, different instance (availability). Escalation = quality problem, stronger model.
+- `fail_closed=True` means stop — do not silently substitute a different executor
+- Tags (`high_risk`, `write_path`) on WorkRequest/PlannedTask force routing to external with fail-closed
