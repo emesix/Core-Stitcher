@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "stitch": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "stitch-mcp"],
+      "env": {
+        "MCP_GATEWAY_AUTH": "${MCP_GATEWAY_AUTH}",
+        "STITCH_TOPOLOGY": "${STITCH_TOPOLOGY:-topologies/lab.json}",
+        "MCP_GATEWAY_URL": "${MCP_GATEWAY_URL:-http://localhost:4444}"
+      }
+    }
+  }
+}

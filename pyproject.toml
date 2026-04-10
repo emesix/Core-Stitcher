@@ -10,6 +10,7 @@ requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.4",
     "fastapi>=0.135.3",
+    "fastmcp>=2.0.0",
     "httpx>=0.28.1",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
@@ -31,6 +32,7 @@ project-stitcher = "stitch.apps.project_stitcher.cli:main"
 stitch = "stitch.apps.operator.app:main"
 stitch-tui = "stitch.apps.tui.app:main"
 stitch-lite = "stitch.apps.lite.app:main"
+stitch-mcp = "stitch.mcp.server:main"
 
 [project.entry-points."stitch.modules"]
 "resource.switchcraft" = "stitch.switchcraft:SwitchcraftModule"
