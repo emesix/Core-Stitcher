@@ -20,6 +20,19 @@ Authority order:
 
 If code appears to diverge from an authoritative spec, do not assume the divergence is intentional. Check tests, recent commits, and adjacent runbooks/specs before changing behavior.
 
+## Start Here
+
+For a safe default session:
+1. Read the Authority docs listed above
+2. Run unit validation: `uv run ruff check src/ tests/ && uv run pytest tests/ -v -m "not integration" && uv run pyright src/`
+3. For read-only live validation, use:
+   - `scripts/alpha_run.py` for executor routing / alpha checks
+   - MCP topology, trace, diagnostics, impact tools for topology inspection
+   - MCP snapshot tools for OPNsense state inspection (queries live APIs)
+4. Do not run write-path operations unless the user explicitly asks and is present
+
+README is for human project overview. For operator behavior and implementation decisions, follow Authority docs and this CLAUDE.md.
+
 ## Commands
 - **Lint:** `uv run ruff check src/ tests/`
 - **Format:** `uv run ruff format src/ tests/`
@@ -29,13 +42,17 @@ If code appears to diverge from an authoritative spec, do not assume the diverge
 - **Type check:** `uv run pyright src/`
 - **All checks:** `uv run ruff check src/ tests/ && uv run pytest tests/ -v -m "not integration" && uv run pyright src/`
 
+## Tool Safety Classes
+- **Pure local (no network):** topology_summary, devices, device_detail, device_neighbors, diagnostics, trace_vlan, impact_preview, snapshot_list, snapshot_diff
+- **Live read-only (queries OPNsense/adapters):** snapshot_capture, preflight_run — safe but hits real APIs; mind OPNsense rate limits
+- **Write-path (changes state):** interface_assign with `dry_run=false` — hook-guarded, requires explicit user approval
+- **Manual approval required:** any operation that changes live network or firewall state
+
 ## Operational Safety
-- **Only current write-path tool:** `stitch_interface_assign` with `dry_run=false`
-- Pre-tool-use hook blocks `dry_run=false` unless explicitly confirmed
+- Pre-tool-use hook blocks `stitch_interface_assign dry_run=false` unless explicitly confirmed
 - Post-tool-use hook logs all write-path calls to `~/.stitch/audit.jsonl`
 - Stop hook reminds about unapplied changes
 - `.mcp.json` passes SSH credentials to the MCP server — stitch tools can SSH to OPNsense
-- Do NOT run `stitch_interface_assign` with `dry_run=false` without explicit user approval
 - Do NOT treat the sidecar as a general compute endpoint — it is intentionally thin (alpha only)
 - Integration tests (`@pytest.mark.integration`) hit live backends and may burn API credits
 
