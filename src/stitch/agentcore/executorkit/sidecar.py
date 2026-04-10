@@ -51,7 +51,7 @@ class SidecarExecutor:
         )
 
     async def health(self) -> ExecutorHealth:
-        """Hit sidecar health endpoint, return stage + status."""
+        """Hit sidecar health endpoint, return status + backend details."""
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get(f"{self._config.base_url}/health")
@@ -61,10 +61,13 @@ class SidecarExecutor:
                     except RuntimeError:
                         latency = None
                     data = resp.json()
-                    stage = data.get("stage", "unknown")
+                    details = data.get("details", {})
+                    detail_str = ", ".join(
+                        f"{k}: {v}" for k, v in details.items()
+                    ) if details else data.get("status", "ok")
                     return ExecutorHealth(
-                        status="ok",
-                        message=f"stage: {stage}",
+                        status=data.get("status", "ok"),
+                        message=detail_str,
                         latency_ms=latency,
                     )
                 return ExecutorHealth(
@@ -83,7 +86,7 @@ class SidecarExecutor:
         try:
             async with httpx.AsyncClient(timeout=self._config.timeout) as client:
                 resp = await client.post(
-                    f"{self._config.base_url}/execute",
+                    f"{self._config.base_url}/work",
                     json=payload,
                 )
                 resp.raise_for_status()
@@ -105,12 +108,13 @@ class SidecarExecutor:
             )
 
     def _build_payload(self, task: TaskRecord) -> dict[str, Any]:
+        """Build sidecar WorkRequest — mirrors TaskRecord shape over the wire."""
         payload: dict[str, Any] = {
-            "task": task.description,
-            "read_only": True,
+            "id": str(task.id),
+            "description": task.description,
         }
+        if task.domain:
+            payload["domain"] = task.domain
         if task.metadata:
-            payload["context"] = task.metadata
-        if task.tags:
-            payload["tags"] = task.tags
+            payload["metadata"] = task.metadata
         return payload

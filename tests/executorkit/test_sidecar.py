@@ -29,14 +29,24 @@ def _patch_sidecar(health_status: int = 200, exec_status: int = 200):
         async def get(self, url: str, **kwargs):
             return httpx.Response(
                 health_status,
-                json={"stage": "FULL", "status": "ok"},
+                json={
+                    "status": "ok",
+                    "message": None,
+                    "latency_ms": None,
+                    "details": {"ovms_gpu0": "ok", "ovms_gpu1": "ok", "ovms_cpu": "ok"},
+                },
                 request=httpx.Request("GET", url),
             )
 
         async def post(self, url: str, *, json=None, **kwargs):
             resp = httpx.Response(
                 exec_status,
-                json={"result": "model_status", "models": ["Qwen2.5-7B"]},
+                json={
+                    "status": "completed",
+                    "result": {"exit_code": 0, "stdout": "qwen25-7b", "stderr": ""},
+                    "error": None,
+                    "executor_id": "intell-a770",
+                },
                 request=httpx.Request("POST", url),
             )
             if exec_status >= 400:
@@ -101,7 +111,7 @@ async def test_health_ok():
     with _patch_sidecar():
         h = await ex.health()
     assert h.status == "ok"
-    assert "FULL" in h.message
+    assert "ovms_gpu0" in h.message
 
 
 async def test_health_unreachable():
@@ -131,7 +141,8 @@ async def test_execute_success():
         outcome = await ex.execute(task)
 
     assert outcome.status == TaskStatus.COMPLETED
-    assert outcome.result["result"] == "model_status"
+    assert outcome.result["status"] == "completed"
+    assert outcome.result["result"]["exit_code"] == 0
     assert outcome.executor_id == "local-sidecar"
     assert outcome.started_at is not None
     assert outcome.finished_at is not None
@@ -173,22 +184,31 @@ async def test_execute_when_down():
 # --- Payload ---
 
 
-def test_payload_includes_read_only():
+def test_payload_includes_id_and_description():
     ex = SidecarExecutor(_config())
     task = TaskRecord(description="check models")
     payload = ex._build_payload(task)
-    assert payload["read_only"] is True
+    assert payload["id"] == str(task.id)
+    assert payload["description"] == "check models"
 
 
-def test_payload_includes_context():
+def test_payload_includes_metadata():
     ex = SidecarExecutor(_config())
     task = TaskRecord(description="check", metadata={"host": "x"})
     payload = ex._build_payload(task)
-    assert payload["context"] == {"host": "x"}
+    assert payload["metadata"] == {"host": "x"}
 
 
-def test_payload_includes_tags():
+def test_payload_includes_domain():
     ex = SidecarExecutor(_config())
-    task = TaskRecord(description="check", tags=["compute"])
+    task = TaskRecord(description="check", domain="topology")
     payload = ex._build_payload(task)
-    assert payload["tags"] == ["compute"]
+    assert payload["domain"] == "topology"
+
+
+def test_payload_omits_empty_optional_fields():
+    ex = SidecarExecutor(_config())
+    task = TaskRecord(description="check")
+    payload = ex._build_payload(task)
+    assert "domain" not in payload
+    assert "metadata" not in payload
