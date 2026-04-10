@@ -224,10 +224,19 @@ Output.summary: "Lab topology: 8 devices, 16 links, 5 VLANs. Last updated 2026-0
 #### `stitch_devices`
 
 ```
-Input:  topology_path?: string
-Output.result: [{ id, name, type, model, management_ip, port_count, mcp_source }]
+Input:
+  topology_path?: string
+  detail?: "summary" | "standard" | "full"   (default: "standard")
+
+Output.result:
+  devices: [{ id, name, type, model, management_ip, port_count, mcp_source }]
+  total_count: int
+  truncated: bool           (true if list was capped for token safety)
+
 Output.summary: "8 devices: 1 firewall, 4 switches, 3 hypervisors."
 ```
+
+In `summary` mode, returns only `{ id, name, type }` per device. In `standard` mode (default), returns all fields. In `full` mode, includes port details per device (use with caution on large topologies).
 
 #### `stitch_device_detail`
 
@@ -255,7 +264,46 @@ Output.summary: "Topology health: 2 dangling ports, 0 orphan devices, 1 missing 
 
 ---
 
-## 5. Package Structure
+## 5. Error Taxonomy
+
+All tools use the same error envelope (`ok: false`, `error: { code, message }`). Error codes are namespaced by category.
+
+### Topology errors
+
+| Code | Emitted by | Meaning |
+|---|---|---|
+| `TOPOLOGY_NOT_FOUND` | All tools that accept `topology_path` | File does not exist at the specified path |
+| `TOPOLOGY_INVALID` | All tools that accept `topology_path` | File exists but fails schema validation (bad JSON, missing version, etc.) |
+
+### Device errors
+
+| Code | Emitted by | Meaning |
+|---|---|---|
+| `DEVICE_NOT_FOUND` | `device_detail`, `device_neighbors`, `interface_assign` | device_id doesn't match any device in topology |
+| `DEVICE_AMBIGUOUS` | `interface_assign` | device_id matches multiple devices |
+
+### Gateway errors
+
+| Code | Emitted by | Meaning |
+|---|---|---|
+| `GATEWAY_UNAVAILABLE` | `preflight_run`, `interface_assign` | Cannot reach MCP gateway at configured URL |
+| `GATEWAY_TOOL_ERROR` | `preflight_run`, `interface_assign` | Gateway returned an error from an adapter tool |
+| `GATEWAY_TIMEOUT` | `preflight_run`, `interface_assign` | Adapter tool call exceeded timeout |
+
+### Write-path errors (interface_assign only)
+
+| Code | Emitted by | Meaning |
+|---|---|---|
+| `INTERFACE_NOT_FOUND` | `interface_assign` | Physical interface doesn't exist on device |
+| `INTERFACE_ALREADY_ASSIGNED` | `interface_assign` | Interface is already bound to a role |
+| `APPLY_FAILED` | `interface_assign` | OPNsense API returned error during assignment |
+| `VERIFICATION_FAILED` | `interface_assign` | Post-change state doesn't match expected |
+
+Services must use these codes exactly. Tools must not invent new error shapes — if a new failure mode is discovered, add it here first.
+
+---
+
+## 6. Package Structure
 
 ```
 src/stitch/mcp/
@@ -281,14 +329,14 @@ src/stitch/mcp/
 
     gateway/                — Adapter access via MCP gateway
         __init__.py
-        client.py           — McpGatewayClient (reuse from contractkit or copy)
+        client.py           — Re-exports McpGatewayClient from stitch.contractkit.gateway (reuse, not copy)
 ```
 
 **Separation rule:** Tools are thin wrappers. Services contain orchestration. Engine provides shared context. Gateway handles external MCP calls. Business logic stays in the existing domain packages (verifykit, tracekit, graphkit, etc.).
 
 ---
 
-## 6. Engine: Lazy Topology with Cache
+## 7. Engine: Lazy Topology with Cache
 
 ```python
 class StitchEngine:
@@ -315,7 +363,7 @@ No mutable observed state across tool calls. Every call starts from the declared
 
 ---
 
-## 7. Registration
+## 8. Registration
 
 ### `.mcp.json` at repo root
 
@@ -349,7 +397,7 @@ fastmcp = ">=2.0.0"
 
 ---
 
-## 8. Write-Path Audit Log
+## 9. Write-Path Audit Log
 
 Every `stitch_interface_assign` call (dry_run or real) is logged to `~/.stitch/audit.jsonl`:
 
@@ -370,7 +418,7 @@ One line per call, append-only.
 
 ---
 
-## 9. Not in v1
+## 10. Not in v1
 
 - HTTP/SSE transport (add later with server-side auth when sharing beyond Claude Code)
 - VLAN apply, config push, bridge membership changes (Phase B write-path expansion)
@@ -381,7 +429,7 @@ One line per call, append-only.
 
 ---
 
-## 10. Dependencies
+## 11. Dependencies
 
 ```
 stitch.mcp → stitch.core (types only)
