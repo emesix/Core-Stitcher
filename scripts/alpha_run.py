@@ -50,7 +50,7 @@ def build_registry(*, gpu: bool = True, cpu: bool = True, sidecar: bool = True) 
             LocalExecutor(
                 LocalExecutorConfig(
                     base_url=CPU_URL,
-                    model="TinyLlama-1.1B-INT4",
+                    model="tinyllama-cpu",
                     executor_id="local-cpu",
                     tags=["local", "a770", "cpu"],
                 )

@@ -98,7 +98,7 @@ def _build_registry(
                     base_url=GPU_URL,
                     api_path="/v3/chat/completions",
                     models_path=None,
-                    model="Qwen2.5-7B-Instruct-INT4",
+                    model="qwen25-7b",
                     executor_id="local-gpu",
                     tags=["local", "a770", "gpu"],
                 )

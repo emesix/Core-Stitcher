@@ -61,8 +61,8 @@ Four runtime backends. Two categories:
 
 | ID | Class | Origin | API path | Models path | Model |
 |---|---|---|---|---|---|
-| `local-gpu` | `LocalExecutor` | `172.16.0.109:8000` | `/v3/chat/completions` | `None` (OVMS has no guaranteed models endpoint) | Qwen2.5-7B-Instruct-INT4 |
-| `local-cpu` | `LocalExecutor` | `172.16.0.109:8001` | `/v3/chat/completions` | `None` | TinyLlama-1.1B-INT4 |
+| `local-gpu` | `LocalExecutor` | `172.16.0.109:8000` | `/v3/chat/completions` | `None` (OVMS has no guaranteed models endpoint) | qwen25-7b |
+| `local-cpu` | `LocalExecutor` | `172.16.0.109:8001` | `/v3/chat/completions` | `None` | tinyllama-cpu |
 | `openrouter` | `OpenAICompatibleExecutor` | `https://openrouter.ai` | `/api/v1/chat/completions` | `/api/v1/models` | configurable (default: `anthropic/claude-sonnet-4`) |
 
 **Work executor** (does not speak chat completions):
@@ -88,7 +88,7 @@ class LocalExecutorConfig(BaseModel):
     base_url: str = "http://172.16.0.109:8000"
     api_path: str = "/v3/chat/completions"
     models_path: str | None = None
-    model: str = "Qwen2.5-7B-Instruct-INT4"
+    model: str = "qwen25-7b"
     executor_id: str = "local-gpu"
     timeout: float = 120.0
     max_tokens: int = 4096

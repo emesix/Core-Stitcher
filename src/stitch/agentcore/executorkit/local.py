@@ -40,7 +40,7 @@ class LocalExecutorConfig(BaseModel):
     base_url: str = "http://172.16.0.109:8000"
     api_path: str = "/v3/chat/completions"
     models_path: str | None = None
-    model: str = "Qwen2.5-7B-Instruct-INT4"
+    model: str = "qwen25-7b"
     executor_id: str = "local-gpu"
     timeout: float = 120.0
     max_tokens: int = 4096

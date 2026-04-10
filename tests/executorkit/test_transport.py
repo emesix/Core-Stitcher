@@ -27,7 +27,7 @@ def test_local_config_defaults():
     assert cfg.base_url == "http://172.16.0.109:8000"
     assert cfg.api_path == "/v3/chat/completions"
     assert cfg.models_path is None
-    assert cfg.model == "Qwen2.5-7B-Instruct-INT4"
+    assert cfg.model == "qwen25-7b"
     assert cfg.executor_id == "local-gpu"
     assert "gpu" in cfg.tags
 
