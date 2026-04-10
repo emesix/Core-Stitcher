@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import httpx
@@ -27,6 +28,27 @@ from stitch.agentcore.taskkit.models import TaskOutcome, TaskStatus
 if TYPE_CHECKING:
     from stitch.agentcore.reviewkit.models import ReviewRequest
     from stitch.agentcore.taskkit.models import TaskRecord
+
+
+_SECRETS_PATH = Path.home() / ".stitch" / "secrets.json"
+
+# Map env var names to keys in secrets.json
+_SECRET_KEY_MAP: dict[str, str] = {
+    "OPENROUTER_API_KEY": "openrouter_api_key",
+    "OPENAI_API_KEY": "openai_api_key",
+}
+
+
+def _read_secret(env_name: str) -> str | None:
+    """Read a secret from ~/.stitch/secrets.json by env var name."""
+    json_key = _SECRET_KEY_MAP.get(env_name)
+    if not json_key:
+        return None
+    try:
+        data = json.loads(_SECRETS_PATH.read_text())
+        return data.get(json_key)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return None
 
 
 class OpenAIExecutorConfig(BaseModel):
@@ -63,7 +85,11 @@ class OpenAICompatibleExecutor:
         )
 
     def _api_key(self) -> str | None:
-        return os.environ.get(self._config.api_key_env)
+        key = os.environ.get(self._config.api_key_env)
+        if key:
+            return key
+        # Fall back to ~/.stitch/secrets.json
+        return _read_secret(self._config.api_key_env)
 
     def _headers(self) -> dict[str, str]:
         headers: dict[str, str] = {"Content-Type": "application/json"}

@@ -25,6 +25,11 @@ htmlcov/
 .ruff_cache/
 .pyright/
 
+# Secrets
+secrets.json
+*.secrets
+.stitch/
+
 # Database
 *.db
 .superpowers/
