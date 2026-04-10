@@ -193,7 +193,10 @@ def test_alpha_policy_review_default():
     policy = alpha_routing_policy()
     decision = policy.resolve(StepKind.AI_REVIEW, [])
     assert decision.primary == "local-gpu"
+    assert decision.fallback_chain == []  # no CPU fallback for structured review
+    assert decision.fail_closed is True
     assert decision.allow_escalation is True
+    assert decision.escalation_target == "openrouter"
 
 
 def test_alpha_policy_correction():
@@ -216,6 +219,28 @@ def test_alpha_policy_domain_call_uses_default():
     decision = policy.resolve(StepKind.DOMAIN_CALL, [])
     assert decision.primary == "local-gpu"  # default_primary
     assert decision.matched_rule is None
+
+
+# --- Live-hardened: CPU capability boundary ---
+
+
+def test_alpha_policy_summary_allows_cpu_fallback():
+    """Summary is lightweight text — CPU fallback is acceptable."""
+    policy = alpha_routing_policy()
+    decision = policy.resolve(StepKind.AI_SUMMARY, [])
+    assert "local-cpu" in decision.fallback_chain
+
+
+def test_alpha_policy_review_blocks_cpu_fallback():
+    """Review requires structured JSON — CPU (TinyLlama) cannot produce it reliably.
+
+    Live-validated 2026-04-10: TinyLlama on OVMS CPU returns 400 on review
+    prompts that require structured JSON output. Summary fallback works fine.
+    """
+    policy = alpha_routing_policy()
+    decision = policy.resolve(StepKind.AI_REVIEW, [])
+    assert "local-cpu" not in decision.fallback_chain
+    assert decision.fail_closed is True
 
 
 # --- Compute step kind ---

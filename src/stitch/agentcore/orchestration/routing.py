@@ -101,17 +101,29 @@ def alpha_routing_policy() -> RoutingPolicy:
                 allow_escalation=False,
                 fail_closed=True,
             ),
-            # Inference: summary and review start local, can fall back and escalate
+            # Summary: lightweight, CPU can handle plain-text output
             RoutingRule(
-                step_kinds=[StepKind.AI_SUMMARY, StepKind.AI_REVIEW],
+                step_kinds=[StepKind.AI_SUMMARY],
                 primary="local-gpu",
                 fallback_chain=["local-cpu"],
+                escalation_target="openrouter",
+                escalation_triggers=[
+                    EscalationTrigger.SCHEMA_INVALID,
+                ],
+                allow_escalation=True,
+            ),
+            # Review: requires structured JSON output, CPU is not reliable for this
+            RoutingRule(
+                step_kinds=[StepKind.AI_REVIEW],
+                primary="local-gpu",
+                fallback_chain=[],
                 escalation_target="openrouter",
                 escalation_triggers=[
                     EscalationTrigger.VERDICT_REJECT,
                     EscalationTrigger.SCHEMA_INVALID,
                 ],
                 allow_escalation=True,
+                fail_closed=True,
             ),
             # Corrections need stronger reasoning
             RoutingRule(
