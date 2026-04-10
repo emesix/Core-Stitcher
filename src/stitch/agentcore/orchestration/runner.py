@@ -3,7 +3,7 @@
 Produces a full audit trail via StepRecords. Supports feedback loops:
 when review rejects, creates correction steps and re-reviews up to
 max_corrections times. Uses health-aware executor selection and
-escalation policy (REUSE → SWITCH → STOP) on repeated failures.
+routing policy for deterministic executor dispatch.
 """
 
 from __future__ import annotations
@@ -11,6 +11,8 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from typing import TYPE_CHECKING, cast
+
+import structlog
 
 from stitch.agentcore.orchestration.budget import BudgetPolicy, EscalationAction
 from stitch.agentcore.reviewkit.models import ReviewRequest, ReviewVerdict
@@ -30,9 +32,16 @@ if TYPE_CHECKING:
         ExecutorProtocol,
         ReviewableExecutorProtocol,
     )
+    from stitch.agentcore.orchestration.routing import (
+        EscalationTrigger,
+        RoutingDecision,
+        RoutingPolicy,
+    )
     from stitch.agentcore.registry.executor_registry import ExecutorRegistry
     from stitch.agentcore.storekit.json_store import JsonRunStore
     from stitch.agentcore.storekit.models import RunRecord
+
+log = structlog.get_logger()
 
 
 class OrchestrationError(Exception):
@@ -47,10 +56,12 @@ class RunOrchestrator:
         registry: ExecutorRegistry,
         store: JsonRunStore,
         policy: BudgetPolicy | None = None,
+        routing: RoutingPolicy | None = None,
     ) -> None:
         self._registry = registry
         self._store = store
         self._policy = policy or BudgetPolicy()
+        self._routing = routing
         self._ai_steps_used = 0
         self._executor_failures: dict[str, int] = {}
 
@@ -68,6 +79,9 @@ class RunOrchestrator:
         self._ai_steps_used = 0
         self._executor_failures = {}
 
+        # Compute effective run-level tags
+        run_tags = run.request.tags if run.request else []
+
         # Step 1: Execute domain tasks
         executions = await self._execute_domain_tasks(run)
         run.executions = executions
@@ -78,7 +92,9 @@ class RunOrchestrator:
         ]
         if domain_results and self._policy.allow_ai_summary:
             if self._can_use_ai_step(run):
-                run.summary = await self._summarize(domain_results, run, iteration=0)
+                run.summary = await self._summarize(
+                    domain_results, run, run_tags=run_tags, iteration=0
+                )
             else:
                 self._record_budget_skip(run, StepKind.AI_SUMMARY, 0)
 
@@ -92,7 +108,7 @@ class RunOrchestrator:
                     self._record_budget_skip(run, StepKind.AI_REVIEW, iteration)
                     break
 
-                review = await self._review(run, iteration=iteration)
+                review = await self._review(run, run_tags=run_tags, iteration=iteration)
                 if review is None:
                     # Review failed (executor error) — escalation decides next action
                     action = self._check_escalation("__ai_review__")
@@ -115,7 +131,9 @@ class RunOrchestrator:
                     self._record_budget_skip(run, StepKind.CORRECTION, iteration + 1)
                     break
 
-                correction = await self._correct(run, review, iteration=iteration)
+                correction = await self._correct(
+                    run, review, run_tags=run_tags, iteration=iteration
+                )
                 if correction:
                     run.summary = correction
                     corrections_done += 1
@@ -226,18 +244,24 @@ class RunOrchestrator:
         domain_results: list[TaskExecution],
         run: RunRecord,
         *,
+        run_tags: list[str] | None = None,
         iteration: int = 0,
     ) -> str | None:
         started = datetime.now(UTC)
-        ai_executor = await self._find_ai_executor()
+        effective_tags = list(run_tags or [])
+
+        ai_executor, selection = await self._route_ai_step(
+            StepKind.AI_SUMMARY, effective_tags
+        )
 
         if ai_executor is None:
             run.steps.append(
                 StepRecord(
                     kind=StepKind.AI_SUMMARY,
                     status=StepStatus.SKIPPED,
-                    description="No general-purpose executor available",
-                    selection=ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
+                    description="No executor available for summary",
+                    selection=selection
+                    or ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
                     iteration=iteration,
                     started_at=started,
                     finished_at=datetime.now(UTC),
@@ -253,12 +277,6 @@ class RunOrchestrator:
         summary_task = TaskRecord(
             description=f"Summarize these domain results:\n{results_text}",
             metadata={"action": "summarize"},
-        )
-
-        selection = ExecutorSelection(
-            executor_id=ai_executor.executor_id,
-            reason=SelectionReason.GENERAL_FALLBACK,
-            candidates_considered=len(self._registry.list_all()),
         )
 
         try:
@@ -293,9 +311,19 @@ class RunOrchestrator:
             )
             return None
 
-    async def _review(self, run: RunRecord, *, iteration: int = 0):
+    async def _review(
+        self,
+        run: RunRecord,
+        *,
+        run_tags: list[str] | None = None,
+        iteration: int = 0,
+    ):
         started = datetime.now(UTC)
-        ai_executor = await self._find_ai_executor()
+        effective_tags = list(run_tags or [])
+
+        ai_executor, selection = await self._route_ai_step(
+            StepKind.AI_REVIEW, effective_tags
+        )
 
         if ai_executor is None or not hasattr(ai_executor, "review"):
             run.steps.append(
@@ -303,19 +331,14 @@ class RunOrchestrator:
                     kind=StepKind.AI_REVIEW,
                     status=StepStatus.SKIPPED,
                     description="No executor available for review",
-                    selection=ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
+                    selection=selection
+                    or ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
                     iteration=iteration,
                     started_at=started,
                     finished_at=datetime.now(UTC),
                 )
             )
             return None
-
-        selection = ExecutorSelection(
-            executor_id=ai_executor.executor_id,
-            reason=SelectionReason.GENERAL_FALLBACK,
-            candidates_considered=len(self._registry.list_all()),
-        )
 
         review_req = ReviewRequest(
             plan_id=run.plan.plan_id if run.plan else None,
@@ -361,9 +384,20 @@ class RunOrchestrator:
             )
             return None
 
-    async def _correct(self, run: RunRecord, review, *, iteration: int) -> str | None:
+    async def _correct(
+        self,
+        run: RunRecord,
+        review,
+        *,
+        run_tags: list[str] | None = None,
+        iteration: int,
+    ) -> str | None:
         started = datetime.now(UTC)
-        ai_executor = await self._find_ai_executor()
+        effective_tags = list(run_tags or [])
+
+        ai_executor, selection = await self._route_ai_step(
+            StepKind.CORRECTION, effective_tags
+        )
 
         if ai_executor is None:
             run.steps.append(
@@ -371,7 +405,8 @@ class RunOrchestrator:
                     kind=StepKind.CORRECTION,
                     status=StepStatus.SKIPPED,
                     description="No executor available for correction",
-                    selection=ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
+                    selection=selection
+                    or ExecutorSelection(reason=SelectionReason.NO_EXECUTOR),
                     iteration=iteration + 1,
                     started_at=started,
                     finished_at=datetime.now(UTC),
@@ -393,12 +428,6 @@ class RunOrchestrator:
                 f"Please produce a corrected version addressing the review findings."
             ),
             metadata={"action": "correction", "iteration": iteration + 1},
-        )
-
-        selection = ExecutorSelection(
-            executor_id=ai_executor.executor_id,
-            reason=SelectionReason.GENERAL_FALLBACK,
-            candidates_considered=len(self._registry.list_all()),
         )
 
         try:
@@ -479,6 +508,180 @@ class RunOrchestrator:
             except Exception:
                 continue
         return healthy
+
+    # --- Routing-aware executor selection ---
+
+    async def _route_ai_step(
+        self,
+        kind: StepKind,
+        effective_tags: list[str],
+    ) -> tuple[ExecutorProtocol | None, ExecutorSelection | None]:
+        """Route an AI step using the routing policy, with fallback chain walking."""
+        if self._routing is None:
+            # No routing policy — fall back to legacy behavior
+            executor = await self._find_ai_executor()
+            if executor is None:
+                return None, None
+            return executor, ExecutorSelection(
+                executor_id=executor.executor_id,
+                reason=SelectionReason.GENERAL_FALLBACK,
+                candidates_considered=len(self._registry.list_all()),
+            )
+
+        decision = self._routing.resolve(kind, effective_tags)
+
+        # Try primary
+        executor = await self._try_executor(decision.primary)
+        if executor is not None:
+            selection = self._build_routing_selection(
+                executor, decision, effective_tags, "initial"
+            )
+            log.info(
+                "routing.decision",
+                step_kind=kind,
+                effective_tags=effective_tags,
+                matched_rule=decision.matched_rule,
+                primary=decision.primary,
+                fallback_chain=decision.fallback_chain,
+                escalation_target=decision.escalation_target,
+                selected_executor=executor.executor_id,
+                dispatch_type="initial",
+            )
+            return executor, selection
+
+        # Walk fallback chain
+        for fb_id in decision.fallback_chain:
+            executor = await self._try_executor(fb_id)
+            if executor is not None:
+                selection = self._build_routing_selection(
+                    executor, decision, effective_tags, "fallback"
+                )
+                log.info(
+                    "routing.decision",
+                    step_kind=kind,
+                    effective_tags=effective_tags,
+                    matched_rule=decision.matched_rule,
+                    primary=decision.primary,
+                    fallback_chain=decision.fallback_chain,
+                    escalation_target=decision.escalation_target,
+                    selected_executor=executor.executor_id,
+                    dispatch_type="fallback",
+                )
+                return executor, selection
+
+        # Fail closed or try default fallback
+        if decision.fail_closed:
+            log.warning(
+                "routing.fail_closed",
+                step_kind=kind,
+                effective_tags=effective_tags,
+                matched_rule=decision.matched_rule,
+                primary=decision.primary,
+            )
+            return None, ExecutorSelection(
+                reason=SelectionReason.POLICY_DISALLOWED,
+                matched_rule=decision.matched_rule,
+                dispatch_type="fail_closed",
+                effective_tags=effective_tags,
+            )
+
+        # Not fail-closed and no fallback worked — try escalation target as last resort
+        if decision.escalation_target:
+            executor = await self._try_executor(decision.escalation_target)
+            if executor is not None:
+                selection = self._build_routing_selection(
+                    executor, decision, effective_tags, "fallback"
+                )
+                log.info(
+                    "routing.decision",
+                    step_kind=kind,
+                    effective_tags=effective_tags,
+                    matched_rule=decision.matched_rule,
+                    selected_executor=executor.executor_id,
+                    dispatch_type="fallback",
+                )
+                return executor, selection
+
+        return None, ExecutorSelection(
+            reason=SelectionReason.NO_EXECUTOR,
+            matched_rule=decision.matched_rule,
+            effective_tags=effective_tags,
+        )
+
+    async def _maybe_escalate(
+        self,
+        kind: StepKind,
+        effective_tags: list[str],
+        trigger: EscalationTrigger,
+    ) -> tuple[ExecutorProtocol | None, ExecutorSelection | None]:
+        """Check if escalation is allowed and return the escalation target."""
+        if self._routing is None:
+            return None, None
+
+        decision = self._routing.resolve(kind, effective_tags)
+
+        if not decision.allow_escalation:
+            return None, None
+
+        if trigger not in decision.escalation_triggers:
+            return None, None
+
+        if decision.escalation_target is None:
+            return None, None
+
+        executor = await self._try_executor(decision.escalation_target)
+        if executor is None:
+            return None, None
+
+        selection = self._build_routing_selection(
+            executor, decision, effective_tags, "escalated"
+        )
+        log.info(
+            "routing.escalation",
+            step_kind=kind,
+            effective_tags=effective_tags,
+            trigger=trigger,
+            matched_rule=decision.matched_rule,
+            escalation_target=decision.escalation_target,
+            selected_executor=executor.executor_id,
+        )
+        return executor, selection
+
+    async def _try_executor(self, executor_id: str) -> ExecutorProtocol | None:
+        """Try to get a healthy executor by ID from the registry."""
+        try:
+            executor = self._registry.get(executor_id)
+        except LookupError:
+            return None
+
+        try:
+            h = await executor.health()
+            if h.status in ("ok", "degraded"):
+                return executor
+        except Exception:
+            pass
+
+        return None
+
+    def _build_routing_selection(
+        self,
+        executor: ExecutorProtocol,
+        decision: RoutingDecision,
+        effective_tags: list[str],
+        dispatch_type: str,
+    ) -> ExecutorSelection:
+        return ExecutorSelection(
+            executor_id=executor.executor_id,
+            reason=SelectionReason.DOMAIN_MATCH
+            if dispatch_type == "initial"
+            else SelectionReason.GENERAL_FALLBACK
+            if dispatch_type == "fallback"
+            else SelectionReason.ESCALATED,
+            candidates_considered=len(self._registry.list_all()),
+            matched_rule=decision.matched_rule,
+            dispatch_type=dispatch_type,
+            effective_tags=effective_tags,
+        )
 
     async def _find_ai_executor(self) -> ExecutorProtocol | None:
         """Find a general-purpose AI executor, preferring local if policy says so."""
