@@ -1,0 +1,36 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__stitch_*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pre-tool-use-safety.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__stitch_*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/post-tool-use-audit.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/stop-session-check.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
