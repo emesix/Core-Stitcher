@@ -144,6 +144,23 @@ def create_routes() -> APIRouter:
             },
         )
 
+    # --- OPNsense ---
+
+    @router.get("/opnsense", response_class=HTMLResponse)
+    async def opnsense_page(request: Request) -> HTMLResponse:
+        client = request.app.state.client
+        try:
+            result = await client.query("opnsense", "summary")
+            summary = result.items[0] if result.items else None
+        except Exception:
+            summary = None
+        templates = request.app.state.templates
+        return templates.TemplateResponse(
+            request,
+            "opnsense.html",
+            {"summary": summary, "active": "opnsense", "subtitle": "OPNsense"},
+        )
+
     # --- System ---
 
     @router.get("/system", response_class=HTMLResponse)

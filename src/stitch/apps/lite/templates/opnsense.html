@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>OPNsense</h1>
+
+{% if summary %}
+<div class="card">
+    <div class="kv"><span class="kv-key">Hostname</span><span>{{ summary.hostname | default('unknown') }}</span></div>
+    <div class="kv"><span class="kv-key">Version</span><span>{{ summary.version | default('unknown') }}</span></div>
+    {% if summary.uptime %}
+    <div class="kv"><span class="kv-key">Uptime</span><span>{{ summary.uptime }}</span></div>
+    {% endif %}
+    {% if summary.load %}
+    <div class="kv"><span class="kv-key">Load</span><span>{{ summary.load }}</span></div>
+    {% endif %}
+</div>
+
+{% if summary.services %}
+<h2>Services</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+    {% for svc in summary.services %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <strong style="color: var(--accent);">{{ svc.name | title }}</strong>
+            {% if svc.status == 'working' %}
+                <span class="badge badge-ok">working</span>
+            {% elif svc.status == 'configured_but_empty' %}
+                <span class="badge badge-pending">empty</span>
+            {% elif svc.status == 'unsupported' %}
+                <span class="badge badge-pending">unsupported</span>
+            {% elif svc.status == 'error' %}
+                <span class="badge badge-error">error</span>
+            {% elif svc.status == 'timed_out' %}
+                <span class="badge badge-warning">timeout</span>
+            {% else %}
+                <span class="badge badge-pending">{{ svc.status | default('unknown') }}</span>
+            {% endif %}
+        </div>
+        <p style="color: var(--text); font-size: 0.9rem;">{{ svc.headline | default('-') }}</p>
+        {% if svc.error %}
+        <p style="color: var(--error); font-size: 0.8rem; margin-top: 0.25rem;">{{ svc.error }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <p style="color: var(--text-dim);">Could not load OPNsense summary. Is the backend running?</p>
+</div>
+{% endif %}
+
+<p style="margin-top: 1rem"><a href="/devices/opnsense">&rarr; Device detail</a></p>
+{% endblock %}
