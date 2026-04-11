@@ -5,7 +5,7 @@ from pathlib import Path
 
 from stitch.modelkit.topology import TopologySnapshot
 
-SUPPORTED_VERSIONS = {"1.0"}
+SUPPORTED_VERSIONS = {"1.0", "1.1"}
 
 
 class TopologyVersionError(Exception):
