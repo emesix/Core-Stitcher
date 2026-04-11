@@ -14,6 +14,7 @@ from stitch.agentcore.storekit import RunRecord, RunStatus, TaskExecution
 
 if TYPE_CHECKING:
     from stitch.agentcore.executorkit.protocol import ReviewableExecutorProtocol
+    from stitch.agentcore.orchestration.routing import RoutingPolicy
     from stitch.agentcore.registry import ExecutorRegistry
     from stitch.agentcore.storekit import JsonRunStore
 
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 def create_router(
     store: JsonRunStore,
     registry: ExecutorRegistry,
+    routing: RoutingPolicy | None = None,
 ) -> APIRouter:
     router = APIRouter()
 
@@ -153,7 +155,7 @@ def create_router(
 
     @router.post("/runs/{run_id}/orchestrate")
     async def orchestrate_run(run_id: UUID):
-        orchestrator = RunOrchestrator(registry, store)
+        orchestrator = RunOrchestrator(registry, store, routing=routing)
         try:
             run = await orchestrator.orchestrate(str(run_id))
         except Exception as e:
