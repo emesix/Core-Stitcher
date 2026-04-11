@@ -117,67 +117,6 @@ def create_routes() -> APIRouter:
             {"run": run, "active": "runs", "subtitle": f"Run {run_id}"},
         )
 
-    # --- Reviews ---
-
-    @router.get("/reviews", response_class=HTMLResponse)
-    async def review_list(request: Request) -> HTMLResponse:
-        client = request.app.state.client
-        result = await client.query("run", "list")
-        templates = request.app.state.templates
-        return templates.TemplateResponse(
-            request,
-            "reviews.html",
-            {"reviews": result.items, "active": "reviews", "subtitle": "Reviews"},
-        )
-
-    @router.get("/reviews/{review_id}", response_class=HTMLResponse)
-    async def review_detail(request: Request, review_id: str) -> HTMLResponse:
-        client = request.app.state.client
-        result = await client.query("run", "show", resource_id=review_id)
-        review = result.items[0] if result.items else {}
-        templates = request.app.state.templates
-        return templates.TemplateResponse(
-            request,
-            "review_detail.html",
-            {"review": review, "active": "reviews", "subtitle": f"Review {review_id}"},
-        )
-
-    @router.post("/reviews/{review_id}/approve", response_class=HTMLResponse)
-    async def review_approve(request: Request, review_id: str) -> HTMLResponse:
-        client = request.app.state.client
-        form = await request.form()
-        comment = form.get("comment", "")
-        await client.command(
-            "run",
-            "review",
-            resource_id=review_id,
-            params={"action": "approve", "comment": comment},
-        )
-        templates = request.app.state.templates
-        return templates.TemplateResponse(
-            request,
-            "review_approved.html",
-            {"review_id": review_id, "active": "reviews", "subtitle": "Approved"},
-        )
-
-    @router.post("/reviews/{review_id}/reject", response_class=HTMLResponse)
-    async def review_reject(request: Request, review_id: str) -> HTMLResponse:
-        client = request.app.state.client
-        form = await request.form()
-        comment = form.get("comment", "")
-        await client.command(
-            "run",
-            "review",
-            resource_id=review_id,
-            params={"action": "reject", "comment": comment},
-        )
-        templates = request.app.state.templates
-        return templates.TemplateResponse(
-            request,
-            "review_rejected.html",
-            {"review_id": review_id, "active": "reviews", "subtitle": "Rejected"},
-        )
-
     # --- Topology ---
 
     @router.get("/topology", response_class=HTMLResponse)

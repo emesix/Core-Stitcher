@@ -205,70 +205,7 @@ async def test_run_detail_page(mock_app, mock_client):
 # --- Review pages ---
 
 
-@pytest.mark.asyncio
-async def test_review_list_page(mock_app, mock_client):
-    reviews = [
-        {"id": "rev_01", "review_status": "pending", "description": "Link review"},
-    ]
-    mock_app.state.client.query.return_value = QueryResult(items=reviews, total=1)
-    resp = await mock_client.get("/reviews")
-    assert resp.status_code == 200
-    assert "rev_01" in resp.text
-
-
-@pytest.mark.asyncio
-async def test_review_list_empty(mock_app, mock_client):
-    mock_app.state.client.query.return_value = QueryResult(items=[], total=0)
-    resp = await mock_client.get("/reviews")
-    assert resp.status_code == 200
-    assert "No reviews found." in resp.text
-
-
-@pytest.mark.asyncio
-async def test_review_detail_page(mock_app, mock_client):
-    review = {
-        "id": "rev_01",
-        "review_status": "pending",
-        "description": "Link mismatch review",
-        "findings": [
-            {"title": "Broken link", "severity": "error", "detail": "Port down on igb0"},
-        ],
-    }
-    mock_app.state.client.query.return_value = QueryResult(items=[review], total=1)
-    resp = await mock_client.get("/reviews/rev_01")
-    assert resp.status_code == 200
-    assert "rev_01" in resp.text
-    assert "Broken link" in resp.text
-    assert "Approve" in resp.text
-    assert "Reject" in resp.text
-
-
-@pytest.mark.asyncio
-async def test_review_approve(mock_app, mock_client):
-    mock_app.state.client.command.return_value = {"status": "approved"}
-    resp = await mock_client.post("/reviews/rev_01/approve", data={"comment": "LGTM"})
-    assert resp.status_code == 200
-    assert "approved" in resp.text.lower()
-    mock_app.state.client.command.assert_called_once_with(
-        "run",
-        "review",
-        resource_id="rev_01",
-        params={"action": "approve", "comment": "LGTM"},
-    )
-
-
-@pytest.mark.asyncio
-async def test_review_reject(mock_app, mock_client):
-    mock_app.state.client.command.return_value = {"status": "rejected"}
-    resp = await mock_client.post("/reviews/rev_01/reject", data={"comment": "Needs fix"})
-    assert resp.status_code == 200
-    assert "rejected" in resp.text.lower()
-    mock_app.state.client.command.assert_called_once_with(
-        "run",
-        "review",
-        resource_id="rev_01",
-        params={"action": "reject", "comment": "Needs fix"},
-    )
+# Reviews removed from first product slice — routes hidden until backend supports them
 
 
 # --- Topology page ---
