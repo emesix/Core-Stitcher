@@ -22,6 +22,14 @@ _ENDPOINTS: dict[tuple[str, str], tuple[str, str]] = {
     ("run", "execute"): ("POST", "/api/v1/runs/{id}/execute"),
     ("run", "review"): ("POST", "/api/v1/runs/{id}/review"),
     ("run", "orchestrate"): ("POST", "/api/v1/runs/{id}/orchestrate"),
+    # OPNsense
+    ("opnsense", "summary"): ("GET", "/api/v1/opnsense/summary"),
+    ("opnsense", "interfaces"): ("GET", "/api/v1/opnsense/interfaces"),
+    ("opnsense", "routes"): ("GET", "/api/v1/opnsense/routes"),
+    ("opnsense", "aliases"): ("GET", "/api/v1/opnsense/aliases"),
+    ("opnsense", "nat"): ("GET", "/api/v1/opnsense/nat"),
+    ("opnsense", "vlans"): ("GET", "/api/v1/opnsense/vlans"),
+    ("opnsense", "bridges"): ("GET", "/api/v1/opnsense/bridges"),
     # System
     ("system", "health"): ("GET", "/api/v1/health"),
     ("system", "info"): ("GET", "/api/v1/readyz"),

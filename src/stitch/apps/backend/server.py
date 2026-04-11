@@ -8,6 +8,7 @@ from pathlib import Path
 import uvicorn
 from fastapi import FastAPI
 
+from stitch.apps.backend.opnsense_routes import create_opnsense_router
 from stitch.interfacekit.explorer_routes import create_explorer_router
 from stitch.interfacekit.routes import create_health_router, create_preflight_router
 from stitch.storekit import load_topology
@@ -31,6 +32,9 @@ def create_app(topology_path: str | None = None) -> FastAPI:
 
     # Health + system probes
     app.include_router(create_health_router(workflow.health), prefix="/api/v1")
+
+    # OPNsense live data (via MCP gateway)
+    app.include_router(create_opnsense_router(), prefix="/api/v1/opnsense")
 
     @app.get("/api/v1/health")
     async def system_health():
