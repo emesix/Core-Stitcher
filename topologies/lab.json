@@ -1,8 +1,8 @@
 {
   "meta": {
-    "version": "1.0",
+    "version": "1.1",
     "name": "emesix-homelab",
-    "updated": "2026-04-08T18:00:00Z",
+    "updated": "2026-04-10T23:00:00Z",
     "updated_by": "emesix"
   },
   "devices": {
@@ -17,8 +17,8 @@
         "igc0": {
           "type": "ethernet",
           "device_name": "igc0",
-          "speed": "2.5G",
-          "description": "WAN (ISP uplink)",
+          "speed": "1G",
+          "description": "WAN (ISP uplink, DHCP)",
           "vlans": {
             "mode": "access",
             "access_vlan": null
@@ -28,7 +28,7 @@
           "type": "ethernet",
           "device_name": "igc1",
           "speed": "2.5G",
-          "description": "Bypass 172.16.0.0/24 (emergency, never touch)",
+          "description": "LAN (172.16.0.1/24)",
           "vlans": {
             "mode": "access",
             "access_vlan": null
@@ -38,7 +38,7 @@
           "type": "sfp+",
           "device_name": "ix0",
           "speed": "10G",
-          "description": "Frontend trunk to ONTi-FE",
+          "description": "opt1 — FRONTEND trunk to ONTi-FE (10G DAC, up)",
           "vlans": {
             "mode": "trunk",
             "native": 1,
@@ -56,7 +56,7 @@
           "type": "sfp+",
           "device_name": "ix1",
           "speed": "10G",
-          "description": "Backend trunk to ONTi-BE",
+          "description": "opt2 — BACKEND trunk to ONTi-BE (10G DAC, up)",
           "vlans": {
             "mode": "trunk",
             "native": 1,
@@ -69,17 +69,33 @@
             "port": "port1"
           }
         },
+        "vlan01": {
+          "type": "vlan",
+          "device_name": "vlan01",
+          "parent": "ix0",
+          "vlan_id": 254,
+          "description": "opt4 — Management_FE (VLAN 254 on ix0, bridge member)"
+        },
+        "vlan02": {
+          "type": "vlan",
+          "device_name": "vlan02",
+          "parent": "ix1",
+          "vlan_id": 254,
+          "description": "opt5 — Management_BE (VLAN 254 on ix1, bridge member)"
+        },
+        "vlan03": {
+          "type": "vlan",
+          "device_name": "vlan03",
+          "parent": "ix0",
+          "vlan_id": 25,
+          "description": "opt3 — GeneralLAN (VLAN 25 on ix0, 192.168.25.1/24)"
+        },
         "bridge0": {
           "type": "bridge",
           "device_name": "bridge0",
-          "description": "Management domain bridge (ix0.254 + ix1.254 + vtnet0)"
+          "description": "opt6 — Management (192.168.254.1/24, members: vlan01 + vlan02)"
         }
-      },
-      "children": [
-        "zabbix",
-        "docker",
-        "lldap"
-      ]
+      }
     },
     "onti-fe": {
       "id": "onti-fe",
@@ -87,6 +103,7 @@
       "type": "switch",
       "model": "ONTI S508CL-8S",
       "management_ip": "192.168.254.31",
+      "mac_address": "d0:aa:5f:01:49:3c",
       "mcp_source": "switchcraft",
       "ports": {
         "port1": {
@@ -170,7 +187,7 @@
           },
           "expected_neighbor": {
             "device": "zyxel-gs1900",
-            "port": "port1"
+            "port": "sfp1"
           }
         }
       }
@@ -181,6 +198,7 @@
       "type": "switch",
       "model": "ONTI S508CL-8S",
       "management_ip": "192.168.254.30",
+      "mac_address": "d0:aa:5f:01:6c:b2",
       "mcp_source": "switchcraft",
       "ports": {
         "port1": {
@@ -234,35 +252,13 @@
           "type": "sfp+",
           "device_name": "Ethernet1/0/7",
           "speed": "1G",
-          "description": "Cat6+SFP to HX310-DB eth1 (SFP installed)",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "pve-hx310-db",
-            "port": "port1"
-          }
+          "description": "Available (was HX310-DB, Proxmox decommissioned)"
         },
         "port8": {
           "type": "sfp+",
           "device_name": "Ethernet1/0/8",
           "speed": "1G",
-          "description": "Cat6+SFP to HX310-ARR eth1 (SFP installed)",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "pve-hx310-arr",
-            "port": "port1"
-          }
+          "description": "Available (was HX310-ARR, Proxmox decommissioned)"
         }
       }
     },
@@ -270,7 +266,7 @@
       "id": "91tsm",
       "name": "91TSM (Copper Breakout)",
       "type": "switch",
-      "model": "JT-COM S207CW-91TSM",
+      "model": "ONT-S207CW",
       "management_ip": "192.168.254.32",
       "mcp_source": "switchcraft",
       "ports": {
@@ -346,36 +342,20 @@
           "type": "ethernet",
           "device_name": "Port 7",
           "speed": "2.5G",
-          "description": "Trunk to HX310-ARR eth0",
+          "description": "Available (was HX310-ARR, Proxmox decommissioned)",
           "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              25,
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "pve-hx310-arr",
-            "port": "eth0"
+            "mode": "access",
+            "access_vlan": 25
           }
         },
         "port8": {
           "type": "ethernet",
           "device_name": "Port 8",
           "speed": "2.5G",
-          "description": "Trunk to HX310-DB eth0",
+          "description": "Available (was HX310-DB, Proxmox decommissioned)",
           "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              25,
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "pve-hx310-db",
-            "port": "eth0"
+            "mode": "access",
+            "access_vlan": 25
           }
         },
         "port9": {
@@ -388,10 +368,11 @@
     },
     "zyxel-gs1900": {
       "id": "zyxel-gs1900",
-      "name": "Zyxel GS1900-24HP",
+      "name": "Zyxel GS1900-24HP (OpenWrt)",
       "type": "switch",
       "model": "Zyxel GS1900-24HP",
       "management_ip": "192.168.254.33",
+      "firmware": "OpenWrt",
       "mcp_source": "switchcraft",
       "ports": {
         "sfp1": {
@@ -429,176 +410,6 @@
           "device_name": "Port 3",
           "speed": "1G",
           "description": "PoE - WiFi AP (Phase 4)"
-        }
-      }
-    },
-    "pve-qotom-1u": {
-      "id": "pve-qotom-1u",
-      "name": "Qotom (Proxmox Host)",
-      "type": "proxmox",
-      "model": "Qotom Mini PC",
-      "management_ip": "192.168.254.100",
-      "mcp_source": "proxmoxcraft",
-      "ports": {
-        "igc0": {
-          "type": "ethernet",
-          "device_name": "igc0",
-          "speed": "2.5G",
-          "description": "WAN (PCI passthrough to OPNsense)"
-        },
-        "igc1": {
-          "type": "ethernet",
-          "device_name": "igc1",
-          "speed": "2.5G",
-          "description": "Bypass 172.16.0.0/24 (PCI passthrough to OPNsense)"
-        },
-        "ix0": {
-          "type": "sfp+",
-          "device_name": "ix0",
-          "speed": "10G",
-          "description": "Frontend trunk (PCI passthrough to OPNsense)"
-        },
-        "ix1": {
-          "type": "sfp+",
-          "device_name": "ix1",
-          "speed": "10G",
-          "description": "Backend trunk (PCI passthrough to OPNsense)"
-        },
-        "vmbr0": {
-          "type": "bridge",
-          "device_name": "vmbr0",
-          "description": "Bypass bridge (igc1 bound, 172.16.0.x)"
-        },
-        "vmbr1": {
-          "type": "bridge",
-          "device_name": "vmbr1",
-          "description": "Frontend trunk bridge (ix0 bound, VLAN-aware)"
-        },
-        "vmbr2": {
-          "type": "bridge",
-          "device_name": "vmbr2",
-          "description": "Backend trunk bridge (ix1 bound, VLAN-aware)"
-        },
-        "vmbr3": {
-          "type": "bridge",
-          "device_name": "vmbr3",
-          "description": "WAN bridge (igc0 bound, passthrough)"
-        }
-      },
-      "children": [
-        "opnsense",
-        "zabbix",
-        "docker",
-        "lldap"
-      ]
-    },
-    "pve-hx310-db": {
-      "id": "pve-hx310-db",
-      "name": "HX310-DB (Database Node)",
-      "type": "proxmox",
-      "model": "HX310",
-      "management_ip": "192.168.254.101",
-      "mcp_source": "proxmoxcraft",
-      "ports": {
-        "eth0": {
-          "type": "ethernet",
-          "device_name": "eth0",
-          "speed": "2.5G",
-          "description": "Frontend (91TSM port 8) - cluster + DHCP",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              25,
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "91tsm",
-            "port": "port8"
-          }
-        },
-        "eth1": {
-          "type": "sfp+",
-          "device_name": "eth1",
-          "speed": "1G",
-          "description": "Backend (ONTi-BE port 7) - SFP installed",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "onti-be",
-            "port": "port7"
-          }
-        },
-        "vmbr0": {
-          "type": "bridge",
-          "device_name": "vmbr0",
-          "description": "Frontend bridge (eth0 bound, NOT yet VLAN-aware)"
-        },
-        "vmbr1": {
-          "type": "bridge",
-          "device_name": "vmbr1",
-          "description": "Backend bridge (eth1 bound, VLAN-aware, bridge-vids 254)"
-        }
-      }
-    },
-    "pve-hx310-arr": {
-      "id": "pve-hx310-arr",
-      "name": "HX310-ARR (ARR Services Node)",
-      "type": "proxmox",
-      "model": "HX310",
-      "management_ip": "192.168.254.102",
-      "mcp_source": "proxmoxcraft",
-      "ports": {
-        "eth0": {
-          "type": "ethernet",
-          "device_name": "eth0",
-          "speed": "2.5G",
-          "description": "Frontend (91TSM port 7) - cluster + DHCP",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              25,
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "91tsm",
-            "port": "port7"
-          }
-        },
-        "eth1": {
-          "type": "sfp+",
-          "device_name": "eth1",
-          "speed": "1G",
-          "description": "Backend (ONTi-BE port 8) - SFP installed",
-          "vlans": {
-            "mode": "trunk",
-            "native": 1,
-            "tagged": [
-              254
-            ]
-          },
-          "expected_neighbor": {
-            "device": "onti-be",
-            "port": "port8"
-          }
-        },
-        "vmbr0": {
-          "type": "bridge",
-          "device_name": "vmbr0",
-          "description": "Frontend bridge (eth0 bound, NOT yet VLAN-aware)"
-        },
-        "vmbr1": {
-          "type": "bridge",
-          "device_name": "vmbr1",
-          "description": "Backend bridge (eth1 bound, VLAN-aware, bridge-vids 254)"
         }
       }
     }
@@ -665,214 +476,28 @@
         },
         {
           "device": "zyxel-gs1900",
-          "port": "port1"
+          "port": "sfp1"
         }
       ],
       "media": "Fiber 1G (BiDi SFP)",
       "cable_color": "yellow",
       "notes": "Frontend: ONTi-FE to Zyxel PoE switch"
-    },
-    {
-      "id": "phys-91tsm-to-hx310-db",
-      "type": "physical_cable",
-      "endpoints": [
-        {
-          "device": "91tsm",
-          "port": "port8"
-        },
-        {
-          "device": "pve-hx310-db",
-          "port": "eth0"
-        }
-      ],
-      "media": "Cat6 RJ45 2.5G",
-      "cable_color": "green",
-      "notes": "Frontend: 91TSM to HX310-DB (cluster + DHCP)"
-    },
-    {
-      "id": "phys-91tsm-to-hx310-arr",
-      "type": "physical_cable",
-      "endpoints": [
-        {
-          "device": "91tsm",
-          "port": "port7"
-        },
-        {
-          "device": "pve-hx310-arr",
-          "port": "eth0"
-        }
-      ],
-      "media": "Cat6 RJ45 2.5G",
-      "cable_color": "green",
-      "notes": "Frontend: 91TSM to HX310-ARR (cluster + DHCP)"
-    },
-    {
-      "id": "phys-onti-be-to-hx310-db",
-      "type": "physical_cable",
-      "endpoints": [
-        {
-          "device": "onti-be",
-          "port": "port7"
-        },
-        {
-          "device": "pve-hx310-db",
-          "port": "port1"
-        }
-      ],
-      "media": "Cat6 + 10Gtek SFP-to-RJ45 1G",
-      "cable_color": "red",
-      "notes": "Backend: ONTi-BE to HX310-DB - SFP installed 2026-04-08"
-    },
-    {
-      "id": "phys-onti-be-to-hx310-arr",
-      "type": "physical_cable",
-      "endpoints": [
-        {
-          "device": "onti-be",
-          "port": "port8"
-        },
-        {
-          "device": "pve-hx310-arr",
-          "port": "port1"
-        }
-      ],
-      "media": "Cat6 + 10Gtek SFP-to-RJ45 1G",
-      "cable_color": "red",
-      "notes": "Backend: ONTi-BE to HX310-ARR - SFP installed 2026-04-08"
-    },
-    {
-      "id": "bridge-qotom-igc1-vmbr0",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-qotom-1u",
-          "port": "igc1"
-        },
-        {
-          "device": "pve-qotom-1u",
-          "port": "vmbr0"
-        }
-      ],
-      "notes": "Bypass bridge"
-    },
-    {
-      "id": "bridge-qotom-ix0-vmbr1",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-qotom-1u",
-          "port": "ix0"
-        },
-        {
-          "device": "pve-qotom-1u",
-          "port": "vmbr1"
-        }
-      ],
-      "notes": "Frontend trunk bridge"
-    },
-    {
-      "id": "bridge-qotom-ix1-vmbr2",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-qotom-1u",
-          "port": "ix1"
-        },
-        {
-          "device": "pve-qotom-1u",
-          "port": "vmbr2"
-        }
-      ],
-      "notes": "Backend trunk bridge"
-    },
-    {
-      "id": "bridge-qotom-igc0-vmbr3",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-qotom-1u",
-          "port": "igc0"
-        },
-        {
-          "device": "pve-qotom-1u",
-          "port": "vmbr3"
-        }
-      ],
-      "notes": "WAN bridge"
-    },
-    {
-      "id": "bridge-hx310-db-eth0-vmbr0",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-hx310-db",
-          "port": "eth0"
-        },
-        {
-          "device": "pve-hx310-db",
-          "port": "vmbr0"
-        }
-      ],
-      "notes": "Frontend bridge"
-    },
-    {
-      "id": "bridge-hx310-db-eth1-vmbr1",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-hx310-db",
-          "port": "port1"
-        },
-        {
-          "device": "pve-hx310-db",
-          "port": "vmbr1"
-        }
-      ],
-      "notes": "Backend bridge (awaiting SFP)"
-    },
-    {
-      "id": "bridge-hx310-arr-eth0-vmbr0",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-hx310-arr",
-          "port": "eth0"
-        },
-        {
-          "device": "pve-hx310-arr",
-          "port": "vmbr0"
-        }
-      ],
-      "notes": "Frontend bridge"
-    },
-    {
-      "id": "bridge-hx310-arr-eth1-vmbr1",
-      "type": "bridge_member",
-      "endpoints": [
-        {
-          "device": "pve-hx310-arr",
-          "port": "port1"
-        },
-        {
-          "device": "pve-hx310-arr",
-          "port": "vmbr1"
-        }
-      ],
-      "notes": "Backend bridge (awaiting SFP)"
     }
   ],
   "vlans": {
     "25": {
-      "name": "General LAN",
+      "name": "GeneralLAN",
       "color": "#4caf50",
       "subnet": "192.168.25.0/24",
-      "gateway": "192.168.25.1"
+      "gateway": "192.168.25.1",
+      "trunk": "FRONTEND (ix0)"
     },
     "254": {
       "name": "Management",
       "color": "#2196f3",
       "subnet": "192.168.254.0/24",
-      "gateway": "192.168.254.1"
+      "gateway": "192.168.254.1",
+      "trunk": "Both FRONTEND (ix0) and BACKEND (ix1), bridged"
     }
   }
 }
