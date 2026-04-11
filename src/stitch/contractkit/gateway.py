@@ -3,10 +3,15 @@
 Handles authentication and the Streamable HTTP transport used by the
 MCP gateway at localhost:4444. Reads the auth token from the
 MCP_GATEWAY_AUTH environment variable.
+
+Features:
+- Persistent httpx.AsyncClient for connection pooling / reuse.
+- Configurable retry with exponential backoff (transport errors + 5xx only).
 """
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 from typing import Any
@@ -19,12 +24,38 @@ log = structlog.get_logger()
 MCP_GATEWAY_URL = "http://localhost:4444"
 MCP_GATEWAY_AUTH_ENV = "MCP_GATEWAY_AUTH"
 
+_DEFAULT_MAX_RETRIES = 3
+_DEFAULT_BACKOFF_SECONDS = (1.0, 2.0, 4.0)
+
+
+def _is_retryable(exc: Exception) -> bool:
+    """Return True for errors worth retrying (transport / 5xx)."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code >= 500
+    # TimeoutException is a subclass of HTTPError, check it first
+    return isinstance(exc, httpx.TimeoutException | httpx.ConnectError | httpx.ReadError)
+
 
 class McpGatewayClient:
     """Calls MCP tools via the gateway's Streamable HTTP endpoint."""
 
-    def __init__(self, gateway_url: str = MCP_GATEWAY_URL) -> None:
+    def __init__(
+        self,
+        gateway_url: str = MCP_GATEWAY_URL,
+        *,
+        max_retries: int = _DEFAULT_MAX_RETRIES,
+        backoff_seconds: tuple[float, ...] = _DEFAULT_BACKOFF_SECONDS,
+    ) -> None:
         self._gateway_url = gateway_url.rstrip("/")
+        self._max_retries = max_retries
+        self._backoff_seconds = backoff_seconds
+        self._client: httpx.AsyncClient | None = None
+
+    def _get_client(self, timeout: float) -> httpx.AsyncClient:
+        """Return the persistent client, creating it lazily on first use."""
+        if self._client is None or self._client.is_closed:
+            self._client = httpx.AsyncClient(timeout=timeout)
+        return self._client
 
     def _headers(self) -> dict[str, str]:
         headers: dict[str, str] = {
@@ -35,6 +66,12 @@ class McpGatewayClient:
         if token:
             headers["Authorization"] = token
         return headers
+
+    async def close(self) -> None:
+        """Close the persistent HTTP client and release connections."""
+        if self._client is not None and not self._client.is_closed:
+            await self._client.aclose()
+            self._client = None
 
     async def call_tool(
         self,
@@ -58,8 +95,11 @@ class McpGatewayClient:
 
         log.debug("mcp.call", tool=tool_name, args=args, has_auth=has_auth)
 
-        try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
+        last_exc: Exception | None = None
+
+        for attempt in range(1 + self._max_retries):
+            try:
+                client = self._get_client(timeout)
                 resp = await client.post(
                     f"{self._gateway_url}/mcp/",
                     json=payload,
@@ -81,7 +121,9 @@ class McpGatewayClient:
 
                 content = result.get("result", {}).get("content", [])
                 if not content:
-                    log.warning("mcp.empty_content", tool=tool_name, raw_result=result)
+                    log.warning(
+                        "mcp.empty_content", tool=tool_name, raw_result=result
+                    )
                     return None
 
                 text = content[0].get("text")
@@ -91,32 +133,60 @@ class McpGatewayClient:
 
                 return json.loads(text)
 
-        except httpx.TimeoutException as exc:
-            log.warning(
-                "mcp.timeout",
-                tool=tool_name,
-                timeout_s=timeout,
-                error=str(exc),
+            except httpx.HTTPStatusError as exc:
+                if not _is_retryable(exc):
+                    # 4xx — not retryable, bail immediately
+                    log.warning(
+                        "mcp.http_error",
+                        tool=tool_name,
+                        status=exc.response.status_code,
+                        body=exc.response.text[:500],
+                    )
+                    return None
+                last_exc = exc
+            except (httpx.TimeoutException, httpx.ConnectError, httpx.ReadError) as exc:
+                last_exc = exc
+            except httpx.HTTPError as exc:
+                # Non-retryable transport error (e.g. decode, redirect loop)
+                log.warning(
+                    "mcp.transport_error",
+                    tool=tool_name,
+                    error_type=type(exc).__name__,
+                    error=str(exc),
+                )
+                return None
+            except json.JSONDecodeError as exc:
+                log.warning(
+                    "mcp.json_error",
+                    tool=tool_name,
+                    error=str(exc),
+                )
+                return None
+
+            # Retryable failure — log and back off
+            delay = (
+                self._backoff_seconds[attempt]
+                if attempt < len(self._backoff_seconds)
+                else self._backoff_seconds[-1]
             )
-        except httpx.HTTPStatusError as exc:
             log.warning(
-                "mcp.http_error",
+                "mcp.retry",
                 tool=tool_name,
-                status=exc.response.status_code,
-                body=exc.response.text[:500],
-            )
-        except httpx.HTTPError as exc:
-            log.warning(
-                "mcp.transport_error",
-                tool=tool_name,
-                error_type=type(exc).__name__,
-                error=str(exc),
-            )
-        except json.JSONDecodeError as exc:
-            log.warning(
-                "mcp.json_error",
-                tool=tool_name,
-                error=str(exc),
+                attempt=attempt + 1,
+                max_retries=self._max_retries,
+                delay_s=delay,
+                error_type=type(last_exc).__name__,
+                error=str(last_exc),
             )
 
+            if attempt < self._max_retries:
+                await asyncio.sleep(delay)
+
+        # All retries exhausted
+        log.warning(
+            "mcp.retries_exhausted",
+            tool=tool_name,
+            attempts=1 + self._max_retries,
+            last_error=str(last_exc),
+        )
         return None
