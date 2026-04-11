@@ -33,6 +33,7 @@ stitch = "stitch.apps.operator.app:main"
 stitch-tui = "stitch.apps.tui.app:main"
 stitch-lite = "stitch.apps.lite.app:main"
 stitch-mcp = "stitch.mcp.server:main"
+stitch-server = "stitch.apps.backend.server:main"
 
 [project.entry-points."stitch.modules"]
 "resource.switchcraft" = "stitch.switchcraft:SwitchcraftModule"
