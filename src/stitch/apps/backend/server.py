@@ -29,8 +29,20 @@ def create_app(topology_path: str | None = None) -> FastAPI:
     # Preflight routes (verify, trace, impact, diff)
     app.include_router(create_preflight_router(workflow), prefix="/api/v1")
 
-    # Health
+    # Health + system probes
     app.include_router(create_health_router(workflow.health), prefix="/api/v1")
+
+    @app.get("/api/v1/health")
+    async def system_health():
+        return {"status": "ok"}
+
+    @app.get("/api/v1/readyz")
+    async def readyz():
+        return {"ready": True, "topology": str(topo_path)}
+
+    @app.get("/api/v1/livez")
+    async def livez():
+        return {"alive": True, "version": "1.0"}
 
     # Project-stitcher run API
     from stitch.agentcore.bootstrap import build_alpha_registry

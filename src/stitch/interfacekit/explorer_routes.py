@@ -32,15 +32,16 @@ def create_explorer_router(workflow: ExplorerWorkflowProtocol) -> APIRouter:
     @router.get("/devices")
     async def list_devices():
         snap = workflow.topology
-        return {
-            dev_id: {
+        return [
+            {
+                "id": dev_id,
                 "name": dev.name,
                 "type": dev.type,
                 "port_count": len(dev.ports),
                 "management_ip": dev.management_ip,
             }
             for dev_id, dev in sorted(snap.devices.items())
-        }
+        ]
 
     @router.get("/devices/{device_id}")
     async def get_device(device_id: str):

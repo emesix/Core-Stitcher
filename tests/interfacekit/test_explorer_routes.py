@@ -80,9 +80,11 @@ def test_list_devices(client: TestClient):
     resp = client.get("/explorer/devices")
     assert resp.status_code == 200
     data = resp.json()
-    assert "sw1" in data
-    assert data["sw1"]["type"] == "switch"
-    assert data["sw1"]["port_count"] == 2
+    assert isinstance(data, list)
+    by_id = {d["id"]: d for d in data}
+    assert "sw1" in by_id
+    assert by_id["sw1"]["type"] == "switch"
+    assert by_id["sw1"]["port_count"] == 2
 
 
 def test_get_device(client: TestClient):

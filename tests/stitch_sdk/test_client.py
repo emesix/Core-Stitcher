@@ -13,7 +13,7 @@ def profile():
 
 async def test_client_query(profile):
     def handler(request: httpx.Request) -> httpx.Response:
-        if request.url.path == "/explorer/devices":
+        if request.url.path == "/api/v1/explorer/devices":
             return httpx.Response(
                 200,
                 json=[{"id": "dev_01", "name": "sw-core-01", "type": "SWITCH"}],

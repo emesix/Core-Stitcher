@@ -5,60 +5,67 @@ from stitch.sdk.endpoints import resolve_endpoint
 
 def test_device_list():
     method, path = resolve_endpoint("device", "list")
-    assert method == "GET" and path == "/explorer/devices"
+    assert method == "GET" and path == "/api/v1/explorer/devices"
 
 
 def test_device_show():
     method, path = resolve_endpoint("device", "show", resource_id="dev_01HX")
-    assert method == "GET" and path == "/explorer/devices/dev_01HX"
+    assert method == "GET" and path == "/api/v1/explorer/devices/dev_01HX"
 
 
 def test_device_neighbors():
     _, path = resolve_endpoint("device", "neighbors", resource_id="dev_01HX")
-    assert path == "/explorer/devices/dev_01HX/neighbors"
+    assert path == "/api/v1/explorer/devices/dev_01HX/neighbors"
 
 
 def test_topology_show():
-    assert resolve_endpoint("topology", "show") == ("GET", "/explorer/topology")
+    assert resolve_endpoint("topology", "show") == ("GET", "/api/v1/explorer/topology")
 
 
 def test_diagnostics():
-    assert resolve_endpoint("topology", "diagnostics") == ("GET", "/explorer/diagnostics")
+    assert resolve_endpoint("topology", "diagnostics") == (
+        "GET",
+        "/api/v1/explorer/diagnostics",
+    )
 
 
 def test_vlan_show():
     _, path = resolve_endpoint("vlan", "show", resource_id="42")
-    assert path == "/explorer/vlans/42"
+    assert path == "/api/v1/explorer/vlans/42"
 
 
 def test_preflight_run():
-    assert resolve_endpoint("preflight", "run") == ("POST", "/verify")
+    assert resolve_endpoint("preflight", "run") == ("POST", "/api/v1/verify")
 
 
 def test_trace_run():
-    assert resolve_endpoint("trace", "run") == ("POST", "/trace")
+    assert resolve_endpoint("trace", "run") == ("POST", "/api/v1/trace")
 
 
 def test_impact_preview():
-    assert resolve_endpoint("impact", "preview") == ("POST", "/impact")
+    assert resolve_endpoint("impact", "preview") == ("POST", "/api/v1/impact")
 
 
 def test_run_list():
-    assert resolve_endpoint("run", "list") == ("GET", "/runs")
+    assert resolve_endpoint("run", "list") == ("GET", "/api/v1/runs")
 
 
 def test_run_show():
     _, path = resolve_endpoint("run", "show", resource_id="run_18f2")
-    assert path == "/runs/run_18f2"
+    assert path == "/api/v1/runs/run_18f2"
 
 
 def test_run_execute():
     method, path = resolve_endpoint("run", "execute", resource_id="run_18f2")
-    assert method == "POST" and path == "/runs/run_18f2/execute"
+    assert method == "POST" and path == "/api/v1/runs/run_18f2/execute"
 
 
 def test_system_health():
     assert resolve_endpoint("system", "health") == ("GET", "/api/v1/health")
+
+
+def test_module_health():
+    assert resolve_endpoint("module", "health") == ("GET", "/api/v1/health/modules")
 
 
 def test_unknown_endpoint():

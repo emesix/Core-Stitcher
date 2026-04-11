@@ -122,10 +122,16 @@ async def test_preflight_page(mock_app, mock_client):
 @pytest.mark.asyncio
 async def test_preflight_run(mock_app, mock_client):
     mock_app.state.client.command.return_value = {
-        "total": 5,
-        "ok": 3,
-        "warning": 1,
-        "error": 1,
+        "summary": {"total": 5, "pass": 3, "warning": 1, "fail": 1},
+        "results": [
+            {
+                "link": "link-01",
+                "status": "fail",
+                "checks": [
+                    {"check": "speed_match", "flag": "error", "message": "Speed mismatch"},
+                ],
+            },
+        ],
     }
     resp = await mock_client.post("/preflight/run", data={"scope": ""})
     assert resp.status_code == 200
@@ -140,10 +146,8 @@ async def test_preflight_run(mock_app, mock_client):
 @pytest.mark.asyncio
 async def test_preflight_run_with_scope(mock_app, mock_client):
     mock_app.state.client.command.return_value = {
-        "total": 2,
-        "ok": 2,
-        "warning": 0,
-        "error": 0,
+        "summary": {"total": 2, "pass": 2, "warning": 0, "fail": 0},
+        "results": [],
     }
     resp = await mock_client.post("/preflight/run", data={"scope": "sw-core-01"})
     assert resp.status_code == 200

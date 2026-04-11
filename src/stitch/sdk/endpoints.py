@@ -3,27 +3,31 @@
 from __future__ import annotations
 
 _ENDPOINTS: dict[tuple[str, str], tuple[str, str]] = {
-    ("device", "list"): ("GET", "/explorer/devices"),
-    ("device", "show"): ("GET", "/explorer/devices/{id}"),
-    ("device", "neighbors"): ("GET", "/explorer/devices/{id}/neighbors"),
-    ("topology", "show"): ("GET", "/explorer/topology"),
-    ("topology", "diagnostics"): ("GET", "/explorer/diagnostics"),
-    ("vlan", "show"): ("GET", "/explorer/vlans/{id}"),
-    ("preflight", "run"): ("POST", "/verify"),
-    ("trace", "run"): ("POST", "/trace"),
-    ("impact", "preview"): ("POST", "/impact"),
-    ("topology", "diff"): ("POST", "/diff"),
-    ("run", "list"): ("GET", "/runs"),
-    ("run", "show"): ("GET", "/runs/{id}"),
-    ("run", "create"): ("POST", "/runs"),
-    ("run", "execute"): ("POST", "/runs/{id}/execute"),
-    ("run", "review"): ("POST", "/runs/{id}/review"),
-    ("run", "orchestrate"): ("POST", "/runs/{id}/orchestrate"),
+    # Explorer (topology browser)
+    ("device", "list"): ("GET", "/api/v1/explorer/devices"),
+    ("device", "show"): ("GET", "/api/v1/explorer/devices/{id}"),
+    ("device", "neighbors"): ("GET", "/api/v1/explorer/devices/{id}/neighbors"),
+    ("topology", "show"): ("GET", "/api/v1/explorer/topology"),
+    ("topology", "diagnostics"): ("GET", "/api/v1/explorer/diagnostics"),
+    ("vlan", "show"): ("GET", "/api/v1/explorer/vlans/{id}"),
+    # Preflight (verification engine)
+    ("preflight", "run"): ("POST", "/api/v1/verify"),
+    ("trace", "run"): ("POST", "/api/v1/trace"),
+    ("impact", "preview"): ("POST", "/api/v1/impact"),
+    ("topology", "diff"): ("POST", "/api/v1/diff"),
+    # Runs (project stitcher)
+    ("run", "list"): ("GET", "/api/v1/runs"),
+    ("run", "show"): ("GET", "/api/v1/runs/{id}"),
+    ("run", "create"): ("POST", "/api/v1/runs"),
+    ("run", "execute"): ("POST", "/api/v1/runs/{id}/execute"),
+    ("run", "review"): ("POST", "/api/v1/runs/{id}/review"),
+    ("run", "orchestrate"): ("POST", "/api/v1/runs/{id}/orchestrate"),
+    # System
     ("system", "health"): ("GET", "/api/v1/health"),
     ("system", "info"): ("GET", "/api/v1/readyz"),
     ("system", "version"): ("GET", "/api/v1/livez"),
     ("module", "list"): ("GET", "/api/v1/modules"),
-    ("module", "health"): ("GET", "/health/modules"),
+    ("module", "health"): ("GET", "/api/v1/health/modules"),
 }
 
 

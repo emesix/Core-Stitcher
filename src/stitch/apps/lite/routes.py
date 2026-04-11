@@ -32,6 +32,11 @@ def create_routes() -> APIRouter:
         client = request.app.state.client
         result = await client.query("device", "show", resource_id=device_id)
         device = result.items[0] if result.items else {}
+        # Flatten ports dict into a list for template iteration
+        if isinstance(device.get("ports"), dict):
+            device["ports"] = [
+                {"name": name, **port} for name, port in device["ports"].items()
+            ]
         neighbors = await client.query("device", "neighbors", resource_id=device_id)
         templates = request.app.state.templates
         return templates.TemplateResponse(
@@ -62,7 +67,24 @@ def create_routes() -> APIRouter:
         form = await request.form()
         scope = form.get("scope", None)
         params = {"scope": scope} if scope else None
-        result = await client.command("preflight", "run", params=params)
+        raw = await client.command("preflight", "run", params=params)
+        # Transform VerificationReport into template-friendly shape
+        summary = raw.get("summary", {})
+        checks = []
+        for link_result in raw.get("results", []):
+            for check in link_result.get("checks", []):
+                checks.append({
+                    "name": check.get("check", link_result.get("link", "-")),
+                    "status": check.get("flag", "info"),
+                    "message": check.get("message", "-"),
+                })
+        result = {
+            "total": summary.get("total", 0),
+            "ok": summary.get("pass", 0),
+            "warning": summary.get("warning", 0),
+            "error": summary.get("fail", 0),
+            "checks": checks,
+        }
         templates = request.app.state.templates
         return templates.TemplateResponse(
             request,
@@ -162,12 +184,22 @@ def create_routes() -> APIRouter:
     async def topology_page(request: Request) -> HTMLResponse:
         client = request.app.state.client
         result = await client.query("topology", "show")
+        topo = result.items[0] if result.items else {}
+        # Flatten devices dict into a list for template iteration
+        if isinstance(topo.get("devices"), dict):
+            topo["devices"] = [
+                {"id": dev_id, **dev} for dev_id, dev in topo["devices"].items()
+            ]
+        # Extract topology name from meta
+        if "meta" in topo and isinstance(topo["meta"], dict):
+            topo.setdefault("name", topo["meta"].get("name"))
+            topo.setdefault("updated_at", topo["meta"].get("updated_at"))
         templates = request.app.state.templates
         return templates.TemplateResponse(
             request,
             "topology.html",
             {
-                "topology": result.items[0] if result.items else {},
+                "topology": topo,
                 "active": "topology",
                 "subtitle": "Topology",
             },

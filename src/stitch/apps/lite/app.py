@@ -12,30 +12,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from stitch.sdk.client import StitchClient
-from stitch.sdk.config import Profile, load_config
+from stitch.sdk.config import Profile
 
 _HERE = Path(__file__).parent
 
 
-def create_app(profile: str | None = None) -> FastAPI:
+def create_app() -> FastAPI:
     app = FastAPI(title="Stitch Lite", docs_url=None, redoc_url=None)
 
     # Templates and static files
     templates = Jinja2Templates(directory=str(_HERE / "templates"))
     app.mount("/static", StaticFiles(directory=str(_HERE / "static")), name="static")
 
-    # SDK client (in-process, not HTTP loopback)
-    config = load_config()
-    env_server = os.environ.get("STITCH_SERVER")
-    if env_server:
-        prof = Profile(server=env_server)
-    else:
-        try:
-            prof = config.resolve_profile(profile)
-        except KeyError:
-            prof = Profile(server="http://localhost:8000")
-
-    client = StitchClient(prof)
+    # SDK client — defaults to localhost:8000 backend
+    server = os.environ.get("STITCH_SERVER", "http://localhost:8000")
+    client = StitchClient(Profile(server=server))
 
     # Store on app state for route access
     app.state.client = client
@@ -51,10 +42,9 @@ def create_app(profile: str | None = None) -> FastAPI:
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="stitch-lite")
-    parser.add_argument("--profile", default=None)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8080)
     args = parser.parse_args()
 
-    app = create_app(profile=args.profile)
+    app = create_app()
     uvicorn.run(app, host=args.host, port=args.port)
